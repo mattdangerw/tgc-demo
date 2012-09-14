@@ -1,12 +1,26 @@
-#ifndef DEMO_GROUND
-#define DEMO_GROUND
+#ifndef SRC_GROUND_H_
+#define SRC_GROUND_H_
 
-class Ground {
+#include <string>
+#include <vector>
+
+#include "glm.hpp"
+#include "gtc/type_ptr.hpp"
+#include "renderer.h"
+
+using std::string;
+using std::vector;
+
+class Ground : Drawable {
   public:
     Ground();
     ~Ground();
+    void init(Renderer *renderer);
+    void draw();
+    string shadingGrounp();
   private:
-    int deleteme;
+    vector<glm::vec2> points;
+    Renderer *renderer;
 };
 
-#endif  // DEMO_GAME
+#endif  // SRC_GROUND_H_

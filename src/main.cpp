@@ -2,39 +2,25 @@
 #include <stdio.h>
 #include <GL/glfw.h>
 
-static bool running = true;
+#include "game.h"
 
-static void draw(void) {
-  glClear(GL_COLOR_BUFFER_BIT);
-  glBegin(GL_POLYGON);
-    glVertex2f(-0.5f, -0.5f);
-    glVertex2f(-0.5f, 0.5f);
-    glVertex2f(0.5f, 0.5f);
-    glVertex2f(0.5f, -0.5f);
-  glEnd();
-  glFlush();
-}
+static Game *game;
+static bool fullscreen = false;
 
 // Handle keyboard events.
-void GLFWCALL keyboardCallback(int k, int action) {
-  if (action != GLFW_PRESS) return;
-  switch (k) {
-    case GLFW_KEY_ESC:
-      running = false;
-      break;
-    default:
-      return;
-  }
+void GLFWCALL keyboardCallback(int key, int action) {
+  game->handleKeyboardEvent(key, action);
 }
 
 // Adjust window size.
-void GLFWCALL reshapeCallback(int width, int height) {}
+void GLFWCALL resizeCallback(int width, int height) {
+  game->resize(width, height);
+}
 
 // Handle input and inititialize OpenGL.
-static void init(int argc, char *argv[]) {
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
+static void init(int argc, char *argv[], int width, int height) {
+  // Parse args someday?
+  game->init(width, height);
 }
 
 int main(int argc, char *argv[]) {
@@ -42,24 +28,37 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Failed to initialize GLFW\n");
     exit(1);
   }
-  // Open a fullscreen window.
-  GLFWvidmode mode;
-  glfwGetDesktopMode(&mode);
-  if (!glfwOpenWindow(mode.Width, mode.Height, 0, 0, 0, 0, 16, 0, GLFW_FULLSCREEN)) {
+  int screen_mode = fullscreen ? GLFW_FULLSCREEN : GLFW_WINDOW;
+  int width, height;
+  if (fullscreen) {
+    // Gets native resolution of monitor.
+    GLFWvidmode mode;
+    glfwGetDesktopMode(&mode);
+    width = mode.Width;
+    height = mode.Height;
+  } else {
+    width = 800;
+    height = 600;
+  }
+  if (!glfwOpenWindow(width, height, 0, 0, 0, 0, 16, 0, screen_mode)) {
     fprintf(stderr, "Failed to open GLFW window\n");
     glfwTerminate();
     exit(1);
   }
+  game = new Game();
+
   glfwEnable(GLFW_KEY_REPEAT);
   glfwSwapInterval(1);
-  // Parse command-line options.
-  init(argc, argv);
   // Set callback functions.
-  glfwSetWindowSizeCallback(reshapeCallback);
+  glfwSetWindowSizeCallback(resizeCallback);
   glfwSetKeyCallback(keyboardCallback);
+
+  // Parse command-line options. And init game;
+  init(argc, argv, width, height);
   // Main loop.
-  while (running) {
-    draw();
+  while (game->stillRunning()) {
+    game->update();
+    game->draw();
     glfwSwapBuffers();
   }
   // Terminate GLFW

@@ -11,13 +11,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\character.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\ground.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\character.h" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\ground.h" />
+    <ClInclude Include="src\renderer.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EAF5428E-BB28-461F-A77E-0DD8C741FB4F}</ProjectGuid>
