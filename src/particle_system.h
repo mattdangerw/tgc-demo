@@ -8,17 +8,18 @@
 #include "renderer.h"
 #include "thought_bubble.h"
 #include "particle.h"
+#include "game_entity.h"
 
 using std::string;
 using std::vector;
 
-class ParticleSystem : Drawable {
+class ParticleSystem : GameEntity, Drawable {
   public:
     ParticleSystem();
     ~ParticleSystem();
     void init(Renderer *renderer, ThoughtBubble *thought_bubble);
     void addParticles(int num_particles);
-    void update(float delta_time);
+    void update(float delta_time, GameState *state);
     void draw();
     string shadingGrounp() { return "default"; }
 

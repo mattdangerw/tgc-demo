@@ -29,7 +29,7 @@ void ParticleSystem::addParticles(int num_particles) {
   }
 }
 
-void ParticleSystem::update(float delta_time) {
+void ParticleSystem::update(float delta_time, GameState *state) {
   vector<Particle>::iterator it;
   for (it = particles_.begin(); it != particles_.end(); ++it) {
     glm::vec2 old_position = it->position;

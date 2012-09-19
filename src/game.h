@@ -8,8 +8,9 @@
 #include "character.h"
 #include "thought_bubble.h"
 #include "particle_system.h"
-#include "triggerable.h"
+#include "triggerables.h"
 #include "clouds.h"
+#include "game_entity.h"
 
 using std::vector;
 
@@ -19,6 +20,8 @@ class Game {
     ~Game();
     // Does all the intialization work.
     void init(int width, int height);
+    // Gets game to quit next update.
+    void prepareToQuit() { leave_game_ = true; }
     // Plays one frame worth of game.
     void update();
     // Draws the frame.
@@ -31,16 +34,6 @@ class Game {
     void resize(int width, int height);
 
   private:
-    // Helper functions.
-    void initTriggerables();
-    void updateTriggerables(float delta_time);
-
-    // Member data
-    enum GameState {
-      WALKING,
-      TRIGGERING,
-      EXPLODING
-    };
     GameState state_;
     Renderer renderer_;
 
@@ -56,12 +49,11 @@ class Game {
 
     // Game entities
     Ground ground_;
-    CloudManager cloud_manager_;
     Character character_;
     ThoughtBubble thought_bubble_;
     ParticleSystem particle_system_;
-    vector<Triggerable *> triggerables_;
-    unsigned int current_triggerable_;
+    CloudManager cloud_manager_;
+    TriggerableManager triggerable_manager_;
 };
 
 #endif  // SRC_GAME_H_

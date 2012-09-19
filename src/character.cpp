@@ -22,16 +22,20 @@ void Character::init(Renderer *renderer, Ground *ground) {
   renderer_->addDrawable(this);
 }
 
-void Character::update(float delta_time, bool move_left, bool move_right, bool jump) {
-  // Update x position.
-  if (move_left) moveLeft(delta_time);
-  if (move_right) moveRight(delta_time);
-  // Udpate y postion.
-  if (jump) this->jump();
-  update(delta_time);
+void Character::setInput(bool left_down, bool right_down, bool space_pressed) {
+  left_down_ = left_down;
+  right_down_ = right_down;
+  space_pressed_ = space_pressed;
 }
 
-void Character::update(float delta_time) {
+void Character::update(float delta_time, GameState *state) {
+  if (*state == WALKING) {
+    // Update x position.
+    if (left_down_) moveLeft(delta_time);
+    if (right_down_) moveRight(delta_time);
+    // Udpate y postion.
+    if (space_pressed_) this->jump();
+  }
   updateY(delta_time);
 }
 

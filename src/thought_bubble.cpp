@@ -22,26 +22,19 @@ void ThoughtBubble::init(Renderer *renderer, Character *character) {
   renderer_->addDrawable(this);
 }
 
-void ThoughtBubble::update(float delta_time) {
+void ThoughtBubble::update(float delta_time, GameState *state) {
   // A simple spring keeps our point mass following the character.
   // We need to calculate forces on out point mass and update the physics sim.
   glm::vec2 spring_anchor, spring_force;
-  spring_anchor = anchorPoint();
-  // Let the actual spring anchor drift horizantally a bit.
-  spring_anchor.x += glm::clamp(mass_.position().x - spring_anchor.x, -kHorizantalLeeway, kHorizantalLeeway);
-  spring_force = -kSpringConstant * (mass_.position() - spring_anchor);
-  mass_.applyForce(spring_force);
-  mass_.update(delta_time);
-}
-
-void ThoughtBubble::moveTowardsCenter(float delta_time) {
-  // A simple spring keeps our point mass following the character.
-  // We need to calculate forces on out point mass and update the physics sim.
-  glm::vec2 spring_anchor, spring_force;
-  spring_anchor = glm::vec2(renderer_->getLeftOfWindow() + renderer_->windowWidth()/2, 0.75f);
-  // Let the actual spring anchor drift horizantally a bit.
-  spring_anchor.x += glm::clamp(mass_.position().x - spring_anchor.x, -kHorizantalLeeway, kHorizantalLeeway);
-  spring_force = -5.0f * (mass_.position() - spring_anchor);
+  if (*state == EXPLODING) {
+    spring_anchor = glm::vec2(renderer_->getLeftOfWindow() + renderer_->windowWidth()/2, 0.75f);
+    spring_force = -5.0f * (mass_.position() - spring_anchor);
+  } else {
+    spring_anchor = anchorPoint();
+    // Let the actual spring anchor drift horizantally a bit.
+    spring_anchor.x += glm::clamp(mass_.position().x - spring_anchor.x, -kHorizantalLeeway, kHorizantalLeeway);
+    spring_force = -kSpringConstant * (mass_.position() - spring_anchor);
+  }
   mass_.applyForce(spring_force);
   mass_.update(delta_time);
 }

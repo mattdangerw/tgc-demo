@@ -57,7 +57,8 @@ void CloudManager::init(Renderer *renderer) {
 }
 
 // Keeps clouds wrapping around viewable area.
-void CloudManager::update(float delta_time) {
+void CloudManager::update(float delta_time, GameState *state) {
+  if (*state == EXPLODING) return;
   list<Cloud *>::iterator it;
   for (it = clouds_.begin(); it != clouds_.end(); ++it) {
     Cloud *cloud = *it;

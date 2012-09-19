@@ -7,18 +7,19 @@
 #include "gtc/type_ptr.hpp"
 #include "renderer.h"
 #include "ground.h"
+#include "game_entity.h"
 
 using std::string;
 
-class Character : Drawable {
+class Character : GameEntity, Drawable {
   public:
     Character();
     ~Character();
     void init(Renderer *renderer, Ground *ground);
-    // Updates the character each frame.
-    void update(float delta_time, bool move_left, bool move_right, bool jump);
+    // Record keyboard input for the frame.
+    void setInput(bool left_down, bool right_down, bool space_pressed);
     // Update without character movement
-    void update(float delta_time);
+    void update(float delta_time, GameState *state);
     // Get the character position.
     glm::vec2 position() { return position_; }
     void draw();
@@ -34,6 +35,7 @@ class Character : Drawable {
     // Member data.
     Renderer *renderer_;
     Ground *ground_;
+    bool left_down_, right_down_, space_pressed_;
     glm::vec2 position_;
     bool is_jumping_;
     float jump_velocity_;

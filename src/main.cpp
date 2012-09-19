@@ -17,6 +17,11 @@ void GLFWCALL resizeCallback(int width, int height) {
   game->resize(width, height);
 }
 
+int GLFWCALL windowCloseCallback() {
+  game->prepareToQuit();
+  return GL_TRUE;
+}
+
 // Handle input and inititialize OpenGL.
 static void init(int argc, char *argv[], int width, int height) {
   // Parse args someday?
@@ -52,6 +57,7 @@ int main(int argc, char *argv[]) {
   // Set callback functions.
   glfwSetWindowSizeCallback(resizeCallback);
   glfwSetKeyCallback(keyboardCallback);
+  glfwSetWindowCloseCallback(windowCloseCallback);
 
   // Parse command-line options. And init game.
   init(argc, argv, width, height);
@@ -81,5 +87,6 @@ int main(int argc, char *argv[]) {
   }
   // Terminate GLFW
   glfwTerminate();
+  delete game;
   return 0;
 }

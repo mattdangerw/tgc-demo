@@ -6,6 +6,7 @@
 
 #include "glm.hpp"
 #include "renderer.h"
+#include "game_entity.h"
 
 using std::string;
 using std::list;
@@ -40,13 +41,13 @@ class Cloud : Drawable {
     float size_, velocity_;
 };
 
-class CloudManager {
+class CloudManager : GameEntity {
   public:
     CloudManager();
     ~CloudManager();
     void init(Renderer *renderer);
     // Keeps clouds wrapping around viewable area.
-    void update(float delta_time);
+    void update(float delta_time, GameState *state);
 
   private:
     // Helper methods

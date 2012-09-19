@@ -20,19 +20,20 @@
     <ClCompile Include="src\point_mass.cpp" />
     <ClCompile Include="src\renderer.cpp" />
     <ClCompile Include="src\thought_bubble.cpp" />
-    <ClCompile Include="src\triggerable.cpp" />
+    <ClCompile Include="src\triggerables.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\character.h" />
     <ClInclude Include="src\clouds.h" />
     <ClInclude Include="src\game.h" />
+    <ClInclude Include="src\game_entity.h" />
     <ClInclude Include="src\ground.h" />
     <ClInclude Include="src\particle.h" />
     <ClInclude Include="src\particle_system.h" />
     <ClInclude Include="src\point_mass.h" />
     <ClInclude Include="src\renderer.h" />
     <ClInclude Include="src\thought_bubble.h" />
-    <ClInclude Include="src\triggerable.h" />
+    <ClInclude Include="src\triggerables.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EAF5428E-BB28-461F-A77E-0DD8C741FB4F}</ProjectGuid>
