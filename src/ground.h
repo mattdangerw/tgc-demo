@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "glm.hpp"
-#include "gtc/type_ptr.hpp"
 #include "renderer.h"
 
 using std::string;
@@ -16,11 +15,14 @@ class Ground : Drawable {
     Ground();
     ~Ground();
     void init(Renderer *renderer);
+    float width();
+    float heightAt(float x);
     void draw();
-    string shadingGrounp();
+    string shadingGrounp() { return "default"; }
+
   private:
-    vector<glm::vec2> points;
-    Renderer *renderer;
+    vector<glm::vec2> points_;
+    Renderer *renderer_;
 };
 
 #endif  // SRC_GROUND_H_

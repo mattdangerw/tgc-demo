@@ -53,10 +53,20 @@ int main(int argc, char *argv[]) {
   glfwSetWindowSizeCallback(resizeCallback);
   glfwSetKeyCallback(keyboardCallback);
 
-  // Parse command-line options. And init game;
+  // Parse command-line options. And init game.
   init(argc, argv, width, height);
   // Main loop.
+  int frame = 0;
+  float lastTime = static_cast<float>(glfwGetTime());
   while (game->stillRunning()) {
+    // Pring the frame rate every once and a while.
+    float currTime = static_cast<float>(glfwGetTime());
+    frame++;
+    if (frame % 500 == 0) {
+      printf("FPS: %f\n", 500.0f / (currTime - lastTime));
+      lastTime = currTime;
+    }
+    // Update and draw the game.
     game->update();
     game->draw();
     glfwSwapBuffers();

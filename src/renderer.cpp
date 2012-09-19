@@ -1,14 +1,17 @@
 #include "Renderer.h"
 #include "GL/glfw.h"
 
-Renderer::Renderer() {}
+Renderer::Renderer() {
+  camera_scroll_ = 0.0f;
+}
 
 Renderer::~Renderer() {}
 
 void Renderer::init(int width, int height) {
+  aspect_ = static_cast<float>(width)/height;
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f);
+  glOrtho(0.0f, aspect_, 0.0f, 1.0f, 0.0f, 1.0f);
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
@@ -17,14 +20,15 @@ void Renderer::draw() {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
+  glTranslatef(-camera_scroll_, 0.0f, 0.0f);
   vector<Drawable *>::iterator it;
-  for (it = to_draw.begin(); it != to_draw.end(); ++it) {
+  for (it = to_draw_.begin(); it != to_draw_.end(); ++it) {
     (*it)->draw();
   }
 }
 
 void Renderer::addDrawable(Drawable *object) {
-  to_draw.push_back(object);
+  to_draw_.push_back(object);
 }
 
 void Renderer::removeDrawable(Drawable *object) {

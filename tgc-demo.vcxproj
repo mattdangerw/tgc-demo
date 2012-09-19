@@ -12,16 +12,27 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\character.cpp" />
+    <ClCompile Include="src\cloud.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\ground.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\particle_system.cpp" />
+    <ClCompile Include="src\point_mass.cpp" />
     <ClCompile Include="src\renderer.cpp" />
+    <ClCompile Include="src\thought_bubble.cpp" />
+    <ClCompile Include="src\triggerable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\character.h" />
+    <ClInclude Include="src\cloud.h" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\ground.h" />
+    <ClInclude Include="src\particle.h" />
+    <ClInclude Include="src\particle_system.h" />
+    <ClInclude Include="src\point_mass.h" />
     <ClInclude Include="src\renderer.h" />
+    <ClInclude Include="src\thought_bubble.h" />
+    <ClInclude Include="src\triggerable.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EAF5428E-BB28-461F-A77E-0DD8C741FB4F}</ProjectGuid>

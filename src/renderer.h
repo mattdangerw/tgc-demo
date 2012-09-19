@@ -30,11 +30,18 @@ class Renderer {
     // Removes a drawable object from the renderer.
     // Use this before deleting a drawable or to make the drawable invisible.
     void removeDrawable(Drawable *object);
+    // Gets the length in x axis of the area the camera will render.
+    float windowWidth() { return aspect_; }
+    // Sets where the left side of the camera should be.
+    void setCameraScroll(float x) { camera_scroll_ = x; }
+    float getCameraScroll() { return camera_scroll_; }
     // Update the size of the render window.
     void resize(int width, int height);
+
   private:
-    vector<Drawable *> to_draw;
-    int deleteme;
+    vector<Drawable *> to_draw_;
+    float aspect_;
+    float camera_scroll_;
 };
 
 #endif  // SRC_RENDERER_H_
