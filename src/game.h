@@ -9,7 +9,7 @@
 #include "thought_bubble.h"
 #include "particle_system.h"
 #include "triggerable.h"
-#include "cloud.h"
+#include "clouds.h"
 
 using std::vector;
 
@@ -34,11 +34,6 @@ class Game {
     // Helper functions.
     void initTriggerables();
     void updateTriggerables(float delta_time);
-    void initClouds();
-    void placeCloudRandomly(Cloud *cloud);
-    void placeCloudRandomlyOnRight(Cloud *cloud);
-    void placeCloudRandomlyOnLeft(Cloud *cloud);
-    void updateClouds(float delta_time);
 
     // Member data
     enum GameState {
@@ -51,7 +46,6 @@ class Game {
 
     // Last time update was called in seconds since start.
     float last_frame_time_;
-    float left_of_screen_;
 
     // Key state tracking
     bool leave_game_;
@@ -62,12 +56,12 @@ class Game {
 
     // Game entities
     Ground ground_;
+    CloudManager cloud_manager_;
     Character character_;
     ThoughtBubble thought_bubble_;
     ParticleSystem particle_system_;
     vector<Triggerable *> triggerables_;
     unsigned int current_triggerable_;
-    vector<Cloud *> clouds_;
 };
 
 #endif  // SRC_GAME_H_

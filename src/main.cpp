@@ -58,6 +58,7 @@ int main(int argc, char *argv[]) {
   // Main loop.
   int frame = 0;
   float lastTime = static_cast<float>(glfwGetTime());
+  float updateTime = 0.0f;
   while (game->stillRunning()) {
     // Pring the frame rate every once and a while.
     float currTime = static_cast<float>(glfwGetTime());
@@ -68,6 +69,13 @@ int main(int argc, char *argv[]) {
     }
     // Update and draw the game.
     game->update();
+
+    updateTime += static_cast<float>(glfwGetTime()) - currTime;
+    if (frame % 500 == 0) {
+      printf("Update time per frame: %f. Keep less than 0.01\n", updateTime / 500.0f);
+      updateTime = 0.0f;
+    }
+
     game->draw();
     glfwSwapBuffers();
   }

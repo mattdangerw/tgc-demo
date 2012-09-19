@@ -2,7 +2,7 @@
 #include "GL/glfw.h"
 
 Renderer::Renderer() {
-  camera_scroll_ = 0.0f;
+  left_of_window_ = 0.0f;
 }
 
 Renderer::~Renderer() {}
@@ -20,7 +20,7 @@ void Renderer::draw() {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
-  glTranslatef(-camera_scroll_, 0.0f, 0.0f);
+  glTranslatef(-left_of_window_, 0.0f, 0.0f);
   vector<Drawable *>::iterator it;
   for (it = to_draw_.begin(); it != to_draw_.end(); ++it) {
     (*it)->draw();

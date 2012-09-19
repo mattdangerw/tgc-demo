@@ -9,18 +9,6 @@
 
 // Where we want the character to be position horizantally on the screen 0 to 1.
 static const float kCharacterScreenX = 0.2f;
-static const int kNumClouds = 6;
-static const float kCloudMinSize = 0.1f;
-static const float kCloudMaxSize = 0.4f;
-static const float kCloudMinY = 0.6f;
-static const float kCloudMaxY = 1.2f;
-static const float kCloudMinVelocity = 0.03f;
-static const float kCloudMaxVelocity = 0.05f;
-static const float kCloudOffscreen = 0.4f;
-
-static inline float randomFloat(float min, float max) {
-  return min + rand()/(RAND_MAX/(max - min));
-}
 
 Game::Game()
     : state_(WALKING),
@@ -28,14 +16,10 @@ Game::Game()
       left_down_(false),
       right_down_(false),
       space_pressed_(false),
-      left_of_screen_(0.0f),
       current_triggerable_(0) {}
 
 Game::~Game() {
   for (vector<Triggerable *>::iterator it = triggerables_.begin(); it != triggerables_.end(); ++it) {
-    delete (*it);
-  }
-  for (vector<Cloud *>::iterator it = clouds_.begin(); it != clouds_.end(); ++it) {
     delete (*it);
   }
 }
@@ -45,11 +29,12 @@ void Game::init(int width, int height) {
 
   renderer_.init(width, height);
   ground_.init(&renderer_);
-  initClouds();
+  cloud_manager_.init(&renderer_);
   initTriggerables();
   character_.init(&renderer_, &ground_);
   thought_bubble_.init(&renderer_, &character_);
   particle_system_.init(&renderer_, &thought_bubble_);
+
   last_frame_time_ = static_cast<float>(glfwGetTime());
 }
 
@@ -67,41 +52,6 @@ void Game::initTriggerables() {
   triggerables_.push_back(new Triggerable());
   triggerables_.back()->init(&renderer_, 2.2f, 3.0f);
   std::sort(triggerables_.begin(), triggerables_.end(), sortTriggerables);
-}
-
-void Game::initClouds() {
-  for (int i = 0; i < kNumClouds; ++i) {
-    Cloud *cloud = new Cloud();
-    cloud->init(&renderer_);
-    placeCloudRandomly(cloud);
-    clouds_.push_back(cloud);
-  }
-}
-
-void Game::placeCloudRandomly(Cloud *cloud) {
-  cloud->setVelocity(randomFloat(kCloudMinVelocity, kCloudMaxVelocity));
-  float size = randomFloat(kCloudMinSize, kCloudMaxSize);
-  cloud->setSize(size);
-  float y_position = randomFloat(kCloudMinY, kCloudMaxY - size);
-  float min_x = left_of_screen_ - kCloudOffscreen;
-  float max_x = left_of_screen_  + renderer_.windowWidth() + kCloudOffscreen - size;
-  cloud->setPosition(glm::vec2(randomFloat(min_x, max_x), y_position));
-}
-
-void Game::placeCloudRandomlyOnLeft(Cloud *cloud) {
-  cloud->setVelocity(randomFloat(kCloudMinVelocity, kCloudMaxVelocity));
-  float size = randomFloat(kCloudMinSize, kCloudMaxSize);
-  cloud->setSize(size);
-  float y_position = randomFloat(kCloudMinY, kCloudMaxY - size);
-  cloud->setPosition(glm::vec2(left_of_screen_ - kCloudOffscreen, y_position));
-}
-
-void Game::placeCloudRandomlyOnRight(Cloud *cloud) {
-  cloud->setVelocity(randomFloat(kCloudMinVelocity, kCloudMaxVelocity));
-  float size = randomFloat(kCloudMinSize, kCloudMaxSize);
-  cloud->setSize(size);
-  float y_position = randomFloat(kCloudMinY, kCloudMaxY - size);
-  cloud->setPosition(glm::vec2(left_of_screen_  + renderer_.windowWidth() + kCloudOffscreen - size, y_position));
 }
 
 void Game::update() {
@@ -124,13 +74,13 @@ void Game::update() {
   } else {
     thought_bubble_.update(delta_time);
     particle_system_.update(delta_time);
+    cloud_manager_.update(delta_time);
     updateTriggerables(delta_time);
-    updateClouds(delta_time);
   }
   // Position the camera so our character is at kCharacterScreenX.
   // But make sure not to scroll off level.
-  left_of_screen_ = glm::clamp(character_.position().x - kCharacterScreenX, 0.0f, ground_.width() - renderer_.windowWidth());
-  renderer_.setCameraScroll(left_of_screen_);
+  float left_of_screen = glm::clamp(character_.position().x - kCharacterScreenX, 0.0f, ground_.width() - renderer_.windowWidth());
+  renderer_.setLeftOfWindow(left_of_screen);
   space_pressed_ = false;
   last_frame_time_ = now;
 }
@@ -144,28 +94,13 @@ void Game::updateTriggerables(float delta_time) {
         state_ = EXPLODING;
       } else {
         state_ = TRIGGERING;
-        particle_system_.addParticles(5);
+        particle_system_.addParticles(10);
       }
     }
   }
   vector<Triggerable *>::iterator it;
   for (it = triggerables_.begin(); it != triggerables_.end(); ++it) {
     (*it)->update(delta_time);
-  }
-}
-
-void Game::updateClouds(float delta_time) {
-  vector<Cloud *>::iterator it;
-  for (it = clouds_.begin(); it != clouds_.end(); ++it) {
-    Cloud *cloud = *it;
-    float x_begin, x_end;
-    cloud->xExtent(&x_begin, &x_end);
-    if (x_end < left_of_screen_ - kCloudOffscreen) {
-      placeCloudRandomlyOnRight(cloud);
-    } else if (x_begin > left_of_screen_ + renderer_.windowWidth() + kCloudOffscreen - cloud->size()) {
-      placeCloudRandomlyOnLeft(cloud);
-    }
-    cloud->update(delta_time);
   }
 }
 

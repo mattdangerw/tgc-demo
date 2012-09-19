@@ -12,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\character.cpp" />
-    <ClCompile Include="src\cloud.cpp" />
+    <ClCompile Include="src\clouds.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\ground.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -24,7 +24,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\character.h" />
-    <ClInclude Include="src\cloud.h" />
+    <ClInclude Include="src\clouds.h" />
     <ClInclude Include="src\game.h" />
     <ClInclude Include="src\ground.h" />
     <ClInclude Include="src\particle.h" />

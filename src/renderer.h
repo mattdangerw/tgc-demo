@@ -33,15 +33,15 @@ class Renderer {
     // Gets the length in x axis of the area the camera will render.
     float windowWidth() { return aspect_; }
     // Sets where the left side of the camera should be.
-    void setCameraScroll(float x) { camera_scroll_ = x; }
-    float getCameraScroll() { return camera_scroll_; }
+    void setLeftOfWindow(float x) { left_of_window_ = x; }
+    float getLeftOfWindow() { return left_of_window_; }
     // Update the size of the render window.
     void resize(int width, int height);
 
   private:
     vector<Drawable *> to_draw_;
     float aspect_;
-    float camera_scroll_;
+    float left_of_window_;
 };
 
 #endif  // SRC_RENDERER_H_

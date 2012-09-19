@@ -38,7 +38,7 @@ void ThoughtBubble::moveTowardsCenter(float delta_time) {
   // A simple spring keeps our point mass following the character.
   // We need to calculate forces on out point mass and update the physics sim.
   glm::vec2 spring_anchor, spring_force;
-  spring_anchor = glm::vec2(renderer_->getCameraScroll() + renderer_->windowWidth()/2, 0.75f);
+  spring_anchor = glm::vec2(renderer_->getLeftOfWindow() + renderer_->windowWidth()/2, 0.75f);
   // Let the actual spring anchor drift horizantally a bit.
   spring_anchor.x += glm::clamp(mass_.position().x - spring_anchor.x, -kHorizantalLeeway, kHorizantalLeeway);
   spring_force = -5.0f * (mass_.position() - spring_anchor);
