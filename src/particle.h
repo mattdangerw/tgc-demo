@@ -4,6 +4,7 @@
 #include "glm.hpp"
 
 const float kParticleRadius = .01f;
+const float kParticleMass = .01f;
 
 struct Particle {
   glm::vec2 position, velocity;

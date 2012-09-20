@@ -7,6 +7,7 @@
 #include "glm.hpp"
 #include "renderer.h"
 #include "game_entity.h"
+#include "ground.h"
 
 using std::string;
 using std::list;
@@ -45,19 +46,19 @@ class CloudManager : GameEntity {
   public:
     CloudManager();
     ~CloudManager();
-    void init(Renderer *renderer);
+    void init(Renderer *renderer, Ground * ground);
     // Keeps clouds wrapping around viewable area.
     void update(float delta_time, GameState *state);
 
   private:
     // Helper methods
-    void placeCloudRandomly(Cloud *cloud);
-    void placeCloudRandomlyOnRight(Cloud *cloud);
-    void placeCloudRandomlyOnLeft(Cloud *cloud);
+    void addRandomCloud(float x_position);
 
     // Member data.
     Renderer *renderer_;
+    Ground *ground_;
     list<Cloud *> clouds_;
+    float dist_to_next_cloud_;
 };
 
 #endif  // SRC_CLOUDS_H_

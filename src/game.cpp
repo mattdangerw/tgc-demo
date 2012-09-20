@@ -7,7 +7,7 @@
 #include "glm.hpp"
 
 // Where we want the character to be position horizantally on the screen 0 to 1.
-static const float kCharacterScreenX = 0.2f;
+static const float kCharacterScreenX = 0.5f;
 
 Game::Game()
     : state_(WALKING),
@@ -23,7 +23,7 @@ void Game::init(int width, int height) {
 
   renderer_.init(width, height);
   ground_.init(&renderer_);
-  cloud_manager_.init(&renderer_);
+  cloud_manager_.init(&renderer_, &ground_);
   character_.init(&renderer_, &ground_);
   thought_bubble_.init(&renderer_, &character_);
   particle_system_.init(&renderer_, &thought_bubble_);
@@ -46,7 +46,8 @@ void Game::update() {
   
   // Position the camera so our character is at kCharacterScreenX.
   // But make sure not to scroll off level.
-  float left_of_screen = glm::clamp(character_.position().x - kCharacterScreenX, 0.0f, ground_.width() - renderer_.windowWidth());
+  float window_width = renderer_.windowWidth();
+  float left_of_screen = glm::clamp(character_.position().x - kCharacterScreenX * window_width, 0.0f, ground_.width() - window_width);
   renderer_.setLeftOfWindow(left_of_screen);
   space_pressed_ = false;
   last_frame_time_ = now;

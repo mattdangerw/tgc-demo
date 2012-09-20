@@ -2,6 +2,7 @@
 #define SRC_THOUGHT_BUBBLE_H_
 
 #include <string>
+#include <vector>
 
 #include "glm.hpp"
 #include "gtc/type_ptr.hpp"
@@ -12,6 +13,12 @@
 #include "game_entity.h"
 
 using std::string;
+using std::vector;
+
+struct Circle {
+  glm::vec2 position;
+  float radius;
+};
 
 class ThoughtBubble : GameEntity, Drawable {
   public:
@@ -26,10 +33,14 @@ class ThoughtBubble : GameEntity, Drawable {
     string shadingGrounp() { return "default"; }
 
   private:
+    // Helper methods
     glm::vec2 anchorPoint();
+
+    // Memeber data
     Renderer *renderer_;
     Character *character_;
     PointMass mass_;
+    vector<Circle> circles_;
 };
 
 #endif  // SRC_THOUGHT_BUBBLE_H_

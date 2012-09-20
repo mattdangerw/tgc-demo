@@ -2,14 +2,14 @@
 
 #include "GL/glfw.h"
 
-static const int kNumClouds = 6;
 static const float kCloudMinSize = 0.1f;
-static const float kCloudMaxSize = 0.4f;
+static const float kCloudMaxSize = 0.35f;
 static const float kCloudMinY = 0.6f;
-static const float kCloudMaxY = 1.2f;
-static const float kCloudMinVelocity = 0.03f;
-static const float kCloudMaxVelocity = 0.05f;
-static const float kCloudOffscreen = 0.4f;
+static const float kCloudMaxY = 1.0f;
+static const float kCloudMinXDistance = 0.2f;
+static const float kCloudMaxXDistance = 0.4f;
+static const float kCloudMinVelocity = 0.025f;
+static const float kCloudMaxVelocity = 0.04f;
 
 static inline float randomFloat(float min, float max) {
   return min + rand()/(RAND_MAX/(max - min));
@@ -46,57 +46,50 @@ CloudManager::~CloudManager() {
   }
 }
 
-void CloudManager::init(Renderer *renderer) {
+void CloudManager::init(Renderer *renderer, Ground *ground) {
   renderer_ = renderer;
-  for (int i = 0; i < kNumClouds; ++i) {
-    Cloud *cloud = new Cloud();
-    cloud->init(renderer);
-    placeCloudRandomly(cloud);
-    clouds_.push_back(cloud);
+  ground_ = ground;
+  float x_position = randomFloat(0.0f, kCloudMaxXDistance);
+  while (x_position < ground_->width()) {
+    addRandomCloud(x_position);
+    x_position += randomFloat(kCloudMinXDistance, kCloudMaxXDistance);
   }
+  dist_to_next_cloud_ = randomFloat(kCloudMinXDistance, kCloudMaxXDistance);
 }
 
 // Keeps clouds wrapping around viewable area.
 void CloudManager::update(float delta_time, GameState *state) {
   if (*state == EXPLODING) return;
   list<Cloud *>::iterator it;
-  for (it = clouds_.begin(); it != clouds_.end(); ++it) {
+  float last_cloud_x = 0.0f;
+  for (it = clouds_.begin(); it != clouds_.end();) {
     Cloud *cloud = *it;
     float x_begin, x_end;
     cloud->xExtent(&x_begin, &x_end);
+    if (x_begin > last_cloud_x) last_cloud_x = x_begin;
     float left_of_window = renderer_->getLeftOfWindow();
-    if (x_end < left_of_window - kCloudOffscreen) {
-      placeCloudRandomlyOnRight(cloud);
-    } else if (x_begin > left_of_window + renderer_->windowWidth() + kCloudOffscreen - cloud->size()) {
-      placeCloudRandomlyOnLeft(cloud);
+    if (x_end < left_of_window) {
+      it = clouds_.erase(it);
+      // TODO: Fix cloud destructor and renderer remove.
+      // delete cloud;
+    } else {
+      cloud->update(delta_time);
+      ++it;
     }
-    cloud->update(delta_time);
+  }
+  if (ground_->width() - last_cloud_x > dist_to_next_cloud_) {
+    addRandomCloud(last_cloud_x + dist_to_next_cloud_);
+    dist_to_next_cloud_ = randomFloat(kCloudMinXDistance, kCloudMaxXDistance);
   }
 }
 
-void CloudManager::placeCloudRandomly(Cloud *cloud) {
-  cloud->setVelocity(randomFloat(kCloudMinVelocity, kCloudMaxVelocity));
-  float size = randomFloat(kCloudMinSize, kCloudMaxSize);
-  cloud->setSize(size);
-  float y_position = randomFloat(kCloudMinY, kCloudMaxY - size);
-  float left_of_window = renderer_->getLeftOfWindow();
-  float min_x = left_of_window - kCloudOffscreen;
-  float max_x = left_of_window  + renderer_->windowWidth() + kCloudOffscreen - size;
-  cloud->setPosition(glm::vec2(randomFloat(min_x, max_x), y_position));
-}
-
-void CloudManager::placeCloudRandomlyOnLeft(Cloud *cloud) {
-  cloud->setVelocity(randomFloat(kCloudMinVelocity, kCloudMaxVelocity));
-  float size = randomFloat(kCloudMinSize, kCloudMaxSize);
-  cloud->setSize(size);
-  float y_position = randomFloat(kCloudMinY, kCloudMaxY - size);
-  cloud->setPosition(glm::vec2(renderer_->getLeftOfWindow() - kCloudOffscreen, y_position));
-}
-
-void CloudManager::placeCloudRandomlyOnRight(Cloud *cloud) {
-  cloud->setVelocity(randomFloat(kCloudMinVelocity, kCloudMaxVelocity));
-  float size = randomFloat(kCloudMinSize, kCloudMaxSize);
-  cloud->setSize(size);
-  float y_position = randomFloat(kCloudMinY, kCloudMaxY - size);
-  cloud->setPosition(glm::vec2(renderer_->getLeftOfWindow()  + renderer_->windowWidth() + kCloudOffscreen - size, y_position));
+void CloudManager::addRandomCloud(float x_position) {
+    Cloud *cloud = new Cloud();
+    cloud->init(renderer_);
+    cloud->setVelocity(randomFloat(kCloudMinVelocity, kCloudMaxVelocity));
+    float size = randomFloat(kCloudMinSize, kCloudMaxSize);
+    cloud->setSize(size);
+    float y_position = randomFloat(kCloudMinY, kCloudMaxY - size);
+    cloud->setPosition(glm::vec2(x_position, y_position));
+    clouds_.push_back(cloud);
 }

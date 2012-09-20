@@ -23,7 +23,7 @@ void ParticleSystem::addParticles(int num_particles) {
   for(int i = 0; i < num_particles; i++) {
     Particle to_add;
     to_add.color = glm::vec3(randomFloat(0.0f, 1.0f), randomFloat(0.0f, 1.0f), randomFloat(0.0f, 1.0f));
-    to_add.position = glm::vec2(0.0f, 0.1f);
+    to_add.position = glm::vec2();
     to_add.velocity = glm::vec2(randomFloat(-0.4f, 0.4f), randomFloat(-0.4f, 0.4f));
     particles_.push_back(to_add);
   }
@@ -35,7 +35,6 @@ void ParticleSystem::update(float delta_time, GameState *state) {
     glm::vec2 old_position = it->position;
     it->position += it->velocity * delta_time;
     thought_bubble_->collideParticle(*it, old_position);
-    (*it).position += (*it).velocity * delta_time;
   }
 }
 

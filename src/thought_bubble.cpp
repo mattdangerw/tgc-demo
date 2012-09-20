@@ -4,8 +4,6 @@
 
 #include "GL/glfw.h"
 
-static const float kBubbleWidth = 0.15f;
-static const float kBubbleHeight = 0.1f;
 static const float kCharacterDistance = 0.25f;
 static const float kHorizantalLeeway = 0.08f;
 static const float kSpringConstant = 120.0f;
@@ -19,6 +17,25 @@ void ThoughtBubble::init(Renderer *renderer, Character *character) {
   character_ = character;
   // We model the thought bubble as a point mass which is pulled along with the character.
   mass_ = PointMass(anchorPoint(), glm::vec2(), 1.0f, 10.0f);
+
+  Circle circle;
+  circle.position = glm::vec2(0.0f, -0.03f);  
+  circle.radius = 0.11f;
+  circles_.push_back(circle);
+  circle.position = glm::vec2(0.09f, 0.0f);
+  circle.radius = 0.1f;
+  circles_.push_back(circle);
+  circle.position = glm::vec2(-0.09f, 0.0f);
+  circle.radius = 0.1f;
+  circles_.push_back(circle);
+  circle.position = glm::vec2(0.05f, 0.05f);
+  circle.radius = 0.1f;
+  circles_.push_back(circle);
+  circle.position = glm::vec2(-0.05f, 0.05f);
+  circle.radius = 0.1f;
+  circles_.push_back(circle);
+
+
   renderer_->addDrawable(this);
 }
 
@@ -40,31 +57,47 @@ void ThoughtBubble::update(float delta_time, GameState *state) {
 }
 
 void ThoughtBubble::collideParticle(Particle &particle, glm::vec2 old_position) {
-  float intersect_radius = kBubbleWidth - kParticleRadius;
-  // This is hardly a correct reflection but assuming the change in loction is small should work fine.
-  // As long as our final output position is always inside the thought bubble somewhere this should be stable.
-  if (glm::dot(particle.position, particle.position) > intersect_radius * intersect_radius) {
-    particle.velocity = glm::reflect(particle.velocity, glm::normalize(particle.position));
-    particle.position = old_position;
+  vector<Circle>::iterator it;
+  // Check if the particle is inside any of the bubble circles. If it is we are fine.
+  for (it = circles_.begin(); it != circles_.end(); ++it) {
+    float intersect_radius = it->radius - kParticleRadius;
+    glm::vec2 centerToParticle = particle.position - it->position;
+    if (glm::dot(centerToParticle, centerToParticle) < intersect_radius * intersect_radius) {
+      return;
+    }
+  }
+  // Find one of the bubble circles the particle was in last time step, and collid with that.
+  for (it = circles_.begin(); it != circles_.end(); ++it) {
+    float intersect_radius = it->radius - kParticleRadius;
+    glm::vec2 centerToOldParticle = old_position - it->position;
+    // This is hardly a correct reflection but assuming the change in loction is small should work fine.
+    // As long as our final output position is always inside the thought bubble somewhere this should be stable.
+    if (glm::dot(centerToOldParticle, centerToOldParticle) < intersect_radius * intersect_radius) {
+      // TODO: Calculate impulse, change velocity * particle mass. Add impulse to point mass to simulate stretch for each circle.
+      particle.velocity = glm::reflect(particle.velocity, glm::normalize(centerToOldParticle));
+      // Don't bother to calculate actual bounced position. Just reposition to the last inside postion.
+      particle.position = old_position;
+    }
   }
 }
 
 void ThoughtBubble::draw() {
-  //glm::vec2 bottom, top, corner;
-  //corner = glm::vec2(kBubbleWidth/2.0f, kBubbleHeight/2.0f);
-  //bottom = mass_.position() - corner;
-  //top = mass_.position() + corner;
-  //glRectf(bottom.x, bottom.y, top.x , top.y);
   float PI = 3.141592f;
   glColor3f(0.0f, 0.0f, 0.0f);
-  glm::vec2 center = mass_.position();
-  glBegin(GL_TRIANGLE_FAN);
-  glVertex2fv(glm::value_ptr(center));
-  for (int i = 0; i <= 360; i+=10) {
-    float rads = i * PI / 180;
-    glVertex2f(center.x + kBubbleWidth*cos(rads), center.y + kBubbleWidth*sin(rads));
-  }
-  glEnd();
+  glPushMatrix();
+    glm::vec2 to_bubble_origin = mass_.position();
+    glTranslatef(to_bubble_origin.x, to_bubble_origin.y, 0.0f);
+    vector<Circle>::iterator it;
+    for (it = circles_.begin(); it != circles_.end(); ++it) {
+      glBegin(GL_TRIANGLE_FAN);
+      glVertex2fv(glm::value_ptr(it->position));
+      for (int i = 0; i <= 360; i+=10) {
+        float rads = i * PI / 180;
+        glVertex2f(it->position.x + it->radius*cos(rads), it->position.y + it->radius*sin(rads));
+      }
+      glEnd();
+    }
+  glPopMatrix();
 }
 
 glm::vec2 ThoughtBubble::anchorPoint() {
