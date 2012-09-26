@@ -11,7 +11,7 @@
 
 using std::string;
 
-class Triggerable : Drawable {
+class Triggerable {
   public:
     Triggerable();
     ~Triggerable();
@@ -21,8 +21,6 @@ class Triggerable : Drawable {
     float animationDuration() { return animation_duration_; }
     float doneAnimating() { return !animating_; }
     void trigger();
-    void draw();
-    string shadingGrounp() { return "default"; }
 
   private:
     Renderer *renderer_;

@@ -6,7 +6,7 @@
 #include "game.h"
 
 static Game *game;
-static bool fullscreen = true;
+static bool fullscreen = false;
 
 // Handle keyboard events.
 void GLFWCALL keyboardCallback(int key, int action) {
@@ -34,6 +34,10 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Failed to initialize GLFW\n");
     exit(1);
   }
+  glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
+  glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 3);
+  glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 8);
   int screen_mode = fullscreen ? GLFW_FULLSCREEN : GLFW_WINDOW;
   int width, height;
   if (fullscreen) {
@@ -58,8 +62,8 @@ int main(int argc, char *argv[]) {
     glfwTerminate();
     exit(1);
   }
-  if (!GLEW_VERSION_3_2) {
-    fprintf(stderr, "OpenGL 3.2 is not supported. Update display drivers?\n");
+  if (!GLEW_VERSION_3_3) {
+    fprintf(stderr, "OpenGL 3.3 is not supported.\n");
     glfwTerminate();
     exit(1);
   }

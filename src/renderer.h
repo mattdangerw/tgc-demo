@@ -1,8 +1,11 @@
 #ifndef SRC_RENDERER_H_
 #define SRC_RENDERER_H_
 
+#include <glm.hpp>
 #include <string>
 #include <vector>
+
+#include "shader_program.h"
 
 using std::string;
 using std::vector;
@@ -11,9 +14,9 @@ class Drawable {
   public:
     virtual ~Drawable() {}
     // Make the GL calls to draw this object.
-    virtual void draw() = 0;
-    // Name of the shading group that should be bound before calling draw.
-    virtual string shadingGrounp() = 0;
+    virtual void draw(glm::mat3 transform) = 0;
+    // We care about order cause we render in flatland.
+    virtual int displayPriority() = 0;
 };
 
 class Renderer {
@@ -42,6 +45,7 @@ class Renderer {
     vector<Drawable *> to_draw_;
     float aspect_;
     float left_of_window_;
+    Program minimal_program, quadric_program, texture_program;
 };
 
 #endif  // SRC_RENDERER_H_

@@ -44,8 +44,6 @@ void ThoughtBubble::init(Renderer *renderer, Character *character) {
   circles_.push_back(StretchyCircle(glm::vec2(-0.09f, 0.0f), 0.1f));
   circles_.push_back(StretchyCircle(glm::vec2(0.05f, 0.05f), 0.1f));
   circles_.push_back(StretchyCircle(glm::vec2(-0.05f, 0.05f), 0.1f));
-
-  renderer_->addDrawable(this);
 }
 
 void ThoughtBubble::update(float delta_time, GameState *state) {
@@ -109,27 +107,6 @@ void ThoughtBubble::collideParticle(Particle &particle, glm::vec2 old_position) 
   glm::vec2 intersection_normal = glm::normalize(old_position - nearest_circle->center());
   particle.velocity = glm::reflect(particle.velocity, intersection_normal);
   particle.position = intersection_normal * (nearest_circle->radius() - kParticleRadius);
-}
-
-void ThoughtBubble::draw() {
-  float PI = 3.141592f;
-  glColor3f(0.0f, 0.0f, 0.0f);
-  glPushMatrix();
-    glm::vec2 to_bubble_origin = mass_.position();
-    glTranslatef(to_bubble_origin.x, to_bubble_origin.y, 0.0f);
-    vector<StretchyCircle>::iterator it;
-    for (it = circles_.begin(); it != circles_.end(); ++it) {
-      glBegin(GL_TRIANGLE_FAN);
-      glm::vec2 center = it->center();
-      float radius = it->radius();
-      glVertex2fv(glm::value_ptr(center));
-      for (int i = 0; i <= 360; i+=10) {
-        float rads = i * PI / 180;
-        glVertex2f(center.x + radius*cos(rads), center.y + radius*sin(rads));
-      }
-      glEnd();
-    }
-  glPopMatrix();
 }
 
 glm::vec2 ThoughtBubble::anchorPoint() {

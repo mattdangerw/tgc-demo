@@ -10,18 +10,26 @@ Renderer::~Renderer() {}
 
 void Renderer::init(int width, int height) {
   aspect_ = static_cast<float>(width)/height;
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(0.0f, aspect_, 0.0f, 1.0f, 0.0f, 1.0f);
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    // Load shaders.
+  Shader textured_vert, minimal_frag, quadric_frag, textured_frag;
+  textured_vert.load("src/shaders/textured.vert", GL_VERTEX_SHADER);
+  textured_frag.load("src/shaders/textured.frag", GL_FRAGMENT_SHADER);
+  texture_program.addShader(&textured_vert);
+  texture_program.addShader(&textured_frag);
+  texture_program.link();
+  minimal_frag.load("src/shaders/minimal.frag", GL_FRAGMENT_SHADER);
+  minimal_program.addShader(&textured_vert);
+  minimal_program.addShader(&minimal_frag);
+  minimal_program.link();
+  quadric_frag.load("src/shaders/quadric_anti_aliased.frag", GL_FRAGMENT_SHADER);
+  quadric_program.addShader(&textured_vert);
+  quadric_program.addShader(&quadric_frag);
+  quadric_program.link();
 }
 
 void Renderer::draw() {
   glClear(GL_COLOR_BUFFER_BIT);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-
-  glTranslatef(-left_of_window_, 0.0f, 0.0f);
   vector<Drawable *>::iterator it;
   for (it = to_draw_.begin(); it != to_draw_.end(); ++it) {
     (*it)->draw();

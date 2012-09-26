@@ -13,15 +13,13 @@
 using std::string;
 using std::vector;
 
-class ParticleSystem : GameEntity, Drawable {
+class ParticleSystem : GameEntity {
   public:
     ParticleSystem();
     ~ParticleSystem();
     void init(Renderer *renderer, ThoughtBubble *thought_bubble);
     void addParticles(int num_particles);
     void update(float delta_time, GameState *state);
-    void draw();
-    string shadingGrounp() { return "default"; }
 
   private:
     Renderer *renderer_;

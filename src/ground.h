@@ -10,7 +10,7 @@
 using std::string;
 using std::vector;
 
-class Ground : Drawable {
+class Ground {
   public:
     Ground();
     ~Ground();

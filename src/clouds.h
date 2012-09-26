@@ -12,7 +12,7 @@
 using std::string;
 using std::list;
 
-class Cloud : Drawable {
+class Cloud {
   public:
     Cloud();
     ~Cloud();
@@ -33,8 +33,6 @@ class Cloud : Drawable {
     void update(float delta_time);
     // Get the left and right extent of the renderable cloud object.
     void xExtent(float *x_begin, float *x_end);
-    void draw();
-    string shadingGrounp() { return "default"; }
 
   private:
     Renderer *renderer_;

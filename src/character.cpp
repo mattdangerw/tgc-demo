@@ -20,7 +20,6 @@ void Character::init(Renderer *renderer, Ground *ground) {
   ground_ = ground;
   position_.x = 0.0f;
   updateY(0.0f);
-  renderer_->addDrawable(this);
 }
 
 void Character::setInput(bool left_down, bool right_down, bool space_pressed) {
@@ -73,9 +72,4 @@ void Character::updateY(float delta_time) {
   } else {
     position_.y = minimum_height;
   }
-}
-
-void Character::draw() {
-  glColor3f(0.7f, 0.7f, 0.7f);
-  glRectf(position_.x, position_.y, position_.x + kPlayerWidth, position_.y + kPlayerWidth);
 }

@@ -11,7 +11,7 @@
 
 using std::string;
 
-class Character : GameEntity, Drawable {
+class Character : GameEntity {
   public:
     Character();
     ~Character();
@@ -22,8 +22,6 @@ class Character : GameEntity, Drawable {
     void update(float delta_time, GameState *state);
     // Get the character position.
     glm::vec2 position() { return position_; }
-    void draw();
-    string shadingGrounp() { return "default"; }
 
   private:
     // Helper functions.

@@ -29,7 +29,7 @@ class StretchyCircle {
     PointMass spring_mass_;
 };
 
-class ThoughtBubble : GameEntity, Drawable {
+class ThoughtBubble : GameEntity {
   public:
     ThoughtBubble();
     ~ThoughtBubble();
@@ -38,8 +38,6 @@ class ThoughtBubble : GameEntity, Drawable {
     glm::vec2 velocity() { return mass_.velocity(); }
     void update(float delta_time, GameState *state);
     void collideParticle(Particle &particle, glm::vec2 old_position);
-    void draw();
-    string shadingGrounp() { return "default"; }
 
   private:
     // Helper methods
