@@ -1,5 +1,6 @@
 #include "character.h"
-#include "GL/glfw.h"
+
+#include <GL/glew.h>
 
 static const float kSpeed = 0.4f;
 static const float kPlayerWidth = 0.02f;

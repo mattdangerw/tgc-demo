@@ -2,8 +2,8 @@
 #define SRC_TRIGGERABLE_H_
 
 #include <string>
+#include <glm.hpp>
 
-#include "glm.hpp"
 #include "renderer.h"
 #include "character.h"
 #include "particle_system.h"

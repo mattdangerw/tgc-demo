@@ -2,9 +2,9 @@
 #define SRC_CHARACTER_H_
 
 #include <string>
+#include <glm.hpp>
+#include <gtc/type_ptr.hpp>
 
-#include "glm.hpp"
-#include "gtc/type_ptr.hpp"
 #include "renderer.h"
 #include "ground.h"
 #include "game_entity.h"

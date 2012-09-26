@@ -1,9 +1,8 @@
 #include "particle_system.h"
 
 #include <cmath>
-
-#include "GL/glfw.h"
-#include "gtc/type_ptr.hpp"
+#include <GL/glew.h>
+#include <gtc/type_ptr.hpp>
 
 static inline float randomFloat(float min, float max) {
   return min + rand()/(RAND_MAX/(max - min));

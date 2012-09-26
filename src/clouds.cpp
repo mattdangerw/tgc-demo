@@ -1,6 +1,6 @@
 #include "clouds.h"
 
-#include "GL/glfw.h"
+#include <GL/glew.h>
 
 static const float kCloudMinSize = 0.1f;
 static const float kCloudMaxSize = 0.35f;

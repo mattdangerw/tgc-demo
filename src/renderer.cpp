@@ -1,5 +1,6 @@
 #include "Renderer.h"
-#include "GL/glfw.h"
+
+#include <GL/glew.h>
 
 Renderer::Renderer() {
   left_of_window_ = 0.0f;

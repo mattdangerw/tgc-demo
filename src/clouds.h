@@ -3,8 +3,8 @@
 
 #include <string>
 #include <list>
+#include <glm.hpp>
 
-#include "glm.hpp"
 #include "renderer.h"
 #include "game_entity.h"
 #include "ground.h"

@@ -1,7 +1,7 @@
 #include "ground.h"
 
-#include "GL\glfw.h"
-#include "gtc/type_ptr.hpp"
+#include <GL/glew.h>
+#include <gtc/type_ptr.hpp>
 
 Ground::Ground() {
   renderer_ = NULL;

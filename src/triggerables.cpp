@@ -1,9 +1,8 @@
 #include "triggerables.h"
 
 #include <algorithm>
-
-#include "GL/glfw.h"
-#include "gtc/type_ptr.hpp"
+#include <GL/glew.h>
+#include <gtc/type_ptr.hpp>
 
 static const float kRenderWidth = 0.1f;
 static const float kRenderHeight = 0.1f;
@@ -86,7 +85,7 @@ void TriggerableManager::update(float delta_time, GameState *state) {
         *state = EXPLODING;
       } else {
         *state = TRIGGERING;
-        particle_system_->addParticles(10);
+        particle_system_->addParticles(50);
       }
     }
   }

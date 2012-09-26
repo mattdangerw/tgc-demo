@@ -3,8 +3,8 @@
 
 #include <string>
 #include <vector>
+#include <glm.hpp>
 
-#include "glm.hpp"
 #include "renderer.h"
 
 using std::string;

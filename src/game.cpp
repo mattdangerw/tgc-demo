@@ -2,9 +2,8 @@
 
 #include <random>
 #include <time.h>
-
-#include "GL/glfw.h"
-#include "glm.hpp"
+#include <GL/glfw.h>
+#include <glm.hpp>
 
 // Where we want the character to be position horizantally on the screen 0 to 1.
 static const float kCharacterScreenX = 0.5f;

@@ -3,8 +3,8 @@
 
 #include <string>
 #include <vector>
+#include <glm.hpp>
 
-#include "glm.hpp"
 #include "renderer.h"
 #include "thought_bubble.h"
 #include "particle.h"

@@ -1,11 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <GL/glew.h>
 #include <GL/glfw.h>
 
 #include "game.h"
 
 static Game *game;
-static bool fullscreen = false;
+static bool fullscreen = true;
 
 // Handle keyboard events.
 void GLFWCALL keyboardCallback(int key, int action) {
@@ -46,12 +47,26 @@ int main(int argc, char *argv[]) {
     height = 600;
   }
   if (!glfwOpenWindow(width, height, 0, 0, 0, 0, 16, 0, screen_mode)) {
-    fprintf(stderr, "Failed to open GLFW window\n");
+    fprintf(stderr, "Failed to open GLFW window.\n");
     glfwTerminate();
     exit(1);
   }
+  // Init glew.
+  GLenum err = glewInit();
+  if (GLEW_OK != err)  {
+    fprintf(stderr, "GLEW error: %s\n", glewGetErrorString(err));
+    glfwTerminate();
+    exit(1);
+  }
+  if (!GLEW_VERSION_3_2) {
+    fprintf(stderr, "OpenGL 3.2 is not supported. Update display drivers?\n");
+    glfwTerminate();
+    exit(1);
+  }
+  // Make the main game object.
   game = new Game();
 
+  // GLFW options.
   glfwEnable(GLFW_KEY_REPEAT);
   glfwSwapInterval(1);
   // Set callback functions.

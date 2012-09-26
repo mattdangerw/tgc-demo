@@ -3,9 +3,9 @@
 
 #include <string>
 #include <vector>
+#include <glm.hpp>
+#include <gtc/type_ptr.hpp>
 
-#include "glm.hpp"
-#include "gtc/type_ptr.hpp"
 #include "renderer.h"
 #include "character.h"
 #include "point_mass.h"
@@ -15,9 +15,18 @@
 using std::string;
 using std::vector;
 
-struct Circle {
-  glm::vec2 position;
-  float radius;
+class StretchyCircle {
+  public:
+    StretchyCircle(glm::vec2 center, float rest_radius);
+    glm::vec2 center() { return center_; }
+    float radius();
+    void addImpulse(glm::vec2 impulse);
+    void update(float delta_time);
+    
+  private:
+    glm::vec2 center_;
+    float rest_radius_;
+    PointMass spring_mass_;
 };
 
 class ThoughtBubble : GameEntity, Drawable {
@@ -40,7 +49,7 @@ class ThoughtBubble : GameEntity, Drawable {
     Renderer *renderer_;
     Character *character_;
     PointMass mass_;
-    vector<Circle> circles_;
+    vector<StretchyCircle> circles_;
 };
 
 #endif  // SRC_THOUGHT_BUBBLE_H_
