@@ -2,6 +2,9 @@
 
 #include <cstdio>
 
+// Forward declare out exit point.
+void cleanupAndExit(int exit_code);
+
 Shader::Shader() : handle_(0) {}
 
 Shader::~Shader() {
@@ -13,7 +16,7 @@ void Shader::load(string filename, GLenum type) {
   FILE *file_pointer = fopen(filename.c_str(), "r");
   if (file_pointer == NULL) {
     fprintf(stderr, "Shader file %s not found.\n", filename);
-    // TODO handle shader not found
+    cleanupAndExit(1);
   }
   fseek(file_pointer, 0, SEEK_END);
   long size = ftell(file_pointer);
@@ -36,7 +39,7 @@ void Shader::load(string filename, GLenum type) {
     glGetShaderInfoLog(handle_, log_length, NULL, log);
     fprintf(stderr, "%s", log);
     delete log;
-    // TODO handle shader not compiled.
+    cleanupAndExit(1);
   }
   delete source;
 }
@@ -66,7 +69,7 @@ void Program::link() {
     glGetProgramInfoLog(handle_, log_length, NULL, log);
     fprintf(stderr, "%s", log);
     delete log;
-    // TODO call some exit thinger.
+    cleanupAndExit(1);
   }
 }
 
@@ -75,9 +78,19 @@ void Program::use() {
 }
 
 GLint Program::attributeHandle(string attribute) {
-  return glGetAttribLocation(handle_, attribute.c_str());
+  GLint handle = glGetAttribLocation(handle_, attribute.c_str());
+  if (handle == -1) {
+    fprintf(stderr, "Shader attribute %s not found.\n", attribute);
+    cleanupAndExit(1);
+  }
+  return handle;
 }
 
 GLint Program::uniformHandle(string uniform) {
-   return glGetUniformLocation(handle_, uniform.c_str());
+  GLint handle = glGetUniformLocation(handle_, uniform.c_str());
+  if (handle == -1) {
+    fprintf(stderr, "Shader uniform %s not found.\n", uniform);
+    cleanupAndExit(1);
+  }
+  return handle;
 }

@@ -12,8 +12,7 @@ ParticleSystem::ParticleSystem() {}
 
 ParticleSystem::~ParticleSystem() {}
 
-void ParticleSystem::init(Renderer *renderer, ThoughtBubble *thought_bubble) {
-  renderer_ = renderer;
+void ParticleSystem::init(ThoughtBubble *thought_bubble) {
   thought_bubble_ = thought_bubble;
 }
 

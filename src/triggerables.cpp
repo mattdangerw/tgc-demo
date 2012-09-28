@@ -11,8 +11,7 @@ Triggerable::Triggerable()
 
 Triggerable::~Triggerable() {}
 
-void Triggerable::init(Renderer *renderer, float trigger_point, float animation_duration) {
-  renderer_ = renderer;
+void Triggerable::init(float trigger_point, float animation_duration) {
   trigger_point_ = trigger_point;
   animation_duration_ = animation_duration;
 }
@@ -45,17 +44,23 @@ static bool sortTriggerables(Triggerable *a, Triggerable *b) {
   return a->triggerPoint() < b->triggerPoint();
 }
 
-void TriggerableManager::init(Renderer *renderer, Character *character, ParticleSystem *particle_system) {
+void TriggerableManager::init(Character *character, ParticleSystem *particle_system) {
   character_ = character;
   particle_system_ = particle_system;
   triggerables_.push_back(new Triggerable());
-  triggerables_.back()->init(renderer, 0.5f, 1.0f);
+  triggerables_.back()->init(0.5f, 1.0f);
   triggerables_.push_back(new Triggerable());
-  triggerables_.back()->init(renderer, 1.0f, 0.5f);
+  triggerables_.back()->init(1.0f, 1.0f);
   triggerables_.push_back(new Triggerable());
-  triggerables_.back()->init(renderer, 1.5f, 0.5f);
+  triggerables_.back()->init(1.5f, 1.0f);
   triggerables_.push_back(new Triggerable());
-  triggerables_.back()->init(renderer, 2.2f, 3.0f);
+  triggerables_.back()->init(2.5f, 1.0f);
+  triggerables_.push_back(new Triggerable());
+  triggerables_.back()->init(3.0f, 1.0f);
+  triggerables_.push_back(new Triggerable());
+  triggerables_.back()->init(3.5f, 1.0f);
+  triggerables_.push_back(new Triggerable());
+  triggerables_.back()->init(3.8f, 3.0f);
   std::sort(triggerables_.begin(), triggerables_.end(), sortTriggerables);
 }
 

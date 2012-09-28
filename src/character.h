@@ -5,9 +5,10 @@
 #include <glm.hpp>
 #include <gtc/type_ptr.hpp>
 
-#include "renderer.h"
 #include "ground.h"
 #include "game_entity.h"
+#include "path_shape.h"
+#include "quad.h"
 
 using std::string;
 
@@ -15,7 +16,7 @@ class Character : GameEntity {
   public:
     Character();
     ~Character();
-    void init(Renderer *renderer, Ground *ground);
+    void init(Ground *ground);
     // Record keyboard input for the frame.
     void setInput(bool left_down, bool right_down, bool space_pressed);
     // Update without character movement
@@ -25,18 +26,20 @@ class Character : GameEntity {
 
   private:
     // Helper functions.
+    void updateQuadTransform();
     void moveLeft(float delta_time);
     void moveRight(float delta_time);
     void jump();
     // Updates Y coord based up jumping state and ground height.
     void updateY(float delta_time);
     // Member data.
-    Renderer *renderer_;
     Ground *ground_;
     bool left_down_, right_down_, space_pressed_;
     glm::vec2 position_;
     bool is_jumping_;
     float jump_velocity_;
+    // TODO make a stick figure rendering class!
+    ColoredQuad quad_;
 };
 
 #endif  // SRC_CHARACTER_H_

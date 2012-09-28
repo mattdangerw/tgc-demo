@@ -5,8 +5,14 @@
 
 #include "game.h"
 
-static Game *game;
-static bool fullscreen = false;
+static Game *game = NULL;
+static bool fullscreen = true;
+
+void cleanupAndExit(int exit_code) {
+  glfwTerminate();
+  if(game!=NULL) delete game;
+  exit(exit_code);
+}
 
 // Handle keyboard events.
 void GLFWCALL keyboardCallback(int key, int action) {
@@ -52,20 +58,17 @@ int main(int argc, char *argv[]) {
   }
   if (!glfwOpenWindow(width, height, 0, 0, 0, 0, 16, 0, screen_mode)) {
     fprintf(stderr, "Failed to open GLFW window.\n");
-    glfwTerminate();
-    exit(1);
+    cleanupAndExit(1);
   }
   // Init glew.
   GLenum err = glewInit();
   if (GLEW_OK != err)  {
     fprintf(stderr, "GLEW error: %s\n", glewGetErrorString(err));
-    glfwTerminate();
-    exit(1);
+    cleanupAndExit(1);
   }
   if (!GLEW_VERSION_3_3) {
     fprintf(stderr, "OpenGL 3.3 is not supported.\n");
-    glfwTerminate();
-    exit(1);
+    cleanupAndExit(1);
   }
   // Make the main game object.
   game = new Game();
@@ -104,8 +107,6 @@ int main(int argc, char *argv[]) {
     game->draw();
     glfwSwapBuffers();
   }
-  // Terminate GLFW
-  glfwTerminate();
-  delete game;
+  cleanupAndExit(0);
   return 0;
 }

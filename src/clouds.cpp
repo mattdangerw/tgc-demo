@@ -2,34 +2,59 @@
 
 #include <GL/glew.h>
 
-static const float kCloudMinSize = 0.1f;
-static const float kCloudMaxSize = 0.35f;
+#include "renderer.h"
+#include "transform2D.h"
+#include "path_shape.h"
+#include "quad.h"
+
+static const float kCloudMinScale = 0.18f;
+static const float kCloudMaxScale = 0.3f;
 static const float kCloudMinY = 0.6f;
 static const float kCloudMaxY = 1.0f;
-static const float kCloudMinXDistance = 0.2f;
-static const float kCloudMaxXDistance = 0.4f;
-static const float kCloudMinVelocity = 0.025f;
-static const float kCloudMaxVelocity = 0.04f;
+static const float kCloudMinXDistance = 0.4f;
+static const float kCloudMaxXDistance = 0.5f;
+static const float kCloudMinVelocity = 0.03f;
+static const float kCloudMaxVelocity = 0.035f;
+static const float kCloudMinShade = 1.1f;
+static const float kCloudMaxShade = 1.3f;
 
 static inline float randomFloat(float min, float max) {
   return min + rand()/(RAND_MAX/(max - min));
 }
 
-Cloud::Cloud() {}
+Cloud::Cloud(glm::vec2 position, float velocity, float scale, float shade)
+  : position_(position),
+    velocity_(velocity),
+    scale_(scale),
+    shade_(shade) {}
 
-Cloud::~Cloud() {}
+Cloud::~Cloud() {
+  Renderer::instance().removeDrawable(&shape_);
+}
 
-void Cloud::init(Renderer *renderer) {
-  renderer_ = renderer;
+void Cloud::init() {
+  quad_.init("textures/paper3.dds");
+  quad_.setColorMask(glm::vec4(shade_, shade_, shade_, 1.0f));
+  shape_.init("paths/cloud.path", &quad_, true, false);
+  width_ = shape_.width() * scale_;
+  Renderer::instance().addDrawable(&shape_);
+  updateShapeTransform();
 }
 
 void Cloud::update(float delta_time) {
   position_.x -= velocity_ * delta_time;
+  updateShapeTransform();
 }
+
+void Cloud::updateShapeTransform() {
+  glm::mat3 shape_transform = scale2D(translate2D(glm::mat3(1.0f), position_), glm::vec2(scale_));
+  shape_.setTransform(shape_transform);
+}
+
 
 void Cloud::xExtent(float *x_begin, float *x_end) {
   *x_begin = position_.x;
-  *x_end = position_.x + size_;
+  *x_end = position_.x + width_;
 }
 
 CloudManager::CloudManager() {}
@@ -40,8 +65,7 @@ CloudManager::~CloudManager() {
   }
 }
 
-void CloudManager::init(Renderer *renderer, Ground *ground) {
-  renderer_ = renderer;
+void CloudManager::init(Ground *ground) {
   ground_ = ground;
   float x_position = randomFloat(0.0f, kCloudMaxXDistance);
   while (x_position < ground_->width()) {
@@ -61,11 +85,10 @@ void CloudManager::update(float delta_time, GameState *state) {
     float x_begin, x_end;
     cloud->xExtent(&x_begin, &x_end);
     if (x_begin > last_cloud_x) last_cloud_x = x_begin;
-    float left_of_window = renderer_->getLeftOfWindow();
-    if (x_end < left_of_window) {
+    float left_of_window = Renderer::instance().getLeftOfWindow();
+    if (x_end < 0.0f) {
+      delete *it;
       it = clouds_.erase(it);
-      // TODO: Fix cloud destructor and renderer remove.
-      // delete cloud;
     } else {
       cloud->update(delta_time);
       ++it;
@@ -78,12 +101,12 @@ void CloudManager::update(float delta_time, GameState *state) {
 }
 
 void CloudManager::addRandomCloud(float x_position) {
-    Cloud *cloud = new Cloud();
-    cloud->init(renderer_);
-    cloud->setVelocity(randomFloat(kCloudMinVelocity, kCloudMaxVelocity));
-    float size = randomFloat(kCloudMinSize, kCloudMaxSize);
-    cloud->setSize(size);
-    float y_position = randomFloat(kCloudMinY, kCloudMaxY - size);
-    cloud->setPosition(glm::vec2(x_position, y_position));
+    float scale = randomFloat(kCloudMinScale, kCloudMaxScale);
+    float velocity = randomFloat(kCloudMinVelocity, kCloudMaxVelocity);
+    float shade = randomFloat(kCloudMinShade, kCloudMaxShade);
+    float y_position = randomFloat(kCloudMinY, kCloudMaxY - scale);
+    glm::vec2 position = glm::vec2(x_position, y_position);
+    Cloud *cloud = new Cloud(position, velocity, scale, shade);
+    cloud->init();
     clouds_.push_back(cloud);
 }

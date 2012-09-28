@@ -1,28 +1,28 @@
 #ifndef SRC_GROUND_H_
 #define SRC_GROUND_H_
 
-#include <string>
-#include <vector>
 #include <glm.hpp>
+#include <vector>
 
-#include "renderer.h"
+#include "path_shape.h"
+#include "quad.h"
 
-using std::string;
 using std::vector;
 
 class Ground {
   public:
     Ground();
     ~Ground();
-    void init(Renderer *renderer);
+    void init();
     float width();
     float heightAt(float x);
-    void draw();
-    string shadingGrounp() { return "default"; }
-
   private:
+    void initPathShape();
     vector<glm::vec2> points_;
-    Renderer *renderer_;
+    // Drawables.
+    PathShape shape_;
+    TiledTexturedQuad quad_;
+    TiledTexturedQuad background_;
 };
 
 #endif  // SRC_GROUND_H_

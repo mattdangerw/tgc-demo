@@ -4,7 +4,6 @@
 #include <string>
 #include <glm.hpp>
 
-#include "renderer.h"
 #include "character.h"
 #include "particle_system.h"
 #include "game_entity.h"
@@ -15,7 +14,7 @@ class Triggerable {
   public:
     Triggerable();
     ~Triggerable();
-    void init(Renderer *renderer, float trigger_point, float animation_duration);
+    void init(float trigger_point, float animation_duration);
     void update(float delta_time);
     float triggerPoint() { return trigger_point_; }
     float animationDuration() { return animation_duration_; }
@@ -23,7 +22,6 @@ class Triggerable {
     void trigger();
 
   private:
-    Renderer *renderer_;
     glm::vec3 color_;
     float trigger_point_;
     float animation_duration_;
@@ -35,7 +33,7 @@ class TriggerableManager : GameEntity {
   public:
     TriggerableManager();
     ~TriggerableManager();
-    void init(Renderer *renderer, Character *character, ParticleSystem *particle_system);
+    void init(Character *character, ParticleSystem *particle_system);
     void update(float delta_time, GameState *state);
 
   private:

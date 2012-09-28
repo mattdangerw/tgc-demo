@@ -1,5 +1,5 @@
-#ifndef SRC_TRANSFORM2D_H
-#define SRC_TRANSFORM2D_H
+#ifndef SRC_TRANSFORM2D_H_
+#define SRC_TRANSFORM2D_H_
 
 #include <glm/glm.hpp>
 
@@ -35,4 +35,4 @@ inline glm::mat3 rotate2D(glm::mat3 transform, float angle) {
   return result;
 }
 
-#endif  // SRC_TRANSFORM2D_H
+#endif  // SRC_TRANSFORM2D_H_

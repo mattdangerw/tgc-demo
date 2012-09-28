@@ -5,7 +5,6 @@
 #include <vector>
 #include <glm.hpp>
 
-#include "renderer.h"
 #include "thought_bubble.h"
 #include "particle.h"
 #include "game_entity.h"
@@ -17,12 +16,11 @@ class ParticleSystem : GameEntity {
   public:
     ParticleSystem();
     ~ParticleSystem();
-    void init(Renderer *renderer, ThoughtBubble *thought_bubble);
+    void init(ThoughtBubble *thought_bubble);
     void addParticles(int num_particles);
     void update(float delta_time, GameState *state);
 
   private:
-    Renderer *renderer_;
     ThoughtBubble *thought_bubble_;
     vector<Particle> particles_;
 };

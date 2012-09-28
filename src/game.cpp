@@ -2,8 +2,11 @@
 
 #include <random>
 #include <time.h>
+#include <GL/glew.h>
 #include <GL/glfw.h>
 #include <glm.hpp>
+
+#include "renderer.h"
 
 // Where we want the character to be position horizantally on the screen 0 to 1.
 static const float kCharacterScreenX = 0.5f;
@@ -20,13 +23,13 @@ Game::~Game() {}
 void Game::init(int width, int height) {
   srand((unsigned)time(0));
 
-  renderer_.init(width, height);
-  ground_.init(&renderer_);
-  cloud_manager_.init(&renderer_, &ground_);
-  character_.init(&renderer_, &ground_);
-  thought_bubble_.init(&renderer_, &character_);
-  particle_system_.init(&renderer_, &thought_bubble_);
-  triggerable_manager_.init(&renderer_, &character_, &particle_system_);
+  Renderer::instance().init(width, height);
+  ground_.init();
+  cloud_manager_.init(&ground_);
+  character_.init(&ground_);
+  thought_bubble_.init(&character_);
+  particle_system_.init(&thought_bubble_);
+  triggerable_manager_.init(&character_, &particle_system_);
   
   last_frame_time_ = static_cast<float>(glfwGetTime());
 }
@@ -45,15 +48,16 @@ void Game::update() {
   
   // Position the camera so our character is at kCharacterScreenX.
   // But make sure not to scroll off level.
-  float window_width = renderer_.windowWidth();
+  Renderer &renderer = Renderer::instance();
+  float window_width = renderer.windowWidth();
   float left_of_screen = glm::clamp(character_.position().x - kCharacterScreenX * window_width, 0.0f, ground_.width() - window_width);
-  renderer_.setLeftOfWindow(left_of_screen);
+  renderer.setLeftOfWindow(left_of_screen);
   space_pressed_ = false;
   last_frame_time_ = now;
 }
 
 void Game::draw() {
-  renderer_.draw();
+  Renderer::instance().draw();
 }
 
 bool Game::stillRunning() {
@@ -84,5 +88,5 @@ void Game::handleKeyboardEvent(int key, int action) {
 }
 
 void Game::resize(int width, int height) {
-  renderer_.resize(width, height);
+  Renderer::instance().resize(width, height);
 }

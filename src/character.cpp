@@ -2,6 +2,8 @@
 
 #include <GL/glew.h>
 
+#include "transform2D.h"
+
 static const float kSpeed = 0.4f;
 static const float kPlayerWidth = 0.02f;
 static const float kHeightAboveGround = 0.01f;
@@ -9,17 +11,19 @@ static const float kGravity = -10.0f;
 static const float kInitialJumpVelocity = 1.2f;
 
 Character::Character() {
-  renderer_ = NULL;
   position_ = glm::vec2();
 }
 
 Character::~Character() {}
 
-void Character::init(Renderer *renderer, Ground *ground) {
-  renderer_ = renderer;
+void Character::init(Ground *ground) {
   ground_ = ground;
   position_.x = 0.0f;
   updateY(0.0f);
+  quad_.init();
+  quad_.setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+  updateQuadTransform();
+  Renderer::instance().addDrawable(&quad_);
 }
 
 void Character::setInput(bool left_down, bool right_down, bool space_pressed) {
@@ -37,6 +41,14 @@ void Character::update(float delta_time, GameState *state) {
     if (space_pressed_) this->jump();
   }
   updateY(delta_time);
+  updateQuadTransform();
+}
+
+void Character::updateQuadTransform() {
+  glm::mat3 transform(1.0f);
+  transform = translate2D(transform, position_);
+  transform = scale2D(transform, glm::vec2(kPlayerWidth));
+  quad_.setTransform(transform);
 }
 
 void Character::moveLeft(float delta_time) {

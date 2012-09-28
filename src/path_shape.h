@@ -23,16 +23,17 @@ struct PathVertex {
   PathVertexType type;
 };
 
-class PathShape : Drawable {
+class PathShape : public Drawable {
   public:
     PathShape();
     ~PathShape();
-    void init(string filename, Quad *fill, Program *minimal_program, Program *quadric_program, bool dynamic, bool fit_fill);
-    void init(const vector<PathVertex> &vertices, Quad *fill, Program *minimal_program, Program *quadric_program, bool dynamic, bool fit_fill);
-    void fitFillToShape();
+    void init(string filename, Quad *fill, bool fit_fill, bool dynamic);
+    void init(const vector<PathVertex> &vertices, Quad *fill, bool fit_fill, bool dynamic);
+    float width();
+    float height();
+    void setTransform(const glm::mat3 &transform) { transform_ = transform; }
     void updateVertexPosition(int i, glm::vec2 position);
     void draw(glm::mat3 transform);
-    int displayPriority() { return 0; }
 
   private:
     // Helper methods.
@@ -43,6 +44,7 @@ class PathShape : Drawable {
     // Member data.
     Quad *fill_;
     bool dynamic_;
+    glm::mat3 transform_;
     vector<glm::vec2> solid_vertices_, quadric_vertices_, quadric_bezier_coords_;
     vector<vector<glm::vec2 *> > updates_by_index_;
     // OpenGL stuff

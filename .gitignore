@@ -1,3 +1,6 @@
+*.pyc
+*.svg
+
 #Visual Studio files
 *.[Oo]bj
 *.user

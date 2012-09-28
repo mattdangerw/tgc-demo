@@ -3,7 +3,6 @@
 
 #include <vector>
 
-#include "renderer.h"
 #include "ground.h"
 #include "character.h"
 #include "thought_bubble.h"
@@ -35,7 +34,6 @@ class Game {
 
   private:
     GameState state_;
-    Renderer renderer_;
 
     // Last time update was called in seconds since start.
     float last_frame_time_;
