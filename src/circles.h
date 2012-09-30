@@ -8,6 +8,8 @@
 #include "renderer.h"
 
 struct Circle {
+  Circle() : color(0.0f, 0.0f, 0.0f, 1.0f), center(), radius(1.0f) {}
+  glm::vec4 color;
   glm::vec2 center;
   float radius;
 };
@@ -18,15 +20,13 @@ class CircleDrawer : public Drawable {
     ~CircleDrawer();
     // Set up the VAOs and VBOs and what not.
     void init(vector<Circle> *circles);
-    void setColor(const glm::vec4 &color) { color_ = color; }
     void draw(glm::mat3 transform);
 
   private:
     vector<Circle> *circles_;
-    glm::vec4 color_;
     // GL stuff
     Program *program_;
-    GLuint array_object_, buffer_objects_[2];
+    GLuint array_object_, buffer_object_;
     GLint modelview_handle_, color_handle_;
 };
 

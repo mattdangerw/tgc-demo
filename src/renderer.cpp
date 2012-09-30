@@ -17,37 +17,45 @@ void Renderer::init(int width, int height) {
   // OpenGL settings.
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
   glEnable(GL_MULTISAMPLE);
-  glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
-
+  //glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_BLEND);
+  
   // Load shaders.
-  Shader textured_vert, textured_frag, colored_vert, colored_frag, minimal_frag, quadric_frag, circles_frag;
-  textured_vert.load("src/shaders/textured.vert", GL_VERTEX_SHADER);
+  Shader general_vert, textured_frag, colored_frag, minimal_frag, quadric_frag, circles_frag,
+    particles_vert, particles_frag;
+  general_vert.load("src/shaders/general.vert", GL_VERTEX_SHADER);
   textured_frag.load("src/shaders/textured.frag", GL_FRAGMENT_SHADER);
   Program &textured = programs_["textured"];
-  textured.addShader(&textured_vert);
+  textured.addShader(&general_vert);
   textured.addShader(&textured_frag);
   textured.link();
-  colored_vert.load("src/shaders/colored.vert", GL_VERTEX_SHADER);
   colored_frag.load("src/shaders/colored.frag", GL_FRAGMENT_SHADER);
   Program &colored = programs_["colored"];
-  colored.addShader(&colored_vert);
+  colored.addShader(&general_vert);
   colored.addShader(&colored_frag);
   colored.link();
   minimal_frag.load("src/shaders/minimal.frag", GL_FRAGMENT_SHADER);
   Program &minimal = programs_["minimal"];
-  minimal.addShader(&textured_vert);
+  minimal.addShader(&general_vert);
   minimal.addShader(&minimal_frag);
   minimal.link();
   quadric_frag.load("src/shaders/quadric_anti_aliased.frag", GL_FRAGMENT_SHADER);
   Program &quadric = programs_["quadric"];
-  quadric.addShader(&textured_vert);
+  quadric.addShader(&general_vert);
   quadric.addShader(&quadric_frag);
   quadric.link();
   circles_frag.load("src/shaders/circles_anti_aliased.frag", GL_FRAGMENT_SHADER);
   Program &circles = programs_["circles"];
-  circles.addShader(&textured_vert);
+  circles.addShader(&general_vert);
   circles.addShader(&circles_frag);
   circles.link();
+  particles_vert.load("src/shaders/particles.vert", GL_VERTEX_SHADER);
+  particles_frag.load("src/shaders/particles.frag", GL_FRAGMENT_SHADER);
+  Program &particles = programs_["particles"];
+  particles.addShader(&particles_vert);
+  particles.addShader(&particles_frag);
+  particles.link();
 }
 
 bool compareDrawables(const Drawable *left, const Drawable *right) {

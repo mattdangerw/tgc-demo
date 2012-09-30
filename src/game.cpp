@@ -34,13 +34,13 @@ void Game::init(int width, int height) {
   parents.push_back(0.5f);
   parents.push_back(0.65f);
   crowds_[0].init(&character_, &ground_, parents, 0.07f, 0.5f, 2.0f, 0.6f);
-  vector<float> children;
-  children.push_back(1.0f);
-  children.push_back(1.05f);
-  children.push_back(1.08f);
-  children.push_back(1.1f);
-  children.push_back(1.12f);
-  crowds_[1].init(&character_, &ground_, children, 0.03f, 0.0f, 0.3f, 1.2f);
+  vector<float> kids;
+  kids.push_back(1.0f);
+  kids.push_back(1.05f);
+  kids.push_back(1.08f);
+  kids.push_back(1.1f);
+  kids.push_back(1.12f);
+  crowds_[1].init(&character_, &ground_, kids, 0.02f, 0.0f, 0.4f, 1.2f);
   
   last_frame_time_ = static_cast<float>(glfwGetTime());
 }

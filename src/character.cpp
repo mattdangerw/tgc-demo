@@ -24,8 +24,8 @@ Character::~Character() {}
 void Character::init(Ground *ground) {
   circle_vector_.push_back(Circle());
   circle_ = &circle_vector_[0];
+  circle_->radius = 0.0f;
   drawer_.init(&circle_vector_);
-  drawer_.setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
   drawer_.setDisplayPriority(3);
   Renderer::instance().addDrawable(&drawer_);
   ground_ = ground;

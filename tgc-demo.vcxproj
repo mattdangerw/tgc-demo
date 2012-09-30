@@ -18,6 +18,7 @@
     <ClCompile Include="src\ground.cpp" />
     <ClCompile Include="src\jumping_crowd.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\particle.cpp" />
     <ClCompile Include="src\particle_system.cpp" />
     <ClCompile Include="src\path_shape.cpp" />
     <ClCompile Include="src\point_mass.cpp" />

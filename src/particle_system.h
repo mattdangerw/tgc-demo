@@ -23,6 +23,7 @@ class ParticleSystem : GameEntity {
   private:
     ThoughtBubble *thought_bubble_;
     vector<Particle> particles_;
+    ParticleDrawer drawer_;
 };
 
 #endif  // SRC_PARTICLES_H_

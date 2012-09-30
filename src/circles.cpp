@@ -5,8 +5,7 @@
 #include "transform2D.h"
 
 CircleDrawer::CircleDrawer()
-  : color_(glm::vec4(1.0f)),
-    program_(NULL) {}
+  : program_(NULL) {}
 
 CircleDrawer::~CircleDrawer() {}
 
@@ -16,10 +15,10 @@ void CircleDrawer::init(vector<Circle> *circles) {
 
   program_ = Renderer::instance().getProgram("circles");
   glGenVertexArrays(1, &array_object_);
-  glGenBuffers(2, buffer_objects_);
+  glGenBuffers(1, &buffer_object_);
   
   glBindVertexArray(array_object_);
-  glBindBuffer(GL_ARRAY_BUFFER, buffer_objects_[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, buffer_object_);
   glBufferData(GL_ARRAY_BUFFER, sizeof(square), square, GL_STATIC_DRAW);
   GLint handle = program_->attributeHandle("position");
   glEnableVertexAttribArray(handle);
@@ -35,12 +34,12 @@ void CircleDrawer::init(vector<Circle> *circles) {
 void CircleDrawer::draw(glm::mat3 transform) {
   program_->use();
   glm::mat3 modelview = transform * transform_;
-  glUniform4fv(color_handle_, 1, glm::value_ptr(color_));
   for (vector<Circle>::iterator it = circles_->begin(); it != circles_->end(); ++it) {
     glm::mat3 circle_transform(1.0f);
     circle_transform = translate2D(circle_transform, it->center);
     circle_transform = scale2D(circle_transform, glm::vec2(it->radius));
     glUniformMatrix3fv(modelview_handle_, 1, GL_FALSE, glm::value_ptr(modelview * circle_transform));
+    glUniform4fv(color_handle_, 1, glm::value_ptr(it->color));
     glBindVertexArray(array_object_);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
   }

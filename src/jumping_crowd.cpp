@@ -20,6 +20,8 @@ void JumpingCrowd::init(Character *character, Ground *ground, vector<float> x_po
   start_ = end_ = x_positions[0];
   for (size_t i = 0; i < x_positions.size(); ++i) {
     Circle circle;
+    float gray = randomFloat(0.15f, 0.35f);
+    circle.color = glm::vec4(gray, gray, gray, 1.0f);
     circle.center.x = x_positions[i];
     circle.center.y = ground_->heightAt(circle.center.x) + size;
     circle.radius = size;
@@ -34,8 +36,6 @@ void JumpingCrowd::init(Character *character, Ground *ground, vector<float> x_po
   }
   // Ready drawable.
   drawer_.init(&crowd_);
-  float gray = 0.15f;//randomFloat(0.15f, 0.35f);
-  drawer_.setColor(glm::vec4(gray, gray, gray, 1.0f));
   drawer_.setDisplayPriority(2);
   Renderer::instance().addDrawable(&drawer_);
 }

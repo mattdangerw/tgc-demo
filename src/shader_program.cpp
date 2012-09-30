@@ -15,7 +15,7 @@ void Shader::load(string filename, GLenum type) {
   // Read the file into a buffer.
   FILE *file_pointer = fopen(filename.c_str(), "r");
   if (file_pointer == NULL) {
-    fprintf(stderr, "Shader file %s not found.\n", filename);
+    fprintf(stderr, "Shader file %s not found.\n", filename.c_str());
     cleanupAndExit(1);
   }
   fseek(file_pointer, 0, SEEK_END);
@@ -80,7 +80,7 @@ void Program::use() {
 GLint Program::attributeHandle(string attribute) {
   GLint handle = glGetAttribLocation(handle_, attribute.c_str());
   if (handle == -1) {
-    fprintf(stderr, "Shader attribute %s not found.\n", attribute);
+    fprintf(stderr, "Shader attribute %s not found.\n", attribute.c_str());
     cleanupAndExit(1);
   }
   return handle;
@@ -89,7 +89,7 @@ GLint Program::attributeHandle(string attribute) {
 GLint Program::uniformHandle(string uniform) {
   GLint handle = glGetUniformLocation(handle_, uniform.c_str());
   if (handle == -1) {
-    fprintf(stderr, "Shader uniform %s not found.\n", uniform);
+    fprintf(stderr, "Shader uniform %s not found.\n", uniform.c_str());
     cleanupAndExit(1);
   }
   return handle;
