@@ -34,7 +34,7 @@ class Game {
     void resize(int width, int height);
 
   private:
-    GameState state_;
+    GameState state_, last_state_;
 
     // Last time update was called in seconds since start.
     float last_frame_time_;
@@ -47,6 +47,7 @@ class Game {
     bool space_pressed_;
 
     // Game entities
+    vector<GameEntity *> entities_;
     Ground ground_;
     Character character_;
     ThoughtBubble thought_bubble_;

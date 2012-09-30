@@ -5,7 +5,8 @@
 #include "transform2D.h"
 
 CircleDrawer::CircleDrawer()
-  : program_(NULL) {}
+  : program_(NULL),
+    draw_stencil_(false) {}
 
 CircleDrawer::~CircleDrawer() {}
 

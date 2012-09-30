@@ -7,12 +7,12 @@
 #include "transform2D.h"
 
 ParticleDrawer::ParticleDrawer()
-  : program_(NULL) {}
+  : program_(NULL), 
+    num_particles_(true) {}
 
 ParticleDrawer::~ParticleDrawer() {}
 
-void ParticleDrawer::init(vector<Particle> *particles) {
-  particles_ = particles;
+void ParticleDrawer::init() {
   glm::vec2 positions[4] = {glm::vec2(-1.0f, -1.0f), glm::vec2(1.0f, -1.0f), glm::vec2(1.0f, 1.0f), glm::vec2(-1.0f, 1.0f)};
   glm::vec2 tex_coords[4] = {glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 0.0f), glm::vec2(1.0f, 1.0f), glm::vec2(0.0f, 1.0f)};
 
@@ -36,11 +36,11 @@ void ParticleDrawer::init(vector<Particle> *particles) {
   glBindBuffer(GL_ARRAY_BUFFER, particle_buffer_object_);
   handle = program_->attributeHandle("color");
   glEnableVertexAttribArray(handle);
-  glVertexAttribPointer(handle, 4, GL_FLOAT, GL_FALSE, sizeof(Particle), (void *)offsetof(Particle, color));
+  glVertexAttribPointer(handle, 4, GL_FLOAT, GL_FALSE, sizeof(ParticleDrawInfo), (void *)offsetof(ParticleDrawInfo, color));
   glVertexAttribDivisor(handle, 1);
   handle = program_->attributeHandle("translate");
   glEnableVertexAttribArray(handle);
-  glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, sizeof(Particle), (void *)offsetof(Particle, position));
+  glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, sizeof(ParticleDrawInfo), (void *)offsetof(ParticleDrawInfo, position));
   glVertexAttribDivisor(handle, 1);
 
   modelview_handle_ = program_->uniformHandle("modelview");
@@ -50,17 +50,21 @@ void ParticleDrawer::init(vector<Particle> *particles) {
   glUniform1i(program_->uniformHandle("color_texture"), 0);
 }
 
+void ParticleDrawer::sendParticles(ParticleDrawInfo *particles, int num_particles) {
+  num_particles_ = num_particles;
+  glBindBuffer(GL_ARRAY_BUFFER, particle_buffer_object_);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(ParticleDrawInfo) * num_particles, particles, GL_DYNAMIC_DRAW);
+}
+
 void ParticleDrawer::draw(glm::mat3 transform) {
-  if (!particles_->empty()) {
+  if (num_particles_ > 0) {
     program_->use();
     glm::mat3 modelview = transform * transform_;
     glUniformMatrix3fv(modelview_handle_, 1, GL_FALSE, glm::value_ptr(modelview));
     glUniform1fv(size_handle_, 1, &kParticleRadius);
-    glBindBuffer(GL_ARRAY_BUFFER, particle_buffer_object_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Particle) * particles_->size(), &(particles_->at(0)), GL_DYNAMIC_DRAW);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture_handle_);
     glBindVertexArray(array_object_);
-    glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, particles_->size());
+    glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, num_particles_);
   }
 }

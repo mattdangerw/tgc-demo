@@ -29,7 +29,7 @@ class Triggerable {
     bool animating_;
 };
 
-class TriggerableManager : GameEntity {
+class TriggerableManager : public GameEntity {
   public:
     TriggerableManager();
     ~TriggerableManager();
@@ -38,7 +38,7 @@ class TriggerableManager : GameEntity {
 
   private:
     vector<Triggerable *> triggerables_;
-    unsigned int current_triggerable_;
+    unsigned int current_triggerable_, particles_to_add_;
     Character *character_;
     ParticleSystem *particle_system_;
 };

@@ -13,7 +13,7 @@
 
 using std::vector;
 
-class ThoughtBubble : GameEntity {
+class ThoughtBubble : public GameEntity {
   public:
     ThoughtBubble();
     ~ThoughtBubble();
@@ -21,7 +21,7 @@ class ThoughtBubble : GameEntity {
     glm::vec2 center() { return mass_.position(); }
     glm::vec2 velocity() { return mass_.velocity(); }
     void update(float delta_time, GameState *state);
-    void collideParticle(Particle &particle, glm::vec2 old_position);
+    void collideEmitter(Emitter &emitter, glm::vec2 old_position);
 
   private:
     // Helper methods

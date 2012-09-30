@@ -18,6 +18,7 @@ class Drawable {
     virtual ~Drawable() {}
     // Make the GL calls to draw this object.
     virtual void draw(glm::mat3 transform) = 0;
+    virtual void drawStencil(glm::mat3 transform) {};
     // We care about order cause we render in flatland.
     int displayPriority() const { return priority_; }
     void setDisplayPriority(int priority) { priority_ = priority; }
@@ -40,6 +41,8 @@ class Renderer {
     // Adds a drawable object to the renderer.
     // Not memory managed! Game entities should allocate and free drawable objects.
     void addDrawable(Drawable *object);
+    // Adds the particles which are drawn with different opengl setting. and maybe 3d?
+    void addParticles(Drawable *particles) { particles_ = particles; }
     // Removes a drawable object from the renderer.
     // Use this before deleting a drawable or to make the drawable invisible.
     void removeDrawable(Drawable *object);
@@ -65,6 +68,7 @@ class Renderer {
     float left_of_window_;
     map<string, Program> programs_;
     map<string, GLuint> textures_;
+    Drawable *particles_;
 };
 
 #endif  // SRC_RENDERER_H_

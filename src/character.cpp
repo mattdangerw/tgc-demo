@@ -51,7 +51,7 @@ void Character::update(float delta_time, GameState *state) {
   if (*state == TRIGGERING) {
     if (time_on_ground_ > time_till_next_jump_) {
       this->jump();
-      time_till_next_jump_ = randomFloat(0.0, 0.2);
+      time_till_next_jump_ = randomFloat(0.0f, 0.2f);
     }
   }
   updateY(delta_time);

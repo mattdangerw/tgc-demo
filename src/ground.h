@@ -7,16 +7,18 @@
 #include "path_shape.h"
 #include "quad.h"
 #include "tree.h"
+#include "game_entity.h"
 
 using std::vector;
 
-class Ground {
+class Ground : public GameEntity {
   public:
     Ground();
     ~Ground();
     void init();
     float width();
     float heightAt(float x);
+    void update(float delta_time, GameState *state) {}
   private:
     void initPathShape();
     vector<glm::vec2> points_;

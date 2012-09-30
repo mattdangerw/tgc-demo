@@ -11,7 +11,7 @@
 
 using std::vector;
 
-class JumpingCrowd : GameEntity {
+class JumpingCrowd : public GameEntity {
   public:
     JumpingCrowd();
     ~JumpingCrowd();

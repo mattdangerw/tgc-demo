@@ -13,7 +13,7 @@
 
 using std::string;
 
-class Character : GameEntity {
+class Character : public GameEntity {
   public:
     Character();
     ~Character();

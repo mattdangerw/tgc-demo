@@ -21,8 +21,13 @@ class CircleDrawer : public Drawable {
     // Set up the VAOs and VBOs and what not.
     void init(vector<Circle> *circles);
     void draw(glm::mat3 transform);
+    void drawStencil(glm::mat3 transform) {
+      if (draw_stencil_ = true) draw(transform);
+    };
+    void doDrawStencil(bool draw_stencil) { draw_stencil_ = draw_stencil; }
 
   private:
+    bool draw_stencil_;
     vector<Circle> *circles_;
     // GL stuff
     Program *program_;

@@ -15,11 +15,8 @@ void Renderer::init(int width, int height) {
   aspect_ = static_cast<float>(width)/height;
 
   // OpenGL settings.
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-  glEnable(GL_MULTISAMPLE);
-  //glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
-  glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_BLEND);
   
   // Load shaders.
   Shader general_vert, textured_frag, colored_frag, minimal_frag, quadric_frag, circles_frag,
@@ -64,7 +61,10 @@ bool compareDrawables(const Drawable *left, const Drawable *right) {
 
 void Renderer::draw() {
   glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  // 2D rendering modelview
+  
+  glEnable(GL_MULTISAMPLE);
+  glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+// 2D rendering modelview
   glm::mat3 view(1.0f);
   view = translate2D(view, glm::vec2(-1.0f, -1.0f));
   view = scale2D(view, glm::vec2(2.0f/aspect_, 2.0f));
@@ -75,6 +75,21 @@ void Renderer::draw() {
   for (it = to_draw_.begin(); it != to_draw_.end(); ++it) {
     (*it)->draw(view);
   }
+  glEnable(GL_STENCIL_TEST);
+  glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+  glStencilFunc(GL_NEVER, 0, 1);
+  glStencilOp(GL_INCR, GL_INCR, GL_INCR);
+  for (it = to_draw_.begin(); it != to_draw_.end(); ++it) {
+    (*it)->drawStencil(view);
+  }
+  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+  glStencilFunc(GL_GEQUAL, 1, 1);
+  glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+  glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+  glEnable(GL_BLEND);
+  particles_->draw(view);
+  glDisable(GL_BLEND);
+  glDisable(GL_STENCIL_TEST);
 }
 
 void Renderer::addDrawable(Drawable *object) {

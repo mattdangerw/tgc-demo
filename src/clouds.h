@@ -38,7 +38,7 @@ class Cloud {
     TiledTexturedQuad quad_;
 };
 
-class CloudManager : GameEntity {
+class CloudManager : public GameEntity {
   public:
     CloudManager();
     ~CloudManager();

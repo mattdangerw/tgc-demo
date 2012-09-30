@@ -109,7 +109,7 @@ void ThoughtBubble::update(float delta_time, GameState *state) {
 }
 
 // Large method, lot of room for optimization. But will usually exit early so seems fine for < 1000 particles.
-void ThoughtBubble::collideParticle(Particle &particle, glm::vec2 old_position) {
+void ThoughtBubble::collideEmitter(Emitter &particle, glm::vec2 old_position) {
   // Check if the particle is inside any of the bubble circles. If it is we are fine.
   for (size_t i = 0; i < circles_.size(); ++i) {
     float intersect_radius = circles_[i].radius - kParticleRadius;

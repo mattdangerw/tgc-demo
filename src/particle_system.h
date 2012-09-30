@@ -2,7 +2,7 @@
 #define SRC_PARTICLES_H_
 
 #include <string>
-#include <vector>
+#include <list>
 #include <glm.hpp>
 
 #include "thought_bubble.h"
@@ -10,19 +10,22 @@
 #include "game_entity.h"
 
 using std::string;
-using std::vector;
+using std::list;
 
-class ParticleSystem : GameEntity {
+class ParticleSystem : public GameEntity {
   public:
     ParticleSystem();
     ~ParticleSystem();
     void init(ThoughtBubble *thought_bubble);
-    void addParticles(int num_particles);
+    void addEmitters(int num_particles);
     void update(float delta_time, GameState *state);
 
   private:
+    void addParticles(Emitter &emitter, float delta_time);
+
     ThoughtBubble *thought_bubble_;
-    vector<Particle> particles_;
+    list<Particle> particles_;
+    list<Emitter> emitters_;
     ParticleDrawer drawer_;
 };
 

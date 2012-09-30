@@ -32,7 +32,8 @@ void Triggerable::trigger() {
 }
 
 TriggerableManager::TriggerableManager()
-    : current_triggerable_(0) {}
+    : current_triggerable_(0), 
+      particles_to_add_(1) {}
 
 TriggerableManager::~TriggerableManager() {
   for (vector<Triggerable *>::iterator it = triggerables_.begin(); it != triggerables_.end(); ++it) {
@@ -78,7 +79,8 @@ void TriggerableManager::update(float delta_time, GameState *state) {
         *state = EXPLODING;
       } else {
         *state = TRIGGERING;
-        particle_system_->addParticles(50);
+        particle_system_->addEmitters(particles_to_add_);
+        particles_to_add_++;
       }
     }
   }
