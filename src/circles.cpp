@@ -5,8 +5,7 @@
 #include "transform2D.h"
 
 CircleDrawer::CircleDrawer()
-  : transform_(glm::mat4(1.0f)),
-    color_(glm::vec4(1.0f)),
+  : color_(glm::vec4(1.0f)),
     program_(NULL) {}
 
 CircleDrawer::~CircleDrawer() {}

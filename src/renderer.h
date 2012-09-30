@@ -14,14 +14,15 @@ using std::map;
 
 class Drawable {
   public:
-    Drawable() : priority_(0) {};
+    Drawable() : priority_(0), transform_(1.0f) {};
     virtual ~Drawable() {}
     // Make the GL calls to draw this object.
     virtual void draw(glm::mat3 transform) = 0;
     // We care about order cause we render in flatland.
     int displayPriority() const { return priority_; }
     void setDisplayPriority(int priority) { priority_ = priority; }
-    //bool operator <(const Drawable &other) const { return displayPriority() < other.displayPriority(); }
+    void setTransform(const glm::mat3 &transform) { transform_ = transform; }
+    glm::mat3 transform_;
   private:
     int priority_;
 };

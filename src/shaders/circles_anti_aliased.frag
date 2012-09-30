@@ -4,6 +4,8 @@ uniform vec4 color;
 
 in vec2 frag_tex_coords;
 
+out vec4 frag_color;
+
 void main()
 {
   float x = frag_tex_coords.x;
@@ -19,9 +21,9 @@ void main()
   // Linear alpha
   float alpha = 0.5 - sd;
   if (alpha > 1)  // Inside
-    gl_FragColor = color; 
+    frag_color = color; 
   else if (alpha < 0)  // Outside
     discard;
   else  // Near boundary
-    gl_FragColor = vec4(color.xyz, alpha);
+    frag_color = vec4(color.xyz, alpha);
 }

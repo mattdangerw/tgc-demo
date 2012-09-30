@@ -31,7 +31,6 @@ class PathShape : public Drawable {
     void init(const vector<PathVertex> &vertices, Quad *fill, bool fit_fill, bool dynamic);
     float width();
     float height();
-    void setTransform(const glm::mat3 &transform) { transform_ = transform; }
     void updateVertexPosition(int i, glm::vec2 position);
     void draw(glm::mat3 transform);
 
@@ -44,7 +43,6 @@ class PathShape : public Drawable {
     // Member data.
     Quad *fill_;
     bool dynamic_;
-    glm::mat3 transform_;
     vector<glm::vec2> solid_vertices_, quadric_vertices_, quadric_bezier_coords_;
     vector<vector<glm::vec2 *> > updates_by_index_;
     // OpenGL stuff

@@ -6,8 +6,8 @@
 #include "renderer.h"
 #include "transform2D.h"
 
-static const float kCharacterDistance = 0.25f;
-static const float kHorizantalLeeway = 0.08f;
+static const float kCharacterDistance = 0.35f;
+static const float kHorizantalLeeway = 0.15f;
 static const float kBubbleSpringConstant = 120.0f;
 static const float kCirclesSpringConstant = 200.0f;
 
@@ -74,7 +74,7 @@ void ThoughtBubble::init(Character *character) {
 
   // Ready the circle drawer.
   circle_drawer_.init(&circles_);
-  circle_drawer_.setDisplayPriority(1);
+  circle_drawer_.setDisplayPriority(2);
   circle_drawer_.setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
   Renderer::instance().addDrawable(&circle_drawer_);
 }

@@ -2,6 +2,8 @@
 
 in vec2 frag_tex_coords;
 
+out vec4 frag_color;
+
 void main()
 {
   float x = frag_tex_coords.x;
@@ -10,5 +12,5 @@ void main()
   float sd = x*x - y;  
   if (sd > 0)
     discard;
-  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+  frag_color = vec4(1.0, 0.0, 0.0, 1.0);
 }

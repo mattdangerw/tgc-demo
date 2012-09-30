@@ -4,7 +4,7 @@
 #include <gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-Quad::Quad() : program_ (NULL), transform_(glm::mat3(1.0f)) {
+Quad::Quad() : program_ (NULL) {
   vertices_[0] = glm::vec2(0.0f, 0.0f);
   vertices_[1] = glm::vec2(1.0f, 0.0f);
   vertices_[2] = glm::vec2(1.0f, 1.0f);
@@ -107,9 +107,9 @@ void TiledTexturedQuad::setCorners(glm::vec2 min, glm::vec2 max) {
   Quad::setCorners(min, max);
   glm::vec2 size = tex_scale_ * (max - min);
   tex_coords_[0] = glm::vec2(0.0f, 0.0f);
-  tex_coords_[1] = glm::vec2(max.x, 0.0f);
-  tex_coords_[2] = glm::vec2(max.x, max.y);
-  tex_coords_[3] = glm::vec2(0.0f, max.y);
+  tex_coords_[1] = glm::vec2(size.x, 0.0f);
+  tex_coords_[2] = glm::vec2(size.x, size.y);
+  tex_coords_[3] = glm::vec2(0.0f, size.y);
   glBindBuffer(GL_ARRAY_BUFFER, texture_buffer_);
   glBufferData(GL_ARRAY_BUFFER, sizeof(tex_coords_), tex_coords_, GL_STATIC_DRAW);
 

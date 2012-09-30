@@ -28,7 +28,7 @@ static void intersectRays(glm::vec2 a_src, glm::vec2 a_dest, glm::vec2 b_src, gl
   }
 }
 
-PathShape::PathShape() : dynamic_(false), transform_(1.0f) {}
+PathShape::PathShape() : dynamic_(false) {}
 
 PathShape::~PathShape() {}
 

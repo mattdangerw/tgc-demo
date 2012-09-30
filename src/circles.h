@@ -18,14 +18,12 @@ class CircleDrawer : public Drawable {
     ~CircleDrawer();
     // Set up the VAOs and VBOs and what not.
     void init(vector<Circle> *circles);
-    void setTransform(const glm::mat3 &transform) { transform_ = transform; }
     void setColor(const glm::vec4 &color) { color_ = color; }
     void draw(glm::mat3 transform);
 
   private:
     vector<Circle> *circles_;
     glm::vec4 color_;
-    glm::mat3 transform_;
     // GL stuff
     Program *program_;
     GLuint array_object_, buffer_objects_[2];

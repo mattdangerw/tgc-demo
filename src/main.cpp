@@ -6,7 +6,7 @@
 #include "game.h"
 
 static Game *game = NULL;
-static bool fullscreen = true;
+static bool fullscreen = false;
 
 void cleanupAndExit(int exit_code) {
   glfwTerminate();

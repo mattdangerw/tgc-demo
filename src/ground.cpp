@@ -3,6 +3,8 @@
 #include <GL/glew.h>
 #include <gtc/type_ptr.hpp>
 
+#include "transform2D.h"
+
 Ground::Ground() {}
 
 Ground::~Ground() {}
@@ -10,13 +12,13 @@ Ground::~Ground() {}
 void Ground::init() {
   // TODO: load from file or something.
   points_.push_back(glm::vec2(0.0f, 0.2f));
-  points_.push_back(glm::vec2(0.3f, 0.2f));
+  points_.push_back(glm::vec2(0.3f, 0.19f));
   points_.push_back(glm::vec2(0.38f, 0.15f));
-  points_.push_back(glm::vec2(0.6f, 0.15f));
+  points_.push_back(glm::vec2(0.6f, 0.145f));
   points_.push_back(glm::vec2(1.0f, 0.3f));
   points_.push_back(glm::vec2(1.2f, 0.23f));
-  points_.push_back(glm::vec2(1.3f, 0.23f));
-  points_.push_back(glm::vec2(1.55f, 0.12f));
+  points_.push_back(glm::vec2(1.3f, 0.225f));
+  points_.push_back(glm::vec2(1.55f, 0.13f));
   points_.push_back(glm::vec2(1.9f, 0.12f));
   points_.push_back(glm::vec2(2.2f, 0.35f));
   points_.push_back(glm::vec2(2.23f, 0.31f));
@@ -25,15 +27,21 @@ void Ground::init() {
   points_.push_back(glm::vec2(2.74f, 0.39f));
   points_.push_back(glm::vec2(2.95f, 0.24f));
   points_.push_back(glm::vec2(3.25f, 0.19f));
-  points_.push_back(glm::vec2(3.65f, 0.19f));
-  points_.push_back(glm::vec2(3.71f, 0.25f));
+  points_.push_back(glm::vec2(3.55f, 0.20f));
+  points_.push_back(glm::vec2(3.61f, 0.25f));
   points_.push_back(glm::vec2(3.91f, 0.25f));
-  points_.push_back(glm::vec2(3.97f, 0.19f));
+  points_.push_back(glm::vec2(3.97f, 0.20f));
   initPathShape();
   background_.init("textures/background.dds");
   background_.setDisplayPriority(-1);
   background_.setCorners(glm::vec2(0.0f, 0.0f), glm::vec2(4.0f, 1.0f));
   Renderer::instance().addDrawable(&background_);
+  tree_.init();
+  glm::mat3 transform(1.0f);
+  transform = translate2D(transform, glm::vec2(0.2f, 0.14f));
+  transform = scale2D(transform, glm::vec2(0.25f));
+  tree_.setTransform(transform);
+  Renderer::instance().addDrawable(&tree_);
 }
 
 void Ground::initPathShape() {

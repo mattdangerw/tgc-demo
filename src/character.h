@@ -9,6 +9,7 @@
 #include "game_entity.h"
 #include "path_shape.h"
 #include "quad.h"
+#include "circles.h"
 
 using std::string;
 
@@ -26,7 +27,7 @@ class Character : GameEntity {
 
   private:
     // Helper functions.
-    void updateQuadTransform();
+    void updateCircle();
     void moveLeft(float delta_time);
     void moveRight(float delta_time);
     void jump();
@@ -37,9 +38,10 @@ class Character : GameEntity {
     bool left_down_, right_down_, space_pressed_;
     glm::vec2 position_;
     bool is_jumping_;
-    float jump_velocity_;
-    // TODO make a stick figure rendering class!
-    ColoredQuad quad_;
+    float jump_velocity_, time_on_ground_, time_till_next_jump_;
+    vector<Circle> circle_vector_;
+    Circle *circle_;
+    CircleDrawer drawer_;
 };
 
 #endif  // SRC_CHARACTER_H_

@@ -13,6 +13,7 @@ class OutputPath:
   min_y = float("inf")
   max_y = float("-inf")
   def add(self, type, x, y):
+    y = -y
     self.path.append((type, x, y))
     if x < self.min_x:
       self.min_x = x

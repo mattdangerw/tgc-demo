@@ -15,7 +15,7 @@ static const float kCloudMinXDistance = 0.4f;
 static const float kCloudMaxXDistance = 0.5f;
 static const float kCloudMinVelocity = 0.03f;
 static const float kCloudMaxVelocity = 0.035f;
-static const float kCloudMinShade = 1.1f;
+static const float kCloudMinShade = 1.05f;
 static const float kCloudMaxShade = 1.3f;
 
 static inline float randomFloat(float min, float max) {
@@ -35,6 +35,7 @@ Cloud::~Cloud() {
 void Cloud::init() {
   quad_.init("textures/paper3.dds");
   quad_.setColorMask(glm::vec4(shade_, shade_, shade_, 1.0f));
+  quad_.setTextureScale(glm::vec2(scale_*2.0f));
   shape_.init("paths/cloud.path", &quad_, true, false);
   width_ = shape_.width() * scale_;
   Renderer::instance().addDrawable(&shape_);

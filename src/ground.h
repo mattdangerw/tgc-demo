@@ -6,6 +6,7 @@
 
 #include "path_shape.h"
 #include "quad.h"
+#include "tree.h"
 
 using std::vector;
 
@@ -23,6 +24,7 @@ class Ground {
     PathShape shape_;
     TiledTexturedQuad quad_;
     TiledTexturedQuad background_;
+    Tree tree_;
 };
 
 #endif  // SRC_GROUND_H_

@@ -5,25 +5,33 @@
 #include "transform2D.h"
 
 static const float kSpeed = 0.4f;
-static const float kPlayerWidth = 0.02f;
-static const float kHeightAboveGround = 0.01f;
-static const float kGravity = -10.0f;
+static const float kPlayerWidth = 0.015f;
+static const float kHeightAboveGround = 0.0f;
+static const float kGravity = -8.0f;
 static const float kInitialJumpVelocity = 1.2f;
 
-Character::Character() {
-  position_ = glm::vec2();
+static inline float randomFloat(float min, float max) {
+  return min + rand()/(RAND_MAX/(max - min));
 }
+
+Character::Character()
+  : position_(),
+    time_on_ground_(0.0f),
+    time_till_next_jump_(0) {}
 
 Character::~Character() {}
 
 void Character::init(Ground *ground) {
+  circle_vector_.push_back(Circle());
+  circle_ = &circle_vector_[0];
+  drawer_.init(&circle_vector_);
+  drawer_.setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+  drawer_.setDisplayPriority(3);
+  Renderer::instance().addDrawable(&drawer_);
   ground_ = ground;
-  position_.x = 0.0f;
+  position_.x = kPlayerWidth;
   updateY(0.0f);
-  quad_.init();
-  quad_.setColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-  updateQuadTransform();
-  Renderer::instance().addDrawable(&quad_);
+  updateCircle();
 }
 
 void Character::setInput(bool left_down, bool right_down, bool space_pressed) {
@@ -40,15 +48,23 @@ void Character::update(float delta_time, GameState *state) {
     // Udpate y postion.
     if (space_pressed_) this->jump();
   }
+  if (*state == TRIGGERING) {
+    if (time_on_ground_ > time_till_next_jump_) {
+      this->jump();
+      time_till_next_jump_ = randomFloat(0.0, 0.2);
+    }
+  }
   updateY(delta_time);
-  updateQuadTransform();
+  updateCircle();
 }
 
-void Character::updateQuadTransform() {
-  glm::mat3 transform(1.0f);
-  transform = translate2D(transform, position_);
-  transform = scale2D(transform, glm::vec2(kPlayerWidth));
-  quad_.setTransform(transform);
+void Character::updateCircle() {
+  float newRadius = (kPlayerWidth + .006f * position_.x);
+  if (circle_->radius < newRadius) {
+    circle_->radius = newRadius;
+  }
+  circle_->center = position_;
+  circle_->center.y += circle_->radius;
 }
 
 void Character::moveLeft(float delta_time) {
@@ -70,10 +86,11 @@ void Character::jump() {
   if (is_jumping_) return;
   is_jumping_ = true;
   jump_velocity_ = kInitialJumpVelocity;
+  time_on_ground_ = 0.0f;
 }
 
 void Character::updateY(float delta_time) {
-  float minimum_height = ground_->heightAt(position_.x + kPlayerWidth/2) + kHeightAboveGround;
+  float minimum_height = ground_->heightAt(position_.x) + kHeightAboveGround;
   if (is_jumping_) {
     position_.y += jump_velocity_ * delta_time;
     jump_velocity_ += kGravity * delta_time;
@@ -83,5 +100,6 @@ void Character::updateY(float delta_time) {
     }
   } else {
     position_.y = minimum_height;
+    time_on_ground_ += delta_time;
   }
 }

@@ -14,11 +14,9 @@ class Quad : public Drawable {
     virtual void setCorners(glm::vec2 min, glm::vec2 max);
     virtual void draw(glm::mat3 transform) = 0;
     void getCorners(glm::vec2 *min, glm::vec2 *max);
-    void setTransform(const glm::mat3 &transform) { transform_ = transform; }
     void xExtent(float *x_begin, float *x_end);
   protected:
     void initPositionBuffer();
-    glm::mat3 transform_;
     glm::vec2 vertices_[4];
     // GL
     Program *program_;

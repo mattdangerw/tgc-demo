@@ -10,6 +10,7 @@
 #include "triggerables.h"
 #include "clouds.h"
 #include "game_entity.h"
+#include "jumping_crowd.h"
 
 using std::vector;
 
@@ -52,6 +53,7 @@ class Game {
     ParticleSystem particle_system_;
     CloudManager cloud_manager_;
     TriggerableManager triggerable_manager_;
+    JumpingCrowd crowds_[2];
 };
 
 #endif  // SRC_GAME_H_
