@@ -108,7 +108,7 @@ void ParticleSystem::addParticles(Emitter &emitter, float delta_time) {
     Particle to_add;
     to_add.color = emitter.color;
     to_add.color.a*=emitter.heat;
-    to_add.alpha_decay = 0.6f + (emitter.heat - 1.0f) * 0.8;
+    to_add.alpha_decay = 0.6f + (emitter.heat - 1.0f) * 0.8f;
     to_add.position = emitter.position;
     to_add.velocity = fastRandomDirection() * 0.02f;
     to_add.lifetime = 1.5f;
