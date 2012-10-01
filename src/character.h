@@ -24,6 +24,9 @@ class Character : public GameEntity {
     void update(float delta_time, GameState *state);
     // Get the character position.
     glm::vec2 position() { return position_; }
+    glm::vec2 groundPosition();
+    void getTargets(vector<Target> &targets);
+    void colorTarget(Target target);
 
   private:
     // Helper functions.

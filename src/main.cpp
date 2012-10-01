@@ -6,7 +6,8 @@
 #include "game.h"
 
 static Game *game = NULL;
-static bool fullscreen = false;
+// Set false when debugging!!
+static bool fullscreen = true;
 
 void cleanupAndExit(int exit_code) {
   glfwTerminate();
@@ -56,7 +57,7 @@ int main(int argc, char *argv[]) {
     width = 800;
     height = 600;
   }
-  if (!glfwOpenWindow(width, height, 0, 0, 0, 0, 16, 0, screen_mode)) {
+  if (!glfwOpenWindow(width, height, 0, 0, 0, 0, 24, 8, screen_mode)) {
     fprintf(stderr, "Failed to open GLFW window.\n");
     cleanupAndExit(1);
   }
@@ -100,7 +101,7 @@ int main(int argc, char *argv[]) {
 
     updateTime += static_cast<float>(glfwGetTime()) - currTime;
     if (frame % 500 == 0) {
-      printf("Update time per frame: %f. Keep less than 0.01\n", updateTime / 500.0f);
+      printf("Update time per frame: %f. Try to keep less than 0.01\n", updateTime / 500.0f);
       updateTime = 0.0f;
     }
 

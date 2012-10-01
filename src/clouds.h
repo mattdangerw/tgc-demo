@@ -1,8 +1,9 @@
 #ifndef SRC_CLOUDS_H_
 #define SRC_CLOUDS_H_
 
-#include <list>
 #include <glm.hpp>
+#include <list>
+#include <map>
 
 #include "game_entity.h"
 #include "ground.h"
@@ -10,6 +11,7 @@
 #include "quad.h"
 
 using std::list;
+using std::map;
 
 class Cloud {
   public:
@@ -18,6 +20,7 @@ class Cloud {
     void init();
     // Gets the position of the bottom left corner of the cloud.
     glm::vec2 position() { return position_; }
+    glm::vec2 center();
     // Gets the cloud velocity: a scalar representing how fast the cloud travels in -x direction.
     float velocity() { return velocity_; }
     // Gets the clouds vertical size.
@@ -26,7 +29,7 @@ class Cloud {
     void update(float delta_time);
     // Get the left and right extent of the renderable cloud object.
     void xExtent(float *x_begin, float *x_end);
-    
+    void setColorMask(glm::vec4 color_mask);
 
   private:
     void updateShapeTransform();
@@ -45,6 +48,8 @@ class CloudManager : public GameEntity {
     void init(Ground * ground);
     // Keeps clouds wrapping around viewable area.
     void update(float delta_time, GameState *state);
+    void getTargets(vector<Target> &targets);
+    void colorTarget(Target target);
 
   private:
     // Helper methods
@@ -54,6 +59,7 @@ class CloudManager : public GameEntity {
     Ground *ground_;
     list<Cloud *> clouds_;
     float dist_to_next_cloud_;
+    map<int, Cloud *> target_to_cloud_;
 };
 
 #endif  // SRC_CLOUDS_H_

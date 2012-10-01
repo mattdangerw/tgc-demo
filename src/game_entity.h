@@ -1,10 +1,32 @@
 #ifndef SRC_GAME_ENTITY_H_
 #define SRC_GAME_ENTITY_H_
 
+#include <glm.hpp>
+#include <vector>
+
+using std::vector;
+
+static int targetID = 0;
+
+class GameEntity;
+
+struct Target {
+  Target() {
+    id = targetID;
+    targetID++;
+  }
+  glm::vec2 position;
+  int id;
+  GameEntity *entity;
+};
+
 enum GameState {
   WALKING,
   TRIGGERING,
-  EXPLODING
+  TRIGGERING_JUMPING,
+  PRE_EXPLODING,
+  EXPLODING,
+  ENDING
 };
 
 class GameEntity {
@@ -12,6 +34,8 @@ class GameEntity {
     virtual ~GameEntity() {}
     // Make the GL calls to draw this object.
     virtual void update(float delta_time, GameState *state) = 0;
+    virtual void getTargets(vector<Target> &targets) {}
+    virtual void colorTarget(Target target) {}
 };
 
 #endif  // SRC_GAME_ENTITY_H_

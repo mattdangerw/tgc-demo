@@ -37,7 +37,7 @@ class Game {
     GameState state_, last_state_;
 
     // Last time update was called in seconds since start.
-    float last_frame_time_;
+    float last_frame_time_, time_in_ending_, time_in_exploding_;
 
     // Key state tracking
     bool leave_game_;
@@ -46,6 +46,8 @@ class Game {
     // Space bar was just pressed.
     bool space_pressed_;
 
+    vector<Target> targets_;
+    
     // Game entities
     vector<GameEntity *> entities_;
     Ground ground_;

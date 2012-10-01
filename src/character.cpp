@@ -24,9 +24,9 @@ Character::~Character() {}
 void Character::init(Ground *ground) {
   circle_vector_.push_back(Circle());
   circle_ = &circle_vector_[0];
-  circle_->radius = 0.0f;
+  circle_->radius = 0.001f;
   drawer_.init(&circle_vector_);
-  drawer_.setDisplayPriority(3);
+  drawer_.setDisplayPriority(5);
   Renderer::instance().addDrawable(&drawer_);
   ground_ = ground;
   position_.x = kPlayerWidth;
@@ -48,7 +48,7 @@ void Character::update(float delta_time, GameState *state) {
     // Udpate y postion.
     if (space_pressed_) this->jump();
   }
-  if (*state == TRIGGERING) {
+  if (*state == TRIGGERING_JUMPING || *state == ENDING) {
     if (time_on_ground_ > time_till_next_jump_) {
       this->jump();
       time_till_next_jump_ = randomFloat(0.0f, 0.2f);
@@ -59,7 +59,7 @@ void Character::update(float delta_time, GameState *state) {
 }
 
 void Character::updateCircle() {
-  float newRadius = (kPlayerWidth + .006f * position_.x);
+  float newRadius = (kPlayerWidth + .0025f * position_.x);
   if (circle_->radius < newRadius) {
     circle_->radius = newRadius;
   }
@@ -102,4 +102,19 @@ void Character::updateY(float delta_time) {
     position_.y = minimum_height;
     time_on_ground_ += delta_time;
   }
+}
+
+void Character::getTargets(vector<Target> &targets) {
+  Target target;
+  target.position = circle_->center;
+  target.entity = this;
+  targets.push_back(target);
+}
+
+void Character::colorTarget(Target target) {
+  circle_->color = glm::vec4(0.65f, 0.47f, 0.0f, 1.0f);
+}
+
+glm::vec2 Character::groundPosition() { 
+  return glm::vec2(position_.x, ground_->heightAt(position_.x) + kHeightAboveGround);
 }

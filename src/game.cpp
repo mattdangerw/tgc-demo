@@ -17,7 +17,9 @@ Game::Game()
       leave_game_(false),
       left_down_(false),
       right_down_(false),
-      space_pressed_(false) {}
+      space_pressed_(false),
+      time_in_ending_(0.0f),
+      time_in_exploding_(0.0f) {}
 
 Game::~Game() {}
 
@@ -38,17 +40,17 @@ void Game::init(int width, int height) {
   triggerable_manager_.init(&character_, &particle_system_);
   entities_.push_back(&triggerable_manager_);
   vector<float> parents;
-  parents.push_back(0.5f);
-  parents.push_back(0.65f);
+  parents.push_back(2.02f);
+  parents.push_back(2.18f);
   crowds_[0].init(&character_, &ground_, parents, 0.07f, 0.5f, 2.0f, 0.6f);
   entities_.push_back(crowds_);
   vector<float> kids;
-  kids.push_back(1.0f);
-  kids.push_back(1.05f);
-  kids.push_back(1.08f);
-  kids.push_back(1.1f);
-  kids.push_back(1.12f);
-  crowds_[1].init(&character_, &ground_, kids, 0.02f, 0.0f, 0.4f, 1.2f);
+  kids.push_back(5.65f);
+  kids.push_back(5.7f);
+  kids.push_back(5.73f);
+  kids.push_back(5.75f);
+  kids.push_back(5.77f);
+  crowds_[1].init(&character_, &ground_, kids, 0.03f, 0.0f, 0.4f, 1.2f);
   entities_.push_back(crowds_ + 1);
   
   last_frame_time_ = static_cast<float>(glfwGetTime());
@@ -60,14 +62,43 @@ void Game::update() {
 
   character_.setInput(left_down_, right_down_, space_pressed_);
 
-  for (vector<GameEntity *>::iterator it = entities_.begin(); it != entities_.end(); it++) {
+  for (vector<GameEntity *>::iterator it = entities_.begin(); it != entities_.end(); ++it) {
     (*it)->update(delta_time, &state_);
   }
 
-  //if (state_ == EXPLODING && last_state_ != EXPLODING) {
-  //  int test = 0;
-  //}
-  
+  if (state_ == EXPLODING && last_state_ != EXPLODING) {
+    for (vector<GameEntity *>::iterator it = entities_.begin(); it != entities_.end(); ++it) {
+      (*it)->getTargets(targets_);
+    }
+    particle_system_.setTargets(targets_);
+    thought_bubble_.stopDrawing();
+    Renderer::instance().stopStenciling();
+  }
+
+  if (state_ == EXPLODING) {
+    if (targets_.empty()) {
+      time_in_exploding_ += delta_time;
+      if (time_in_exploding_ > 2.0f)
+        state_ = ENDING;
+    } else {
+      for (vector<Target>::iterator it = targets_.begin(); it != targets_.end();) {
+        if(particle_system_.targetWasHit(*it)) {
+          it->entity->colorTarget(*it);
+          it = targets_.erase(it);
+        } else {
+          ++it;
+        }
+      }
+    }
+  }
+
+  if (state_ == ENDING) {
+    if (time_in_ending_ > 8.0f) {
+      leave_game_ = true;
+    }
+    time_in_ending_+=delta_time;
+  }
+
   // Position the camera so our character is at kCharacterScreenX.
   // But make sure not to scroll off level.
   Renderer &renderer = Renderer::instance();

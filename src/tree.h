@@ -10,6 +10,7 @@ class Tree : public Drawable {
     ~Tree();
     void init();
     void draw(glm::mat3 transform);
+    void setColor(glm::vec4 color);
 
   private:
     TiledTexturedQuad trunk_quad_, leaves_quad_;

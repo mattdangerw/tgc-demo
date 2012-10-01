@@ -15,8 +15,15 @@ static const float kCloudMinXDistance = 0.4f;
 static const float kCloudMaxXDistance = 0.5f;
 static const float kCloudMinVelocity = 0.03f;
 static const float kCloudMaxVelocity = 0.035f;
-static const float kCloudMinShade = 1.05f;
-static const float kCloudMaxShade = 1.3f;
+static const float kCloudMinShade = 0.95f;
+static const float kCloudMaxShade = 1.15f;
+
+static const int numColors = 5;
+static const glm::vec4 kCloudColors[5] = {glm::vec4(1.0f, 0.6f, 0.5f, 1.0f),  // yellow red
+                                          glm::vec4(1.0f, 0.7f, 0.65f, 1.0f), // redish
+                                          glm::vec4(1.0f, 0.65f, .85f, 1.0f), // pinkish
+                                          glm::vec4(.97f, 0.75f, .97f, 1.0f), // i forget
+                                          glm::vec4(0.7f, 0.65f, 1.0f, 1.0f)}; // purple
 
 static inline float randomFloat(float min, float max) {
   return min + rand()/(RAND_MAX/(max - min));
@@ -35,11 +42,15 @@ Cloud::~Cloud() {
 void Cloud::init() {
   quad_.init("textures/paper3.dds");
   quad_.setColorMask(glm::vec4(shade_, shade_, shade_, 1.0f));
-  quad_.setTextureScale(glm::vec2(scale_*2.0f));
+  quad_.setTextureScale(glm::vec2(scale_));
   shape_.init("paths/cloud.path", &quad_, true, false);
   width_ = shape_.width() * scale_;
   Renderer::instance().addDrawable(&shape_);
   updateShapeTransform();
+}
+
+glm::vec2 Cloud::center() {
+  return position_ + glm::vec2(width_/2.0f, scale_/2.0f);
 }
 
 void Cloud::update(float delta_time) {
@@ -56,6 +67,10 @@ void Cloud::updateShapeTransform() {
 void Cloud::xExtent(float *x_begin, float *x_end) {
   *x_begin = position_.x;
   *x_end = position_.x + width_;
+}
+
+void Cloud::setColorMask(glm::vec4 color_mask) {
+  quad_.setColorMask(color_mask);
 }
 
 CloudManager::CloudManager() {}
@@ -78,9 +93,9 @@ void CloudManager::init(Ground *ground) {
 
 // Keeps clouds wrapping around viewable area.
 void CloudManager::update(float delta_time, GameState *state) {
-  if (*state == EXPLODING) return;
-  list<Cloud *>::iterator it;
+  if (*state == PRE_EXPLODING || *state == EXPLODING) return;
   float last_cloud_x = 0.0f;
+  list<Cloud *>::iterator it;
   for (it = clouds_.begin(); it != clouds_.end();) {
     Cloud *cloud = *it;
     float x_begin, x_end;
@@ -96,8 +111,10 @@ void CloudManager::update(float delta_time, GameState *state) {
     }
   }
   if (ground_->width() - last_cloud_x > dist_to_next_cloud_) {
-    addRandomCloud(last_cloud_x + dist_to_next_cloud_);
-    dist_to_next_cloud_ = randomFloat(kCloudMinXDistance, kCloudMaxXDistance);
+    if (*state != ENDING) {
+      addRandomCloud(last_cloud_x + dist_to_next_cloud_);
+      dist_to_next_cloud_ = randomFloat(kCloudMinXDistance, kCloudMaxXDistance);
+    }
   }
 }
 
@@ -110,4 +127,24 @@ void CloudManager::addRandomCloud(float x_position) {
     Cloud *cloud = new Cloud(position, velocity, scale, shade);
     cloud->init();
     clouds_.push_back(cloud);
+}
+
+void CloudManager::getTargets(vector<Target> &targets) {
+  for (list<Cloud *>::iterator it = clouds_.begin(); it != clouds_.end(); ++it) {
+    Cloud *cloud = *it;
+    float x_begin, x_end;
+    cloud->xExtent(&x_begin, &x_end);
+    float left_of_window = Renderer::instance().getLeftOfWindow();
+    if (x_end > left_of_window) {
+      Target target;
+      target.position = cloud->center();
+      target.entity = this;
+      targets.push_back(target);
+      target_to_cloud_[target.id] = cloud;
+    }
+  }
+}
+
+void CloudManager::colorTarget(Target target) {
+  target_to_cloud_[target.id]->setColorMask(kCloudColors[target.id%numColors]);
 }

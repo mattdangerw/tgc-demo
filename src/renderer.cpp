@@ -9,6 +9,7 @@
 
 Renderer::Renderer() {
   left_of_window_ = 0.0f;
+  do_stencil_ = true;
 }
 
 void Renderer::init(int width, int height) {
@@ -75,21 +76,25 @@ void Renderer::draw() {
   for (it = to_draw_.begin(); it != to_draw_.end(); ++it) {
     (*it)->draw(view);
   }
-  glEnable(GL_STENCIL_TEST);
-  glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-  glStencilFunc(GL_NEVER, 0, 1);
-  glStencilOp(GL_INCR, GL_INCR, GL_INCR);
-  for (it = to_draw_.begin(); it != to_draw_.end(); ++it) {
-    (*it)->drawStencil(view);
+  if (do_stencil_) {
+    glEnable(GL_STENCIL_TEST);
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    glStencilFunc(GL_NEVER, 0, 0xFF);
+    glStencilOp(GL_INCR, GL_INCR, GL_INCR);
+    for (it = to_draw_.begin(); it != to_draw_.end(); ++it) {
+      (*it)->drawStencil(view);
+    }
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
   }
-  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-  glStencilFunc(GL_GEQUAL, 1, 1);
-  glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
   glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
   glEnable(GL_BLEND);
   particles_->draw(view);
   glDisable(GL_BLEND);
-  glDisable(GL_STENCIL_TEST);
+  if (do_stencil_) {
+    glDisable(GL_STENCIL_TEST);
+  }
 }
 
 void Renderer::addDrawable(Drawable *object) {

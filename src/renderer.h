@@ -57,6 +57,8 @@ class Renderer {
     Program *getProgram(string name);
     // Get a texture handle by filename. Keeps two different objects from loading the same texture to memory.
     GLuint getTexture(string filename);
+    // Stop using stencil test for particle drawing
+    void stopStenciling() { do_stencil_ = false; }
 
   private:
     // Singleton. Keep these private.
@@ -69,6 +71,7 @@ class Renderer {
     map<string, Program> programs_;
     map<string, GLuint> textures_;
     Drawable *particles_;
+    bool do_stencil_;
 };
 
 #endif  // SRC_RENDERER_H_

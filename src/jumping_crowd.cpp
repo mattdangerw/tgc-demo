@@ -20,7 +20,7 @@ void JumpingCrowd::init(Character *character, Ground *ground, vector<float> x_po
   start_ = end_ = x_positions[0];
   for (size_t i = 0; i < x_positions.size(); ++i) {
     Circle circle;
-    float gray = randomFloat(0.15f, 0.35f);
+    float gray = randomFloat(0.12f, 0.38f);
     circle.color = glm::vec4(gray, gray, gray, 1.0f);
     circle.center.x = x_positions[i];
     circle.center.y = ground_->heightAt(circle.center.x) + size;
@@ -41,7 +41,7 @@ void JumpingCrowd::init(Character *character, Ground *ground, vector<float> x_po
 }
 
 void JumpingCrowd::update(float delta_time, GameState *state) {
-  if (*state == EXPLODING) return;
+  if (*state == EXPLODING || *state == PRE_EXPLODING) return;
   float character_x = character_->position().x;
   for (size_t i = 0; i < crowd_.size(); i++) {
     if (jumping_[i]) {

@@ -10,18 +10,21 @@ using std::list;
 
 const float kParticleRadius = .012f;
 const float kParticleMass = .1f;
-const float kMaxParticles = .1f;
 
 struct Particle {
   glm::vec2 position, velocity;
   glm::vec4 color;
-  float age, lifetime;
+  float age, lifetime, alpha_decay;
 };
 
 struct Emitter {
   glm::vec2 position, velocity;
   glm::vec4 color;
   float particles_per_second, leftover_from_last_frame;
+  float heat;
+  //Stuff for explosion effect.
+  glm::vec2 target, start, midway;
+  float time_to_target, time_in_flight;
 };
 
 struct ParticleDrawInfo {
