@@ -22,10 +22,10 @@ Libraries
 
 The libraries I choose were not for any practical reasons. I simply went for short non-descriptive acronyms that started with gl. So in total we have glew, glfw, glm, and gli. Here's some links if you really want to know what they stand for.
  
- * glew.sourceforge.net
- * www.glfw.org
- * glm.g-truc.net
- * www.g-truc.net/project-0024.html
+ * http://glew.sourceforge.net
+ * http://www.glfw.org
+ * http://glm.g-truc.net
+ * http://www.g-truc.net/project-0024.html
 
 Also a huge shout out to Lost and Taken (lostandtaken.com) -- a fantastic texture site.
 
