@@ -116,7 +116,9 @@ void Renderer::resize(int width, int height) {
 }
 
 Program *Renderer::getProgram(string name) {
-  if (programs_.count(name) == 0) return NULL;
+  if (programs_.count(name) == 0) {
+    return NULL;
+  }
   return &programs_[name];
 }
 

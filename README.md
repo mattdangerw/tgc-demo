@@ -4,7 +4,7 @@ ThatGameCompany Demo
 Content
 -------
 
-So it's definitely still a work in progress, but one I like a lot and am going to keep working at. 1990-2010 was years 1 though 21 for me, so I felt like the demo should center around growing up and learning things. The idea is you (a little black circle) wander a world, getting bigger and bigger as a thought bubble above your head fills up with colorful ideas. Originally the circles were going to be stick figures, which could make the story quite a bit easier to follow, but that will have to wait till I have time to implement a decent walking animation system.
+So it's definitely still a work in progress, but one I like a lot and am going to keep working at. 1990-2010 was years 1 though 21 for me, so I felt like the demo should center around growing up and learning things. The idea is you (a little black circle) wander a world, getting bigger and bigger as a thought bubble above your head fills up with colorful ideas (the repeated objects). Originally the characters were going to be stick figures, which could make the story quite a bit easier to follow, but that will have to wait till I have time to implement a decent walking animation system.
 
 I really like how the visuals for the paper world worked out. I'm excited to play with it and add some more content and animation.
 
