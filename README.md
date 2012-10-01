@@ -27,7 +27,7 @@ The libraries I choose were not for any practical reasons. I simply went for sho
  * http://glm.g-truc.net
  * http://www.g-truc.net/project-0024.html
 
-Also a huge shout out to Lost and Taken (lostandtaken.com) -- a fantastic texture site.
+Also a huge shout out to Lost and Taken (http://lostandtaken.com) -- a fantastic texture site.
 
 Requirements
 ------------
