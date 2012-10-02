@@ -33,6 +33,7 @@ void CircleDrawer::init(vector<Circle> *circles) {
 }
 
 void CircleDrawer::draw(glm::mat3 transform) {
+  glEnable(GL_DEPTH_TEST);
   program_->use();
   glm::mat3 modelview = transform * transform_;
   for (vector<Circle>::iterator it = circles_->begin(); it != circles_->end(); ++it) {
@@ -44,4 +45,5 @@ void CircleDrawer::draw(glm::mat3 transform) {
     glBindVertexArray(array_object_);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
   }
+  glDisable(GL_DEPTH_TEST);
 }

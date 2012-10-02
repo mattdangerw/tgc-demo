@@ -5,7 +5,8 @@
 #include "transform2D.h"
 
 static const float kSpeed = 0.4f;
-static const float kPlayerWidth = 0.015f;
+static const float kPlayerWidth = 0.008f;
+static const float kGrowthRate = 0.004f;
 static const float kHeightAboveGround = 0.0f;
 static const float kGravity = -8.0f;
 static const float kInitialJumpVelocity = 1.2f;
@@ -59,7 +60,7 @@ void Character::update(float delta_time, GameState *state) {
 }
 
 void Character::updateCircle() {
-  float newRadius = (kPlayerWidth + .0025f * position_.x);
+  float newRadius = (kPlayerWidth + kGrowthRate * position_.x);
   if (circle_->radius < newRadius) {
     circle_->radius = newRadius;
   }

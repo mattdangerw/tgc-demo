@@ -41,9 +41,14 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Failed to initialize GLFW\n");
     exit(1);
   }
-  glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
-  glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 3);
-  glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+  printf("Welcome to the demo. Controls are quite simple--left/right arrows and space to play, escape to quit. Enjoy!\n");
+  printf("Press enter to continue...");
+  std::getchar();
+
+  //glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
+  //glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 3);
+  //glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 8);
   int screen_mode = fullscreen ? GLFW_FULLSCREEN : GLFW_WINDOW;
   int width, height;
@@ -61,6 +66,10 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Failed to open GLFW window.\n");
     cleanupAndExit(1);
   }
+  int major, minor, rev;
+  glfwGetGLVersion(&major, &minor, &rev);
+  fprintf(stderr, "OpenGL version: %d.%d.%d\n", major, minor, rev);
+  
   // Init glew.
   GLenum err = glewInit();
   if (GLEW_OK != err)  {

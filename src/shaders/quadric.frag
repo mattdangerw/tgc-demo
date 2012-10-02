@@ -1,8 +1,8 @@
-#version 150
+#version 330
 
 in vec2 frag_tex_coords;
 
-out vec4 frag_color;
+out vec4 out_color;
 
 void main()
 {
@@ -12,5 +12,5 @@ void main()
   float sd = x*x - y;  
   if (sd > 0)
     discard;
-  frag_color = vec4(1.0, 0.0, 0.0, 1.0);
+  out_color = vec4(1.0, 0.0, 0.0, 1.0);
 }

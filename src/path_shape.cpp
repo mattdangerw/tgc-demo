@@ -216,8 +216,8 @@ void PathShape::draw(glm::mat3 transform) {
   // Ready stencil drawing.
   glEnable(GL_STENCIL_TEST);
   glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-  glStencilFunc(GL_NEVER, 0, 1);
-  glStencilOp(GL_INVERT, GL_INVERT, GL_INVERT);
+  glStencilFunc(GL_ALWAYS, 0, 1);
+  glStencilOp(GL_KEEP, GL_KEEP, GL_INVERT);
 
   // Draw solid and quadric triangles, inverting the stencil each time.
   minimal_program_->use();
@@ -225,10 +225,12 @@ void PathShape::draw(glm::mat3 transform) {
   glBindVertexArray(solid_array_object_);
   glDrawArrays(GL_TRIANGLE_FAN, 0, solid_vertices_.size());
 
+  glEnable(GL_DEPTH_TEST);
   quadric_program_->use();
   glUniformMatrix3fv(modelview_handle_quadric_, 1, GL_FALSE, glm::value_ptr(modelview));
   glBindVertexArray(quadric_array_object_);
   glDrawArrays(GL_TRIANGLES, 0, quadric_vertices_.size());
+  glDisable(GL_DEPTH_TEST);
 
   // Draw a quad over the whole shape and test with stencil.
   glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);

@@ -16,8 +16,10 @@ void Renderer::init(int width, int height) {
   aspect_ = static_cast<float>(width)/height;
 
   // OpenGL settings.
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+  glClearDepth(1.0);
+  glDepthFunc(GL_LESS);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
   // Load shaders.
   Shader general_vert, textured_frag, colored_frag, minimal_frag, quadric_frag, circles_frag,
@@ -61,7 +63,9 @@ bool compareDrawables(const Drawable *left, const Drawable *right) {
 }
 
 void Renderer::draw() {
+  glDepthMask(GL_TRUE);
   glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glDepthMask(GL_FALSE);
   
   glEnable(GL_MULTISAMPLE);
   glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
@@ -79,8 +83,8 @@ void Renderer::draw() {
   if (do_stencil_) {
     glEnable(GL_STENCIL_TEST);
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    glStencilFunc(GL_NEVER, 0, 0xFF);
-    glStencilOp(GL_INCR, GL_INCR, GL_INCR);
+    glStencilFunc(GL_ALWAYS, 0, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
     for (it = to_draw_.begin(); it != to_draw_.end(); ++it) {
       (*it)->drawStencil(view);
     }

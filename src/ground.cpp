@@ -134,7 +134,7 @@ void Ground::initTrees() {
   transform = scale2D(transform, glm::vec2(0.2f));
   transform = rotate2D(transform, 3.0f);
   tree->setTransform(transform);
-  tree->setDisplayPriority(6);
+  tree->setDisplayPriority(1);
 
   tree = &trees_[6];
   tree->init();
