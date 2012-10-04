@@ -22,7 +22,7 @@ path_shape.h/cpp and the circle and quadric curve shaders are where most of the 
 
 The particle simulation isn't nearly as complex, but still worked out pretty well. The particles are stored and updated on the CPU and passed to the GPU each frame as a bunch of instanced quads. This is the definite bottle neck in terms of speed, so moving it all to the GPU at some point would be nice. Only the emitters themselves collide with thought bubble. To keep the particles from leaking out into the black and white world the stencil buffer is used. The collisions themselves are quite simple and cheap--the thought bubble is modeled as a bunch of circles.
 
-There's also some mass/spring simulation happening to keep the thought bubble animating.
+I also decided to go ahead a learn the new cleaned up OpenGL 3+ API while doing this project. So all the rendering code is done with the OpenGL 3.3 core profile.
 
 Libraries
 ---------
