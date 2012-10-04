@@ -40,3 +40,9 @@ Requirements
 ------------
 
 Windows (till I switch this to cmake) and OpenGL 3.3.
+
+Screenshots
+-----------
+
+![Screenshot1](https://raw.github.com/mattdangerw/tgc-demo/master/screenshots/screenshot1.png)
+![Screenshot2](https://raw.github.com/mattdangerw/tgc-demo/master/screenshots/screenshot2.png)
