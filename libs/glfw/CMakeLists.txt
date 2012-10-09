@@ -38,18 +38,15 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   FIND_LIBRARY(X11_LIBRARY X11)
   set(GLFW_SOURCES
     ${GLFW_SOURCES}
-    lib/x11/enable.c
-    lib/x11/fullscreen.c
-    lib/x11/glext.c
-    lib/x11/image.c
-    lib/x11/init.c
-    lib/x11/input.c
-    lib/x11/joystick.c
-    lib/x11/stream.c
-    lib/x11/tga.c
-    lib/x11/thread.c
-    lib/x11/time.c
-    lib/x11/window.c
+    lib/x11/x11_enable.c
+    lib/x11/x11_fullscreen.c
+    lib/x11/x11_glext.c
+    lib/x11/x11_init.c
+    lib/x11/x11_joystick.c
+    lib/x11/x11_keysym2unicode.c
+    lib/x11/x11_thread.c
+    lib/x11/x11_time.c
+    lib/x11/x11_window.c
     )
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 

@@ -1,6 +1,6 @@
 #include "game.h"
 
-#include <random>
+#include <stdlib.h>
 #include <time.h>
 #include <GL/glew.h>
 #include <GL/glfw.h>

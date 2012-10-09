@@ -1,6 +1,7 @@
 #include "thought_bubble.h"
 
 #include <cmath>
+#include <limits>
 #include <GL/glew.h>
 
 #include "renderer.h"
@@ -197,7 +198,7 @@ void ThoughtBubble::collideEmitter(Emitter &particle, glm::vec2 old_position) {
   }
   // Find one of the bubble circles the particle was in last time step, and collide with that.
   Circle *nearest_circle = NULL;
-  float min_distance_to_circle = float('inf');
+  float min_distance_to_circle = std::numeric_limits<float>::max();
   for (size_t i = 0; i < bubble_circles_.size(); ++i) {
     float intersect_radius = bubble_circles_[i].radius - kParticleRadius;
     glm::vec2 center_to_old_particle = old_position - bubble_circles_[i].center;

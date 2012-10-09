@@ -36,7 +36,7 @@ void PathShape::init(string filename, Quad *fill, bool fit_fill, bool dynamic) {
   vector<PathVertex> vertices;
   FILE *file_pointer = fopen(filename.c_str(), "r");
   if (file_pointer == NULL) {
-    fprintf(stderr, "Path file %s not found.\n", filename);
+    fprintf(stderr, "Path file %s not found.\n", filename.c_str());
     cleanupAndExit(1);
   }
   char line[64];

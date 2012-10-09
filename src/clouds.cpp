@@ -1,6 +1,7 @@
 #include "clouds.h"
 
 #include <GL/glew.h>
+#include <stdlib.h>
 
 #include "renderer.h"
 #include "transform2D.h"

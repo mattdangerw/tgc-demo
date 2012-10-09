@@ -1,6 +1,7 @@
 #include "particle_system.h"
 
 #include <cmath>
+#include <stdlib.h>
 #include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/color_space.hpp>
