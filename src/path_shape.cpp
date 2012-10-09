@@ -151,33 +151,37 @@ void PathShape::createVAOs() {
   glGenBuffers(2, quadric_buffers_);
 
   // Set up the solid path traingles VAO
-  glBindVertexArray(solid_array_object_);
-  glBindBuffer(GL_ARRAY_BUFFER, solid_vertex_buffer_);
-  if (dynamic_) {
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * solid_vertices_.size(), NULL, GL_DYNAMIC_DRAW);
-  } else {
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * solid_vertices_.size(), &solid_vertices_[0], GL_STATIC_DRAW);
+  if(solid_vertices_.size() > 0) {
+    glBindVertexArray(solid_array_object_);
+    glBindBuffer(GL_ARRAY_BUFFER, solid_vertex_buffer_);
+    if (dynamic_) {
+      glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * solid_vertices_.size(), NULL, GL_DYNAMIC_DRAW);
+    } else {
+      glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * solid_vertices_.size(), &solid_vertices_[0], GL_STATIC_DRAW);
+    }
+    GLint handle = minimal_program_->attributeHandle("position");
+    glEnableVertexAttribArray(handle);
+    glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
   }
-  GLint handle = minimal_program_->attributeHandle("position");
-  glEnableVertexAttribArray(handle);
-  glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
   // Set up the quadric triangles VAO
-  glBindVertexArray(quadric_array_object_);
-  glBindBuffer(GL_ARRAY_BUFFER, quadric_buffers_[0]);
-  if (dynamic_) {
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_vertices_.size(), NULL, GL_DYNAMIC_DRAW);
-  } else {
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_vertices_.size(), &quadric_vertices_[0], GL_STATIC_DRAW);
+  if(quadric_vertices_.size() > 0) {
+    glBindVertexArray(quadric_array_object_);
+    glBindBuffer(GL_ARRAY_BUFFER, quadric_buffers_[0]);
+    if (dynamic_) {
+      glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_vertices_.size(), NULL, GL_DYNAMIC_DRAW);
+    } else {
+      glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_vertices_.size(), &quadric_vertices_[0], GL_STATIC_DRAW);
+    }
+    GLint handle = quadric_program_->attributeHandle("position");
+    glEnableVertexAttribArray(handle);
+    glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    glBindBuffer(GL_ARRAY_BUFFER, quadric_buffers_[1]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_bezier_coords_.size(), &quadric_bezier_coords_[0], GL_STATIC_DRAW);
+    handle = quadric_program_->attributeHandle("tex_coords");
+    glEnableVertexAttribArray(handle);
+    glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
   }
-  handle = quadric_program_->attributeHandle("position");
-  glEnableVertexAttribArray(handle);
-  glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-  glBindBuffer(GL_ARRAY_BUFFER, quadric_buffers_[1]);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_bezier_coords_.size(), &quadric_bezier_coords_[0], GL_STATIC_DRAW);
-  handle = quadric_program_->attributeHandle("tex_coords");
-  glEnableVertexAttribArray(handle);
-  glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
   modelview_handle_minimal_ = minimal_program_->uniformHandle("modelview");
   modelview_handle_quadric_ = quadric_program_->uniformHandle("modelview");
@@ -220,17 +224,21 @@ void PathShape::draw(glm::mat3 transform) {
   glStencilOp(GL_KEEP, GL_KEEP, GL_INVERT);
 
   // Draw solid and quadric triangles, inverting the stencil each time.
-  minimal_program_->use();
-  glUniformMatrix3fv(modelview_handle_minimal_, 1, GL_FALSE, glm::value_ptr(modelview));
-  glBindVertexArray(solid_array_object_);
-  glDrawArrays(GL_TRIANGLE_FAN, 0, solid_vertices_.size());
+  if (solid_vertices_.size() > 0) {
+    minimal_program_->use();
+    glUniformMatrix3fv(modelview_handle_minimal_, 1, GL_FALSE, glm::value_ptr(modelview));
+    glBindVertexArray(solid_array_object_);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, solid_vertices_.size());
+  }
 
-  glEnable(GL_DEPTH_TEST);
-  quadric_program_->use();
-  glUniformMatrix3fv(modelview_handle_quadric_, 1, GL_FALSE, glm::value_ptr(modelview));
-  glBindVertexArray(quadric_array_object_);
-  glDrawArrays(GL_TRIANGLES, 0, quadric_vertices_.size());
-  glDisable(GL_DEPTH_TEST);
+  if (quadric_vertices_.size() > 0) {
+    glEnable(GL_DEPTH_TEST);
+    quadric_program_->use();
+    glUniformMatrix3fv(modelview_handle_quadric_, 1, GL_FALSE, glm::value_ptr(modelview));
+    glBindVertexArray(quadric_array_object_);
+    glDrawArrays(GL_TRIANGLES, 0, quadric_vertices_.size());
+    glDisable(GL_DEPTH_TEST);
+  }
 
   // Draw a quad over the whole shape and test with stencil.
   glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);

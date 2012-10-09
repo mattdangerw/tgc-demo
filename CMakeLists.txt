@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.7)
 
 project(tgc-demo)
 
+find_package(OpenGL REQUIRED)
+
 add_definitions(-DGLEW_STATIC)
 
 add_subdirectory(libs)
@@ -48,4 +50,4 @@ add_executable(tgc-demo
   src/triggerables.h
   )
 
-target_link_libraries(tgc-demo glew glfw)
+target_link_libraries(tgc-demo glew glfw ${OPENGL_LIBRARIES})
