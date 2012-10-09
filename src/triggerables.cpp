@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include <GL/glew.h>
-#include <gtc/type_ptr.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 
 Triggerable::Triggerable()

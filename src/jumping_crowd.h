@@ -1,7 +1,7 @@
 #ifndef SRC_JUMPING_CROWD_H_
 #define SRC_JUMPING_CROWD_H_
 
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <vector>
 
 #include "circles.h"

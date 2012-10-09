@@ -2,7 +2,7 @@
 #define SRC_TRIGGERABLE_H_
 
 #include <string>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 
 #include "character.h"
 #include "particle_system.h"

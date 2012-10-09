@@ -1,7 +1,7 @@
 #ifndef SRC_GROUND_H_
 #define SRC_GROUND_H_
 
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <vector>
 
 #include "path_shape.h"

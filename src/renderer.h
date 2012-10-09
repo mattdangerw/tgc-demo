@@ -1,7 +1,7 @@
 #ifndef SRC_RENDERER_H_
 #define SRC_RENDERER_H_
 
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <string>
 #include <vector>
 #include <map>

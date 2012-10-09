@@ -2,8 +2,8 @@
 #define SRC_THOUGHT_BUBBLE_H_
 
 #include <vector>
-#include <glm.hpp>
-#include <gtc/type_ptr.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "character.h"
 #include "point_mass.h"

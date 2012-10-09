@@ -2,8 +2,8 @@
 
 #include <cmath>
 #include <GL/glew.h>
-#include <gtc/type_ptr.hpp>
-#include <gtx/color_space.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/color_space.hpp>
 
 #include "transform2D.h"
 

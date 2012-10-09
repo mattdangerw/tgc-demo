@@ -1,7 +1,7 @@
 #include "quad.h"
 
-#include <glm.hpp>
-#include <gtx/transform.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 Quad::Quad() : program_ (NULL) {

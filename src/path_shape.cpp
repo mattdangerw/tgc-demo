@@ -1,6 +1,6 @@
 #include "path_shape.h"
 
-#include <gtc/type_ptr.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <cstdio>
 #include <sstream>
 

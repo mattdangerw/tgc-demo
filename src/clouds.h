@@ -1,7 +1,7 @@
 #ifndef SRC_CLOUDS_H_
 #define SRC_CLOUDS_H_
 
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <list>
 #include <map>
 

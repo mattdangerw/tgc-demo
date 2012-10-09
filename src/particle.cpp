@@ -1,6 +1,6 @@
 #include "particle.h"
 
-#include <gtc/type_ptr.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <cstddef>
 
 #include "circles.h"

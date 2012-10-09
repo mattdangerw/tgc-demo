@@ -4,7 +4,7 @@
 #include <string>
 #include <list>
 #include <map>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 
 #include "thought_bubble.h"
 #include "particle.h"

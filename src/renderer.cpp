@@ -1,7 +1,7 @@
 #include "renderer.h"
 
 #include <GL/glew.h>
-#include <gli.hpp>
+#include <gli/gli.hpp>
 #include <gli/gtx/gl_texture2d.hpp>
 #include <algorithm>
 

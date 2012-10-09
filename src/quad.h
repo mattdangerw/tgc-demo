@@ -2,7 +2,7 @@
 #define SRC_QUAD_H_
 
 #include <GL/glew.h>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <string>
 
 #include "shader_program.h"

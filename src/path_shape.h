@@ -2,7 +2,7 @@
 #define SRC_PATH_SHAPE_H_
 
 #include <GL/glew.h>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <string>
 #include <vector>
 

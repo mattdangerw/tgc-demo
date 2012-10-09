@@ -1,7 +1,7 @@
 #ifndef SRC_POINT_MASS_H_
 #define SRC_POINT_MASS_H_
 
-#include <glm.hpp>
+#include <glm/glm.hpp>
 
 class PointMass {
   public:

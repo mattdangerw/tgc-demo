@@ -1,7 +1,7 @@
 #ifndef SRC_PARTICLE_H_
 #define SRC_PARTICLE_H_
 
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <list>
 
 #include "renderer.h"

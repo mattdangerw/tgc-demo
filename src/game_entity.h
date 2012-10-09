@@ -1,7 +1,7 @@
 #ifndef SRC_GAME_ENTITY_H_
 #define SRC_GAME_ENTITY_H_
 
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <vector>
 
 using std::vector;
