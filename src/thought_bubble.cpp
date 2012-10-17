@@ -105,11 +105,13 @@ void ThoughtBubble::init(Character *character) {
   // Ready the circle drawer.
   circle_drawer_.init(&bubble_circles_);
   circle_drawer_.setDisplayPriority(100);
-  circle_drawer_.doDrawStencil(true);
+  circle_drawer_.setOccluder(false);
   Renderer::instance().addDrawable(&circle_drawer_);
+  Renderer::instance().addStencilShape(&circle_drawer_);
   // same for sub bubble
   sub_circle_drawer_.init(&sub_bubble_circles_);
   sub_circle_drawer_.setDisplayPriority(99);
+  sub_circle_drawer_.setOccluder(false);
   Renderer::instance().addDrawable(&sub_circle_drawer_);
 }
 

@@ -30,8 +30,6 @@ class Game {
     bool stillRunning();
     // Handle keyboard input. Expects glfw key and action.
     void handleKeyboardEvent(int key, int action);
-    // Change the screen size of our game.
-    void resize(int width, int height);
 
   private:
     GameState state_, last_state_;

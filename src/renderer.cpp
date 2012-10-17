@@ -7,12 +7,17 @@
 
 #include "transform2D.h"
 
-Renderer::Renderer() {
-  left_of_window_ = 0.0f;
-  do_stencil_ = true;
-}
+// Forward declare out exit point.
+void cleanupAndExit(int exit_code);
+
+Renderer::Renderer()
+  : left_of_window_(0.0f),
+    do_stencil_(true),
+    light_position_(0.0f) {}
 
 void Renderer::init(int width, int height) {
+  width_ = width;
+  height_ = height;
   aspect_ = static_cast<float>(width)/height;
 
   // OpenGL settings.
@@ -20,42 +25,176 @@ void Renderer::init(int width, int height) {
   glClearDepth(1.0);
   glDepthFunc(GL_LESS);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  loadShaders();
+  setupScreenQuad();
+  setupFBOs();
+
+  Program *shadows_program = getProgram("shadows");
+  shadows_program->use();
+  light_position_handle_ = shadows_program->uniformHandle("light_position");
+  glUniform1f(shadows_program->uniformHandle("density"), 2.0f);
+  glUniform1f(shadows_program->uniformHandle("decay_rate"), 0.98f);
+  glUniform1f(shadows_program->uniformHandle("constant_factor"), 0.85f);
+  glUniform1f(shadows_program->uniformHandle("scale_factor"), 1.0f/160.0f);
+}
+
+void Renderer::setupScreenQuad() {
+  glm::vec2 vertices[4];
+  vertices[0] = glm::vec2(-1.0f, -1.0f);
+  vertices[1] = glm::vec2(1.0f, -1.0f);
+  vertices[2] = glm::vec2(1.0f, 1.0f);
+  vertices[3] = glm::vec2(-1.0f, 1.0f);
+  glm::vec2 tex_coords[4];
+  tex_coords[0] = glm::vec2(0.0f, 0.0f);
+  tex_coords[1] = glm::vec2(1.0f, 0.0f);
+  tex_coords[2] = glm::vec2(1.0f, 1.0f);
+  tex_coords[3] = glm::vec2(0.0f, 1.0f);
+
+  GLuint buffer_objects[2];  
+  glGenVertexArrays(1, &quad_array_object_);
+  glGenBuffers(2, buffer_objects);
+
+  glBindVertexArray(quad_array_object_);
   
-  // Load shaders.
-  Shader general_vert, textured_frag, colored_frag, minimal_frag, quadric_frag, circles_frag,
-    particles_vert, particles_frag;
+  glBindBuffer(GL_ARRAY_BUFFER, buffer_objects[0]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+  GLint handle = programs_["shadows"].attributeHandle("position");
+  glEnableVertexAttribArray(handle);
+  glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+
+  glBindBuffer(GL_ARRAY_BUFFER, buffer_objects[1]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(tex_coords), tex_coords, GL_STATIC_DRAW);
+  handle = programs_["shadows"].attributeHandle("tex_coord");
+  glEnableVertexAttribArray(handle);
+  glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+}
+
+void Renderer::setupFBOs() {
+  glGenFramebuffers(1, &occluder_frame_buffer_);
+  glBindFramebuffer(GL_FRAMEBUFFER, occluder_frame_buffer_);
+
+  glGenTextures(1, &occluder_texture_);
+  glBindTexture(GL_TEXTURE_2D, occluder_texture_);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width_/2, height_/2, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, occluder_texture_, 0);
+  
+  glGenRenderbuffers(1, &occluder_stencil_);
+  glBindRenderbuffer(GL_RENDERBUFFER, occluder_stencil_);
+  // I think we need the depth packaged along with stencil. Stencil only formats aren't supported on any hardware.
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width_/2, height_/2);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, occluder_stencil_);
+
+  GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+  if (status != GL_FRAMEBUFFER_COMPLETE) {
+    fprintf(stderr, "Occlusion framebuffer object not complete. Something went wrong :(\n");
+    cleanupAndExit(1);
+  }
+
+  glGenFramebuffers(1, &shadow_frame_buffer_);
+  glBindFramebuffer(GL_FRAMEBUFFER, shadow_frame_buffer_);
+
+  glGenTextures(1, &shadow_texture_);
+  glBindTexture(GL_TEXTURE_2D, shadow_texture_);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width_/2, height_/2, 0, GL_RED, GL_UNSIGNED_BYTE, NULL);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, shadow_texture_, 0);
+  
+  status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+  if (status != GL_FRAMEBUFFER_COMPLETE) {
+    fprintf(stderr, "Exposure framebuffer object not complete. Something went wrong :(\n");
+    cleanupAndExit(1);
+  }
+}
+
+void Renderer::loadShaders() {
+  Shader general_vert, textured_frag, textured_with_shadows_frag, colored_frag, minimal_frag,
+    quadric_frag, circles_frag, particles_vert, particles_frag, shadows_vert, shadows_frag;
+
   general_vert.load("src/shaders/general.vert", GL_VERTEX_SHADER);
   textured_frag.load("src/shaders/textured.frag", GL_FRAGMENT_SHADER);
   Program &textured = programs_["textured"];
   textured.addShader(&general_vert);
   textured.addShader(&textured_frag);
-  textured.link();
+  setAttributesAndLink(textured);
+
+  textured_with_shadows_frag.load("src/shaders/textured_with_shadows.frag", GL_FRAGMENT_SHADER);
+  Program &textured_with_shadows = programs_["textured_with_shadows"];
+  textured_with_shadows.addShader(&general_vert);
+  textured_with_shadows.addShader(&textured_with_shadows_frag);
+  setAttributesAndLink(textured_with_shadows);
+
   colored_frag.load("src/shaders/colored.frag", GL_FRAGMENT_SHADER);
   Program &colored = programs_["colored"];
   colored.addShader(&general_vert);
   colored.addShader(&colored_frag);
-  colored.link();
+  setAttributesAndLink(colored);
+  
   minimal_frag.load("src/shaders/minimal.frag", GL_FRAGMENT_SHADER);
   Program &minimal = programs_["minimal"];
   minimal.addShader(&general_vert);
   minimal.addShader(&minimal_frag);
-  minimal.link();
+  setAttributesAndLink(minimal);
+  
   quadric_frag.load("src/shaders/quadric_anti_aliased.frag", GL_FRAGMENT_SHADER);
   Program &quadric = programs_["quadric"];
   quadric.addShader(&general_vert);
   quadric.addShader(&quadric_frag);
-  quadric.link();
+  setAttributesAndLink(quadric);
+  
   circles_frag.load("src/shaders/circles_anti_aliased.frag", GL_FRAGMENT_SHADER);
   Program &circles = programs_["circles"];
   circles.addShader(&general_vert);
   circles.addShader(&circles_frag);
-  circles.link();
+  setAttributesAndLink(circles);
+  
   particles_vert.load("src/shaders/particles.vert", GL_VERTEX_SHADER);
   particles_frag.load("src/shaders/particles.frag", GL_FRAGMENT_SHADER);
   Program &particles = programs_["particles"];
   particles.addShader(&particles_vert);
   particles.addShader(&particles_frag);
-  particles.link();
+  setAttributesAndLink(particles);
+
+  shadows_vert.load("src/shaders/shadows.vert", GL_VERTEX_SHADER);
+  shadows_frag.load("src/shaders/shadows.frag", GL_FRAGMENT_SHADER);
+  Program &shadows = programs_["shadows"];
+  shadows.addShader(&shadows_vert);
+  shadows.addShader(&shadows_frag);
+  setAttributesAndLink(shadows);
+
+  setTextureUnits();
+}
+
+void Renderer::setAttributesAndLink(Program &program) {
+  // Keep our vertex attributes in a consistent location accross programs.
+  // This way we can VAOs with different programs without worrying.
+  program.setAttributeHandle("position", 0);
+  program.setAttributeHandle("color", 1);
+  program.setAttributeHandle("tex_coord", 2);
+  program.setAttributeHandle("translate", 3);
+  program.link();
+}
+
+void Renderer::setTextureUnits() {
+  Program &textured = programs_["textured"];
+  textured.use();
+  glUniform1i(textured.uniformHandle("color_texture"), 0);
+
+  Program &textured_with_shadows = programs_["textured_with_shadows"];
+  textured_with_shadows.use();
+  glUniform1i(textured_with_shadows.uniformHandle("color_texture"), 0);
+  glUniform1i(textured_with_shadows.uniformHandle("shadow_texture"), 1);
+
+  Program &shadows = programs_["shadows"];
+  shadows.use();
+  glUniform1i(shadows.uniformHandle("occluder_texture"), 0);
+
+  Program &particles = programs_["particles"];
+  particles.use();
+  glUniform1i(particles.uniformHandle("color_texture"), 0);
 }
 
 bool compareDrawables(const Drawable *left, const Drawable *right) {
@@ -63,30 +202,66 @@ bool compareDrawables(const Drawable *left, const Drawable *right) {
 }
 
 void Renderer::draw() {
-  glDepthMask(GL_TRUE);
-  glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glDepthMask(GL_FALSE);
-  
-  glEnable(GL_MULTISAMPLE);
-  glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
-// 2D rendering modelview
+  // 2D rendering modelview
   glm::mat3 view(1.0f);
   view = translate2D(view, glm::vec2(-1.0f, -1.0f));
   view = scale2D(view, glm::vec2(2.0f/aspect_, 2.0f));
   view = translate2D(view, glm::vec2(-left_of_window_, 0.0f));
 
-  std::sort(to_draw_.begin(), to_draw_.end(), compareDrawables);
+  // Sort drawables by priority.
+  std::sort(draw_normal_.begin(), draw_normal_.end(), compareDrawables);
   vector<Drawable *>::iterator it;
-  for (it = to_draw_.begin(); it != to_draw_.end(); ++it) {
+
+  // Draw occluders to texture.
+  //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glBindFramebuffer(GL_FRAMEBUFFER, occluder_frame_buffer_);
+  glViewport(0,0,width_/2, height_/2);
+  glDepthMask(GL_TRUE);
+  glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glDepthMask(GL_FALSE);
+  for (it = draw_normal_.begin(); it != draw_normal_.end(); ++it) {
+    if ((*it)->occluder()) (*it)->drawOcclude(view);
+  }
+  
+  //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glBindFramebuffer(GL_FRAMEBUFFER, shadow_frame_buffer_);
+  glDepthMask(GL_TRUE);
+  glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glDepthMask(GL_FALSE);
+  programs_["shadows"].use();
+  glm::vec3 transformed_light_position = view * glm::vec3(light_position_, 1.0f);
+  glUniform2fv(light_position_handle_, 1, glm::value_ptr(transformed_light_position));
+  glBindTexture(GL_TEXTURE_2D, shadow_texture_);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, occluder_texture_);
+  glBindVertexArray(quad_array_object_);
+  glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glViewport(0,0,width_, height_);
+  glDepthMask(GL_TRUE);
+  glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glDepthMask(GL_FALSE);
+  glEnable(GL_MULTISAMPLE);
+  glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D, shadow_texture_);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  for (it = draw_normal_.begin(); it != draw_normal_.end(); ++it) {
     (*it)->draw(view);
   }
+
   if (do_stencil_) {
     glEnable(GL_STENCIL_TEST);
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     glStencilFunc(GL_ALWAYS, 0, 0xFF);
     glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-    for (it = to_draw_.begin(); it != to_draw_.end(); ++it) {
-      (*it)->drawStencil(view);
+    for (it = draw_stencil_.begin(); it != draw_stencil_.end(); ++it) {
+      (*it)->draw(view);
     }
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
@@ -102,21 +277,31 @@ void Renderer::draw() {
 }
 
 void Renderer::addDrawable(Drawable *object) {
-  to_draw_.push_back(object);
+  draw_normal_.push_back(object);
 }
 
 void Renderer::removeDrawable(Drawable *object) {
   vector<Drawable *>::iterator it;
-  for (it = to_draw_.begin(); it != to_draw_.end(); ++it) {
+  for (it = draw_normal_.begin(); it != draw_normal_.end(); ++it) {
     if (*it == object) {
-      to_draw_.erase(it);
+      draw_normal_.erase(it);
       return;
     }
   }
 }
 
-void Renderer::resize(int width, int height) {
-  glViewport(0, 0, width, height);
+void Renderer::addStencilShape(Drawable *object) {
+  draw_stencil_.push_back(object);
+}
+
+void Renderer::removeStencilShape(Drawable *object) {
+  vector<Drawable *>::iterator it;
+  for (it = draw_stencil_.begin(); it != draw_stencil_.end(); ++it) {
+    if (*it == object) {
+      draw_normal_.erase(it);
+      return;
+    }
+  }
 }
 
 Program *Renderer::getProgram(string name) {

@@ -178,13 +178,14 @@ void PathShape::createVAOs() {
     glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
     glBindBuffer(GL_ARRAY_BUFFER, quadric_buffers_[1]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_bezier_coords_.size(), &quadric_bezier_coords_[0], GL_STATIC_DRAW);
-    handle = quadric_program_->attributeHandle("tex_coords");
+    handle = quadric_program_->attributeHandle("tex_coord");
     glEnableVertexAttribArray(handle);
     glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
   }
+}
 
-  modelview_handle_minimal_ = minimal_program_->uniformHandle("modelview");
-  modelview_handle_quadric_ = quadric_program_->uniformHandle("modelview");
+void PathShape::setOccluderColor(glm::vec4 color) {
+  fill_->setOccluderColor(color);
 }
 
 // For now just give the quad extent as width and height. This is the maximum extent the shape can have on screen.
@@ -206,9 +207,7 @@ void PathShape::updateVertexPosition(int i, glm::vec2 position) {
   }
 }
 
-void PathShape::draw(glm::mat3 transform) {
-  glm::mat3 modelview = transform * transform_;
-  
+void PathShape::drawHelper(glm::mat3 view, bool asOccluder) {
   // Send position buffers if dynamic.
   if (dynamic_) {
     glBindBuffer(GL_ARRAY_BUFFER, quadric_buffers_[0]);
@@ -226,7 +225,7 @@ void PathShape::draw(glm::mat3 transform) {
   // Draw solid and quadric triangles, inverting the stencil each time.
   if (solid_vertices_.size() > 0) {
     minimal_program_->use();
-    glUniformMatrix3fv(modelview_handle_minimal_, 1, GL_FALSE, glm::value_ptr(modelview));
+    setModelviewUniform(minimal_program_, view);
     glBindVertexArray(solid_array_object_);
     glDrawArrays(GL_TRIANGLE_FAN, 0, solid_vertices_.size());
   }
@@ -234,7 +233,7 @@ void PathShape::draw(glm::mat3 transform) {
   if (quadric_vertices_.size() > 0) {
     glEnable(GL_DEPTH_TEST);
     quadric_program_->use();
-    glUniformMatrix3fv(modelview_handle_quadric_, 1, GL_FALSE, glm::value_ptr(modelview));
+    setModelviewUniform(quadric_program_, view);
     glBindVertexArray(quadric_array_object_);
     glDrawArrays(GL_TRIANGLES, 0, quadric_vertices_.size());
     glDisable(GL_DEPTH_TEST);
@@ -244,6 +243,10 @@ void PathShape::draw(glm::mat3 transform) {
   glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
   glStencilFunc(GL_EQUAL, 1, 1);
   glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO);
-  fill_->draw(modelview);
+  if (asOccluder) {
+    fill_->drawOcclude(modelview(view));
+  } else {
+    fill_->draw(modelview(view));
+  }
   glDisable(GL_STENCIL_TEST);
 }

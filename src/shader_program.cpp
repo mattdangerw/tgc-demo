@@ -44,7 +44,9 @@ void Shader::load(string filename, GLenum type) {
   delete source;
 }
 
-Program::Program() : handle_(0) {}
+Program::Program()
+  : handle_(0),
+    linked_(false) {}
 
 Program::~Program() {
   if (handle_ != 0) glDeleteProgram(handle_);
@@ -62,7 +64,7 @@ void Program::link() {
   glLinkProgram(handle_);
   GLint linked;
   glGetProgramiv(handle_, GL_COMPILE_STATUS, &linked);
-  if (linked == false) {
+  if (linked == GL_FALSE) {
     GLint log_length;
     glGetProgramiv(handle_, GL_INFO_LOG_LENGTH , &log_length);
     GLchar *log = new GLchar[log_length];
@@ -71,13 +73,22 @@ void Program::link() {
     delete log;
     cleanupAndExit(1);
   }
+  linked_ = linked;
 }
 
 void Program::use() {
   glUseProgram(handle_);
 }
 
-GLint Program::attributeHandle(string attribute) {
+void Program::setAttributeHandle(string attribute, GLuint handle) {
+  if (linked_) {
+    fprintf(stderr, "Shader aleardy linked.\n");
+    cleanupAndExit(1);
+  }
+  glBindAttribLocation(handle_, handle, attribute.c_str());
+}
+
+GLuint Program::attributeHandle(string attribute) {
   GLint handle = glGetAttribLocation(handle_, attribute.c_str());
   if (handle == -1) {
     fprintf(stderr, "Shader attribute %s not found.\n", attribute.c_str());
@@ -86,7 +97,7 @@ GLint Program::attributeHandle(string attribute) {
   return handle;
 }
 
-GLint Program::uniformHandle(string uniform) {
+GLuint Program::uniformHandle(string uniform) {
   GLint handle = glGetUniformLocation(handle_, uniform.c_str());
   if (handle == -1) {
     fprintf(stderr, "Shader uniform %s not found.\n", uniform.c_str());

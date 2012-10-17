@@ -9,11 +9,12 @@ class Tree : public Drawable {
     Tree();
     ~Tree();
     void init();
-    void draw(glm::mat3 transform);
+    void draw(glm::mat3 view);
+    void drawOcclude(glm::mat3 view);
     void setColor(glm::vec4 color);
 
   private:
-    TiledTexturedQuad trunk_quad_, leaves_quad_;
+    TexturedQuad trunk_quad_, leaves_quad_;
     PathShape trunk_shape_, leaves_shape_;
 };
 

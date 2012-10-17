@@ -45,6 +45,7 @@ void Cloud::init() {
   quad_.setColorMask(glm::vec4(shade_, shade_, shade_, 1.0f));
   quad_.setTextureScale(glm::vec2(scale_));
   shape_.init("paths/cloud.path", &quad_, true, false);
+  //shape_.setOccluderColor(glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
   width_ = shape_.width() * scale_;
   Renderer::instance().addDrawable(&shape_);
   updateShapeTransform();

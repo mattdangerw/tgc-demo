@@ -38,7 +38,7 @@ class Cloud {
     float scale_, velocity_, width_, shade_;
     // Drawables.
     PathShape shape_;
-    TiledTexturedQuad quad_;
+    TexturedQuad quad_;
 };
 
 class CloudManager : public GameEntity {

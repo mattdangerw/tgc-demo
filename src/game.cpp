@@ -140,7 +140,3 @@ void Game::handleKeyboardEvent(int key, int action) {
       return;
   }
 }
-
-void Game::resize(int width, int height) {
-  Renderer::instance().resize(width, height);
-}

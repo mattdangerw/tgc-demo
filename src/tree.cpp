@@ -19,10 +19,16 @@ void Tree::init() {
   leaves_shape_.setTransform(transform);
 }
 
-void Tree::draw(glm::mat3 transform) {
-  transform = transform * transform_;
-  trunk_shape_.draw(transform);
-  leaves_shape_.draw(transform);
+void Tree::draw(glm::mat3 view) {
+  view = view * transform();
+  trunk_shape_.draw(view);
+  leaves_shape_.draw(view);
+}
+
+void Tree::drawOcclude(glm::mat3 view) {
+  view = view * transform();
+  trunk_shape_.drawOcclude(view);
+  leaves_shape_.drawOcclude(view);
 }
 
 void Tree::setColor(glm::vec4 color){

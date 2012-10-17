@@ -29,7 +29,7 @@ void ParticleDrawer::init() {
   glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
   glBindBuffer(GL_ARRAY_BUFFER, quad_buffer_objects_[1]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(tex_coords), tex_coords, GL_STATIC_DRAW);
-  handle = program_->attributeHandle("tex_coords");
+  handle = program_->attributeHandle("tex_coord");
   glEnableVertexAttribArray(handle);
   glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
@@ -56,10 +56,10 @@ void ParticleDrawer::sendParticles(ParticleDrawInfo *particles, int num_particle
   glBufferData(GL_ARRAY_BUFFER, sizeof(ParticleDrawInfo) * num_particles, particles, GL_DYNAMIC_DRAW);
 }
 
-void ParticleDrawer::draw(glm::mat3 transform) {
+void ParticleDrawer::draw(glm::mat3 view) {
   if (num_particles_ > 0) {
     program_->use();
-    glm::mat3 modelview = transform * transform_;
+    glm::mat3 modelview = view * transform();
     glUniformMatrix3fv(modelview_handle_, 1, GL_FALSE, glm::value_ptr(modelview));
     glUniform1fv(size_handle_, 1, &kParticleRadius);
     glActiveTexture(GL_TEXTURE0);

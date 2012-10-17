@@ -7,7 +7,7 @@
 
 static Game *game = NULL;
 // Set false when debugging!!
-static bool fullscreen = true;
+static bool fullscreen = false;
 
 void cleanupAndExit(int exit_code) {
   glfwTerminate();
@@ -18,11 +18,6 @@ void cleanupAndExit(int exit_code) {
 // Handle keyboard events.
 void GLFWCALL keyboardCallback(int key, int action) {
   game->handleKeyboardEvent(key, action);
-}
-
-// Adjust window size.
-void GLFWCALL resizeCallback(int width, int height) {
-  game->resize(width, height);
 }
 
 int GLFWCALL windowCloseCallback() {
@@ -46,9 +41,9 @@ int main(int argc, char *argv[]) {
   printf("Press enter to continue...");
   std::getchar();
 
-  //glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
-  //glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 3);
-  //glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
+  glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 3);
+  glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 8);
   int screen_mode = fullscreen ? GLFW_FULLSCREEN : GLFW_WINDOW;
   int width, height;
@@ -87,7 +82,6 @@ int main(int argc, char *argv[]) {
   glfwEnable(GLFW_KEY_REPEAT);
   glfwSwapInterval(1);
   // Set callback functions.
-  glfwSetWindowSizeCallback(resizeCallback);
   glfwSetKeyCallback(keyboardCallback);
   glfwSetWindowCloseCallback(windowCloseCallback);
 

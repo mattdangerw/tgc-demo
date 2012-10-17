@@ -1,13 +1,13 @@
 #version 330
 
-in vec2 frag_tex_coords;
+in vec2 frag_tex_coord;
 
 out vec4 out_color;
 
 void main()
 {
-  float x = frag_tex_coords.x;
-  float y = frag_tex_coords.y;
+  float x = frag_tex_coord.x;
+  float y = frag_tex_coord.y;
   // Signed distance
   float sd = x*x - y;  
   if (sd > 0)

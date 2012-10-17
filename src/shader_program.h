@@ -27,12 +27,14 @@ class Program {
     void link();
     void use();
     GLuint handle() { return handle_; }
-    GLint attributeHandle(string attribute);
-    GLint uniformHandle(string uniform);
+    void setAttributeHandle(string attribute, GLuint handle);
+    GLuint attributeHandle(string attribute);
+    GLuint uniformHandle(string uniform);
 
   private:
+    bool linked_;
     GLuint handle_;
-    vector<Shader *>shaders_;
+    vector<Shader *> shaders_;
 };
 
 #endif  // SRC_SHADER_PROGRAM_H_

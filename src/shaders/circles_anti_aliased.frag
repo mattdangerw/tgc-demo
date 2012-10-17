@@ -2,17 +2,17 @@
 
 uniform vec4 color;
 
-in vec2 frag_tex_coords;
+in vec2 frag_tex_coord;
 
 out vec4 out_color;
 
 void main()
 {
-  float x = frag_tex_coords.x;
-  float y = frag_tex_coords.y;
+  float x = frag_tex_coord.x;
+  float y = frag_tex_coord.y;
 
-  vec2 dx = dFdx(frag_tex_coords);
-  vec2 dy = dFdy(frag_tex_coords);
+  vec2 dx = dFdx(frag_tex_coord);
+  vec2 dy = dFdy(frag_tex_coord);
   // Chain rule
   float fx = 2*x*dx.x + 2*y*dx.y;
   float fy = 2*x*dy.x + 2*y*dy.y;

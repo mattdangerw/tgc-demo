@@ -39,7 +39,8 @@ class ParticleDrawer : public Drawable {
     // Set up the VAOs and VBOs and what not.
     void init();
     void sendParticles(ParticleDrawInfo *particles, int num_particles);
-    void draw(glm::mat3 transform);
+    void draw(glm::mat3 view);
+    void drawOcclude(glm::mat3 view) {}
 
   private:
     int num_particles_;

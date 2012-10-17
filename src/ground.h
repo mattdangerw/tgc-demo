@@ -27,8 +27,8 @@ class Ground : public GameEntity {
     vector<glm::vec2> points_;
     // Drawables.
     PathShape shape_;
-    TiledTexturedQuad quad_;
-    TiledTexturedQuad background_;
+    TexturedQuad quad_;
+    TexturedQuad background_;
     vector<Tree> trees_;
     int ground_target_id_, background_target_id_, tree6_target_id_,
       tree7_target_id_, tree8_target_id_, tree9_target_id_;
