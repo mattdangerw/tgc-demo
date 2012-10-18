@@ -3,11 +3,16 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <cstdio>
 #include <sstream>
+#include <stdlib.h>
 
 #include "transform2D.h"
 
 // Forward declare out exit point.
 void cleanupAndExit(int exit_code);
+
+static inline float randomFloat(float min, float max) {
+  return min + rand()/(RAND_MAX/(max - min));
+}
 
 static inline glm::vec2 midpoint(glm::vec2 a, glm::vec2 b) {
   return glm::mix(a, b, 0.5f);
@@ -28,12 +33,44 @@ static void intersectRays(glm::vec2 a_src, glm::vec2 a_dest, glm::vec2 b_src, gl
   }
 }
 
-PathShape::PathShape() : dynamic_(false) {}
+PathShape::PathShape() : dynamic_(false), time_(randomFloat(0.0f, 1.0f)) {}
 
 PathShape::~PathShape() {}
 
-void PathShape::init(string filename, Quad *fill, bool fit_fill, bool dynamic) {
+void PathShape::init(string filename, Quad *fill) {
+  quadric_program_ = Renderer::instance().getProgram("quadric");
+  minimal_program_ = Renderer::instance().getProgram("minimal");
+  fill_ = fill;
   vector<PathVertex> vertices;
+  readVertices(filename, vertices);
+  fitFillQuad(vertices);
+  prepVertices(vertices, solid_vertices_, quadric_vertices_);
+}
+
+void PathShape::init(string filename1, string filename2, Quad *fill) {
+  dynamic_ = true;
+  quadric_program_ = Renderer::instance().getProgram("quadric");
+  minimal_program_ = Renderer::instance().getProgram("minimal");
+  fill_ = fill;
+  vector<PathVertex> vertices;
+  readVertices(filename1, vertices);
+  fitFillQuad(vertices);
+  prepVertices(vertices, solid_vertices_, quadric_vertices_);
+  prepVertices(vertices, solid_vertices1_, quadric_vertices1_);
+  vector<PathVertex> vertices2;
+  readVertices(filename2, vertices2);
+  prepVertices(vertices2, solid_vertices2_, quadric_vertices2_);
+}
+
+void PathShape::init(const vector<PathVertex> &vertices, Quad *fill) {
+  quadric_program_ = Renderer::instance().getProgram("quadric");
+  minimal_program_ = Renderer::instance().getProgram("minimal");
+  fill_ = fill;
+  fitFillQuad(vertices);
+  prepVertices(vertices, solid_vertices_, quadric_vertices_);
+}
+
+void PathShape::readVertices(string filename, vector<PathVertex> &vertices) {
   FILE *file_pointer = fopen(filename.c_str(), "r");
   if (file_pointer == NULL) {
     fprintf(stderr, "Path file %s not found.\n", filename.c_str());
@@ -52,32 +89,19 @@ void PathShape::init(string filename, Quad *fill, bool fit_fill, bool dynamic) {
     vertices.push_back(vertex);
   }
   fclose(file_pointer);
-  init(vertices, fill, fit_fill, dynamic);
 }
 
-void PathShape::init(const vector<PathVertex> &vertices, Quad *fill, bool fit_fill, bool dynamic) {
-  dynamic_ = dynamic;
-  quadric_program_ = Renderer::instance().getProgram("quadric");
-  minimal_program_ = Renderer::instance().getProgram("minimal");
-  fill_ = fill;
-
-  if (fit_fill) fitFillQuad(vertices);
-  updates_by_index_ = vector<vector<glm::vec2 *> >(vertices.size());
+void PathShape::prepVertices(const vector<PathVertex> &vertices, vector<glm::vec2> &solids, vector<glm::vec2> &quadrics) {
   for (unsigned int i = 0; i < vertices.size(); ++i) {
     PathVertexType type = vertices[i].type;
     if (type == ON_PATH) {
-      solid_vertices_.push_back(vertices[i].position);
-      updates_by_index_[i].push_back(&solid_vertices_.back());
+      solids.push_back(vertices[i].position);
     } else if (type == QUADRIC) {
-      quadric_vertices_.push_back(vertices[i-1].position);
-      updates_by_index_[i-1].push_back(&quadric_vertices_.back());
-      quadric_vertices_.push_back(vertices[i].position);
-      updates_by_index_[i].push_back(&quadric_vertices_.back());
-      quadric_vertices_.push_back(vertices[i+1].position);
-      updates_by_index_[i+1].push_back(&quadric_vertices_.back());
-      pushBezierCoords();
+      quadrics.push_back(vertices[i-1].position);
+      quadrics.push_back(vertices[i].position);
+      quadrics.push_back(vertices[i+1].position);
     } else if (type == CUBIC) {
-      cubicToQuadrics(vertices[i-1].position, vertices[i].position, vertices[i+1].position, vertices[i+2].position);
+      cubicToQuadrics(vertices[i-1].position, vertices[i].position, vertices[i+1].position, vertices[i+2].position, solids, quadrics);
       // Skip the next vertex its the other cubic control.
       i++;
     }
@@ -95,7 +119,8 @@ void PathShape::fitFillQuad(const vector<PathVertex> &vertices) {
   fill_->setCorners(min, max);
 }
 
-void PathShape::cubicToQuadrics(glm::vec2 start, glm::vec2 control1, glm::vec2 control2, glm::vec2 end) {
+void PathShape::cubicToQuadrics(glm::vec2 start, glm::vec2 control1, glm::vec2 control2, glm::vec2 end,
+  vector<glm::vec2> &solids, vector<glm::vec2> &quadrics) {
   // Approximate the cubic with two quadrics.
   // Find on path point with succesive midpoints.
   glm::vec2 midpoints[3];
@@ -113,10 +138,9 @@ void PathShape::cubicToQuadrics(glm::vec2 start, glm::vec2 control1, glm::vec2 c
   intersectRays(start, control1, new_tangents[1], new_tangents[0], &degenerate, &intersects, &new_control_point);
   if (!degenerate) {
     if (intersects) {
-      quadric_vertices_.push_back(start);
-      quadric_vertices_.push_back(new_control_point);
-      quadric_vertices_.push_back(new_on_path);
-      pushBezierCoords();
+      quadrics.push_back(start);
+      quadrics.push_back(new_control_point);
+      quadrics.push_back(new_on_path);
     }
     // TODO: try subdivide
   }
@@ -124,21 +148,22 @@ void PathShape::cubicToQuadrics(glm::vec2 start, glm::vec2 control1, glm::vec2 c
   intersectRays(end, control2, new_tangents[0], new_tangents[1], &degenerate, &intersects, &new_control_point);
   if (!degenerate) {
     if (intersects) {
-      quadric_vertices_.push_back(new_on_path);
-      quadric_vertices_.push_back(new_control_point);
-      quadric_vertices_.push_back(end);
-      pushBezierCoords();
+      quadrics.push_back(new_on_path);
+      quadrics.push_back(new_control_point);
+      quadrics.push_back(end);
     }
     // TODO: try subdivide
   }
   // Add a solid point at the new on path points
-  solid_vertices_.push_back(new_on_path);
+  solids.push_back(new_on_path);
 }
 
-void PathShape::pushBezierCoords() {
-  quadric_bezier_coords_.push_back(glm::vec2(0.0f, 0.0f));
-  quadric_bezier_coords_.push_back(glm::vec2(0.5f, 0.0f));
-  quadric_bezier_coords_.push_back(glm::vec2(1.0f, 1.0f));
+void PathShape::makeBezierTexCoords(vector<glm::vec2> &bezier_tex_coords) {
+  for (size_t i = 0; i < quadric_vertices_.size()/3 ; i++) {
+    bezier_tex_coords.push_back(glm::vec2(0.0f, 0.0f));
+    bezier_tex_coords.push_back(glm::vec2(0.5f, 0.0f));
+    bezier_tex_coords.push_back(glm::vec2(1.0f, 1.0f));
+  }
 }
 
 // Prepare GL to draw paths and build indices for each bezier level.
@@ -166,6 +191,7 @@ void PathShape::createVAOs() {
 
   // Set up the quadric triangles VAO
   if(quadric_vertices_.size() > 0) {
+    // Set up the quadric vertices vertex buffer
     glBindVertexArray(quadric_array_object_);
     glBindBuffer(GL_ARRAY_BUFFER, quadric_buffers_[0]);
     if (dynamic_) {
@@ -176,8 +202,12 @@ void PathShape::createVAOs() {
     GLint handle = quadric_program_->attributeHandle("position");
     glEnableVertexAttribArray(handle);
     glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    // Pass in the bezier texture coords.
+    vector<glm::vec2> bezier_tex_coords;
+    makeBezierTexCoords(bezier_tex_coords);
     glBindBuffer(GL_ARRAY_BUFFER, quadric_buffers_[1]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_bezier_coords_.size(), &quadric_bezier_coords_[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * bezier_tex_coords.size(), &bezier_tex_coords[0], GL_STATIC_DRAW);
     handle = quadric_program_->attributeHandle("tex_coord");
     glEnableVertexAttribArray(handle);
     glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
@@ -201,15 +231,18 @@ float PathShape::height() {
   return max.y - min.y;
 }
 
-void PathShape::updateVertexPosition(int i, glm::vec2 position) {
-  for (vector<glm::vec2 *>::iterator it = updates_by_index_[0].begin(); it != updates_by_index_[0].end(); ++it) {
-    **it = position;
-  }
-}
-
 void PathShape::drawHelper(glm::mat3 view, bool asOccluder) {
   // Send position buffers if dynamic.
   if (dynamic_) {
+    int time_floor = static_cast<int>(time_);
+    float t = time_ - time_floor;
+    if(time_floor % 2 != 0) t = 1- t;
+    for (size_t i = 0; i < quadric_vertices_.size(); i++) {
+      quadric_vertices_[i] = glm::mix(quadric_vertices1_[i], quadric_vertices2_[i], t);
+    }
+    for (size_t i = 0; i < solid_vertices_.size(); i++) {
+      solid_vertices_[i] = glm::mix(solid_vertices1_[i], solid_vertices2_[i], t);
+    }
     glBindBuffer(GL_ARRAY_BUFFER, quadric_buffers_[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_vertices_.size(), &quadric_vertices_[0], GL_DYNAMIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, solid_vertex_buffer_);

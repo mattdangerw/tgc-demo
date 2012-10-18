@@ -44,7 +44,7 @@ void Cloud::init() {
   quad_.init("textures/paper3.dds");
   quad_.setColorMask(glm::vec4(shade_, shade_, shade_, 1.0f));
   quad_.setTextureScale(glm::vec2(scale_));
-  shape_.init("paths/cloud.path", &quad_, true, false);
+  shape_.init("paths/cloud2.path", "paths/cloud3.path", &quad_);
   //shape_.setOccluderColor(glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
   width_ = shape_.width() * scale_;
   Renderer::instance().addDrawable(&shape_);
@@ -56,6 +56,7 @@ glm::vec2 Cloud::center() {
 }
 
 void Cloud::update(float delta_time) {
+  shape_.addTime(delta_time / 15.0f);
   position_.x -= velocity_ * delta_time;
   updateShapeTransform();
 }
