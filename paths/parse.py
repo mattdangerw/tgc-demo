@@ -8,27 +8,27 @@ output_paths = []
 
 class OutputPath:
   path = []
-  min_x = float("inf")
-  max_x = float("-inf")
-  min_y = float("inf")
-  max_y = float("-inf")
+  # min_x = float("inf")
+  # max_x = float("-inf")
+  # min_y = float("inf")
+  # max_y = float("-inf")
   def add(self, type, x, y):
-    y = -y
+    # y = -y
     self.path.append((type, x, y))
-    if x < self.min_x:
-      self.min_x = x
-    if x > self.max_x:
-      self.max_x = x
-    if y < self.min_y:
-      self.min_y = y
-    if y > self.max_y:
-      self.max_y = y
+    # if x < self.min_x:
+    #   self.min_x = x
+    # if x > self.max_x:
+    #   self.max_x = x
+    # if y < self.min_y:
+    #   self.min_y = y
+    # if y > self.max_y:
+    #   self.max_y = y
   def write(self, name):
     out = open(name, "w")
-    scale = 1.0 / (self.max_y - self.min_y)
+    scale = 1.0 / 1000
     for (type, x, y) in self.path:
-      x = (x - self.min_x) * scale
-      y = (y - self.min_y) * scale
+      x *= scale
+      y = 1 - y * scale
       out.write(" ".join((str(type), str(x), str(y))))
       out.write("\n")
     out.close()

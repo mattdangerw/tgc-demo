@@ -43,31 +43,59 @@ void PathShape::init(string filename, Quad *fill) {
   fill_ = fill;
   vector<PathVertex> vertices;
   readVertices(filename, vertices);
-  fitFillQuad(vertices);
+  glm::vec2 min, max;
+  corners(vertices, &min, &max);
+  fill_->setCorners(min, max);
   prepVertices(vertices, solid_vertices_, quadric_vertices_);
-}
-
-void PathShape::init(string filename1, string filename2, Quad *fill) {
-  dynamic_ = true;
-  quadric_program_ = Renderer::instance().getProgram("quadric");
-  minimal_program_ = Renderer::instance().getProgram("minimal");
-  fill_ = fill;
-  vector<PathVertex> vertices;
-  readVertices(filename1, vertices);
-  fitFillQuad(vertices);
-  prepVertices(vertices, solid_vertices_, quadric_vertices_);
-  prepVertices(vertices, solid_vertices1_, quadric_vertices1_);
-  vector<PathVertex> vertices2;
-  readVertices(filename2, vertices2);
-  prepVertices(vertices2, solid_vertices2_, quadric_vertices2_);
+  createVAOs();
 }
 
 void PathShape::init(const vector<PathVertex> &vertices, Quad *fill) {
   quadric_program_ = Renderer::instance().getProgram("quadric");
   minimal_program_ = Renderer::instance().getProgram("minimal");
   fill_ = fill;
-  fitFillQuad(vertices);
+  glm::vec2 min, max;
+  corners(vertices, &min, &max);
+  fill_->setCorners(min, max);
   prepVertices(vertices, solid_vertices_, quadric_vertices_);
+  createVAOs();
+}
+
+void PathShape::init(vector<string> keyframe_files, vector<float> keyframe_durations, Quad *fill) {
+  dynamic_ = true;
+  quadric_program_ = Renderer::instance().getProgram("quadric");
+  minimal_program_ = Renderer::instance().getProgram("minimal");
+  fill_ = fill;
+  
+  solid_keys_.resize(keyframe_files.size());
+  quadric_keys_.resize(keyframe_files.size());
+  glm::vec2 min(std::numeric_limits<float>::max()), max(std::numeric_limits<float>::min());
+  for (size_t i = 0; i < keyframe_files.size(); ++i) {
+    vector<PathVertex> vertices;
+    readVertices(keyframe_files[i], vertices);
+    prepVertices(vertices, solid_keys_[i], quadric_keys_[i]);
+    glm::vec2 frame_min, frame_max;
+    corners(vertices, &frame_min, &frame_max);
+    min = glm::min(frame_min, min);
+    max = glm::max(frame_max, max);
+  }
+  solid_vertices_.resize(solid_keys_[0].size());
+  quadric_vertices_.resize(quadric_keys_[0].size());
+  fill_->setCorners(min, max);
+
+  assert(keyframe_files.size() == keyframe_durations.size());
+  keyframe_times_.push_back(0.0f);
+  float t = 0.0f;
+  for (size_t i = 0; i < keyframe_durations.size() - 1; ++i) {
+    t += keyframe_durations[i];
+    keyframe_times_.push_back(t);
+  }
+  animation_duration_ = t + keyframe_durations.back();
+  last_keyframe_ = 0;
+  next_keyframe_ = 1;
+  time_ = randomFloat(0.0f, animation_duration_);
+
+  createVAOs();
 }
 
 void PathShape::readVertices(string filename, vector<PathVertex> &vertices) {
@@ -76,8 +104,8 @@ void PathShape::readVertices(string filename, vector<PathVertex> &vertices) {
     fprintf(stderr, "Path file %s not found.\n", filename.c_str());
     cleanupAndExit(1);
   }
-  char line[64];
-  while (fgets(line, 64, file_pointer) != NULL) {
+  char line[128];
+  while (fgets(line, 128, file_pointer) != NULL) {
     PathVertex vertex;
     int type;
     std::istringstream stream(line);
@@ -106,17 +134,16 @@ void PathShape::prepVertices(const vector<PathVertex> &vertices, vector<glm::vec
       i++;
     }
   }
-  createVAOs();
 }
 
-void PathShape::fitFillQuad(const vector<PathVertex> &vertices) {
-  glm::vec2 min, max = vertices[0].position;
+void PathShape::corners(const vector<PathVertex> &vertices, glm::vec2 *min, glm::vec2 *max) {
+  *min = vertices[0].position;
+  *max = vertices[0].position;
   for (vector<PathVertex>::const_iterator it = vertices.begin(); it != vertices.end(); ++it) {
     glm::vec2 position = it->position;
-    min = glm::min(position, min);
-    max = glm::max(position, max);
+    *min = glm::min(position, *min);
+    *max = glm::max(position, *max);
   }
-  fill_->setCorners(min, max);
 }
 
 void PathShape::cubicToQuadrics(glm::vec2 start, glm::vec2 control1, glm::vec2 control2, glm::vec2 end,
@@ -136,24 +163,22 @@ void PathShape::cubicToQuadrics(glm::vec2 start, glm::vec2 control1, glm::vec2 c
   bool degenerate, intersects;
   // First quadric
   intersectRays(start, control1, new_tangents[1], new_tangents[0], &degenerate, &intersects, &new_control_point);
-  if (!degenerate) {
-    if (intersects) {
-      quadrics.push_back(start);
-      quadrics.push_back(new_control_point);
-      quadrics.push_back(new_on_path);
-    }
-    // TODO: try subdivide
+  quadrics.push_back(start);
+  if (!degenerate && intersects) {
+    quadrics.push_back(new_control_point);
+  } else {
+    quadrics.push_back(midpoint(start, new_on_path));
   }
+  quadrics.push_back(new_on_path);
   // Second quadric
   intersectRays(end, control2, new_tangents[0], new_tangents[1], &degenerate, &intersects, &new_control_point);
-  if (!degenerate) {
-    if (intersects) {
-      quadrics.push_back(new_on_path);
-      quadrics.push_back(new_control_point);
-      quadrics.push_back(end);
-    }
-    // TODO: try subdivide
+  quadrics.push_back(new_on_path);
+  if (!degenerate && intersects) {
+    quadrics.push_back(new_control_point);
+  } else {
+    quadrics.push_back(midpoint(new_on_path, end));
   }
+  quadrics.push_back(end);
   // Add a solid point at the new on path points
   solids.push_back(new_on_path);
 }
@@ -231,24 +256,42 @@ float PathShape::height() {
   return max.y - min.y;
 }
 
-void PathShape::drawHelper(glm::mat3 view, bool asOccluder) {
-  // Send position buffers if dynamic.
-  if (dynamic_) {
-    int time_floor = static_cast<int>(time_);
-    float t = time_ - time_floor;
-    if(time_floor % 2 != 0) t = 1- t;
-    for (size_t i = 0; i < quadric_vertices_.size(); i++) {
-      quadric_vertices_[i] = glm::mix(quadric_vertices1_[i], quadric_vertices2_[i], t);
-    }
-    for (size_t i = 0; i < solid_vertices_.size(); i++) {
-      solid_vertices_[i] = glm::mix(solid_vertices1_[i], solid_vertices2_[i], t);
-    }
-    glBindBuffer(GL_ARRAY_BUFFER, quadric_buffers_[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_vertices_.size(), &quadric_vertices_[0], GL_DYNAMIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, solid_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * solid_vertices_.size(), &solid_vertices_[0], GL_DYNAMIC_DRAW);
+void PathShape::animate(float delta_time) {
+  if (!dynamic_) return;
+  time_+=delta_time;
+  float last_key_time = keyframe_times_[last_keyframe_];
+  float next_key_time = keyframe_times_[next_keyframe_];
+  if (next_keyframe_ == 0) {
+    next_key_time = animation_duration_;
   }
+  if (next_key_time <= time_) {
+    last_keyframe_ = next_keyframe_;
+    last_key_time = next_key_time;
+    if (last_keyframe_ == 0) {
+      last_key_time = 0.0f;
+      time_ -= animation_duration_;
+    }
+    next_keyframe_ = (next_keyframe_ + 1) % keyframe_times_.size();
+    next_key_time = keyframe_times_[next_keyframe_];
+    if (next_keyframe_ == 0) {
+      next_key_time = animation_duration_;
+    }
+  }
+  keyframes_mix_ = (time_ - last_key_time) / (next_key_time - last_key_time);
 
+  for (size_t i = 0; i < quadric_vertices_.size(); i++) {
+    quadric_vertices_[i] = glm::mix(quadric_keys_[last_keyframe_][i], quadric_keys_[next_keyframe_][i], keyframes_mix_);
+  }
+  for (size_t i = 0; i < solid_vertices_.size(); i++) {
+    solid_vertices_[i] = glm::mix(solid_keys_[last_keyframe_][i], solid_keys_[next_keyframe_][i], keyframes_mix_);
+  }
+  glBindBuffer(GL_ARRAY_BUFFER, quadric_buffers_[0]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_vertices_.size(), &quadric_vertices_[0], GL_DYNAMIC_DRAW);
+  glBindBuffer(GL_ARRAY_BUFFER, solid_vertex_buffer_);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * solid_vertices_.size(), &solid_vertices_[0], GL_DYNAMIC_DRAW);
+}
+
+void PathShape::drawHelper(glm::mat3 view, bool asOccluder) {
   // Ready stencil drawing.
   glEnable(GL_STENCIL_TEST);
   glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
