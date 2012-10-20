@@ -5,6 +5,7 @@
 #include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/color_space.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "transform2D.h"
 
@@ -17,8 +18,17 @@ static inline glm::vec2 randomDirection() {
   return glm::normalize(direction);
 }
 
+static inline glm::vec3 randomDirection3D() {
+  glm::vec3 direction = glm::vec3(randomFloat(-1.0f, 1.0f), randomFloat(-1.0f, 1.0f), randomFloat(-1.0f, 1.0f));
+  return glm::normalize(direction);
+}
+
 static inline glm::vec2 fastRandomDirection() {
   return glm::vec2(randomFloat(-1.0f, 1.0f), randomFloat(-1.0f, 1.0f));
+}
+
+static inline glm::vec3 fastRandomDirection3D() {
+  return glm::vec3(randomFloat(-1.0f, 1.0f), randomFloat(-1.0f, 1.0f), randomFloat(-1.0f, 1.0f));
 }
 
 static const int kMaxParticles = 10000;
@@ -43,7 +53,6 @@ ParticleSystem::~ParticleSystem() {
 void ParticleSystem::init(ThoughtBubble *thought_bubble) {
   thought_bubble_ = thought_bubble;
   drawer_.init();
-  drawer_.setDisplayPriority(3);
   Renderer::instance().addParticles(&drawer_);
 }
 
@@ -86,7 +95,7 @@ void ParticleSystem::update(float delta_time, GameState *state) {
     if (it->age > it->lifetime) {
       it = particles_.erase(it);
     } else {
-      glm::vec2 old_position = it->position;
+      glm::vec3 old_position = it->position;
       it->position += it->velocity * delta_time;
       it->age += delta_time;
       it->color.a -= delta_time * it->alpha_decay;
@@ -97,7 +106,7 @@ void ParticleSystem::update(float delta_time, GameState *state) {
     }
   }
   drawer_.sendParticles(render_data_, particles_.size());
-  drawer_.setTransform(translate2D(glm::mat3(1.0f), thought_bubble_->center()));
+  //drawer_.setTransform(glm::translate(glm::mat4(1.0f), glm::vec3(thought_bubble_->center()));
 }
 
 void ParticleSystem::addParticles(Emitter &emitter, float delta_time) {
@@ -110,8 +119,8 @@ void ParticleSystem::addParticles(Emitter &emitter, float delta_time) {
     to_add.color = emitter.color;
     to_add.color.a*=emitter.heat;
     to_add.alpha_decay = 0.6f + (emitter.heat - 1.0f) * 0.8f;
-    to_add.position = emitter.position;
-    to_add.velocity = fastRandomDirection() * 0.02f;
+    to_add.position = glm::vec3(emitter.position, -1.0f);
+    to_add.velocity = fastRandomDirection3D() * 0.02f;
     to_add.lifetime = 1.5f;
     to_add.age = 0;
     particles_.push_back(to_add);

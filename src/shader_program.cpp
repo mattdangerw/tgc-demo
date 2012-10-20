@@ -92,7 +92,7 @@ GLuint Program::attributeHandle(string attribute) {
   GLint handle = glGetAttribLocation(handle_, attribute.c_str());
   if (handle == -1) {
     fprintf(stderr, "Shader attribute %s not found.\n", attribute.c_str());
-    cleanupAndExit(1);
+    //cleanupAndExit(1);
   }
   return handle;
 }
@@ -101,7 +101,7 @@ GLuint Program::uniformHandle(string uniform) {
   GLint handle = glGetUniformLocation(handle_, uniform.c_str());
   if (handle == -1) {
     fprintf(stderr, "Shader uniform %s not found.\n", uniform.c_str());
-    cleanupAndExit(1);
+    //cleanupAndExit(1);
   }
   return handle;
 }

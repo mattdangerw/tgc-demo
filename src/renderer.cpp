@@ -1,6 +1,7 @@
 #include "renderer.h"
 
 #include <GL/glew.h>
+#include <glm/gtc/matrix_transform.hpp>
 #include <gli/gli.hpp>
 #include <gli/gtx/gl_texture2d.hpp>
 #include <algorithm>
@@ -255,25 +256,27 @@ void Renderer::draw() {
     (*it)->draw(view);
   }
 
-  if (do_stencil_) {
-    glEnable(GL_STENCIL_TEST);
-    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    glStencilFunc(GL_ALWAYS, 0, 0xFF);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-    for (it = draw_stencil_.begin(); it != draw_stencil_.end(); ++it) {
-      (*it)->draw(view);
-    }
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-  }
+  //if (do_stencil_) {
+  //  glEnable(GL_STENCIL_TEST);
+  //  glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+  //  glStencilFunc(GL_ALWAYS, 0, 0xFF);
+  //  glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+  //  for (it = draw_stencil_.begin(); it != draw_stencil_.end(); ++it) {
+  //    (*it)->draw(view);
+  //  }
+  //  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+  //  glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
+  //  glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+  //}
   glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
   glEnable(GL_BLEND);
-  particles_->draw(view);
+  //glm::mat4 projection = glm::mat4(1.0f);
+  glm::mat4 projection = glm::perspective(90.0f, aspect_, 0.1f, 100.0f);
+  particles_->draw(projection);
   glDisable(GL_BLEND);
-  if (do_stencil_) {
-    glDisable(GL_STENCIL_TEST);
-  }
+  //if (do_stencil_) {
+  //  glDisable(GL_STENCIL_TEST);
+  //}
 }
 
 void Renderer::addDrawable(Drawable *object) {

@@ -45,6 +45,25 @@ class Drawable {
     bool occluder_;
 };
 
+class Drawable3D {
+  public:
+    Drawable3D() : transform_(1.0f) {};
+    virtual ~Drawable3D() {}
+    // Make the GL calls to draw this object.
+    virtual void draw(glm::mat4 projection) = 0;
+    // The local transform of the drawable.
+    glm::mat4 transform() { return transform_; }
+    void setTransform(const glm::mat4 &transform) { transform_ = transform; }
+    // Multiplies this shapes transform in with the rest of the stack.
+    glm::mat4 mvp(glm::mat4 projection) { return projection * transform(); }
+    // Helpers for setting common uniforms in our shaders.
+    void setMVPUniform(Program *program, glm::mat4 projection) {
+      glUniformMatrix4fv(program->uniformHandle("mvp"), 1, GL_FALSE, glm::value_ptr(mvp(projection))); 
+    }
+  private:
+    glm::mat4 transform_;
+};
+
 // Does all the setting up of OpenGL and draws all the shapes in the scene.
 // Also manages textures and shader loading.
 // A singleton class, because I only ever want one and I'm too lazy to pass it around everywhere.
@@ -68,7 +87,7 @@ class Renderer {
     void addStencilShape(Drawable *object);
     void removeStencilShape(Drawable *object);
     // Adds the particles which are drawn with different opengl setting. and maybe 3d?
-    void addParticles(Drawable *particles) { particles_ = particles; }
+    void addParticles(Drawable3D *particles) { particles_ = particles; }
     // Sets location of our light source for the god rays.
     void setLightPosition(glm::vec2 position) { light_position_ = position; }
     // Gets the length in x axis of the area the camera will render.
@@ -100,7 +119,7 @@ class Renderer {
     float left_of_window_;
     bool do_stencil_;
     vector<Drawable *> draw_normal_, draw_stencil_;
-    Drawable *particles_;
+    Drawable3D *particles_;
     glm::vec2 light_position_;
     map<string, Program> programs_;
     map<string, GLuint> textures_;

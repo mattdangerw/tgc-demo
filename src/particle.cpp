@@ -40,11 +40,12 @@ void ParticleDrawer::init() {
   glVertexAttribDivisor(handle, 1);
   handle = program_->attributeHandle("translate");
   glEnableVertexAttribArray(handle);
-  glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, sizeof(ParticleDrawInfo), (void *)offsetof(ParticleDrawInfo, position));
+  glVertexAttribPointer(handle, 3, GL_FLOAT, GL_FALSE, sizeof(ParticleDrawInfo), (void *)offsetof(ParticleDrawInfo, position));
   glVertexAttribDivisor(handle, 1);
 
-  modelview_handle_ = program_->uniformHandle("modelview");
-  size_handle_ = program_->uniformHandle("size");
+  program_->use();
+  glUniform1fv(program_->uniformHandle("size"), 1, &kParticleRadius);
+  // TODO: take these out in all files!
   glActiveTexture(GL_TEXTURE0);
   texture_handle_ = Renderer::instance().getTexture("textures/particle.dds");
   glUniform1i(program_->uniformHandle("color_texture"), 0);
@@ -56,12 +57,10 @@ void ParticleDrawer::sendParticles(ParticleDrawInfo *particles, int num_particle
   glBufferData(GL_ARRAY_BUFFER, sizeof(ParticleDrawInfo) * num_particles, particles, GL_DYNAMIC_DRAW);
 }
 
-void ParticleDrawer::draw(glm::mat3 view) {
+void ParticleDrawer::draw(glm::mat4 projection) {
   if (num_particles_ > 0) {
     program_->use();
-    glm::mat3 modelview = view * transform();
-    glUniformMatrix3fv(modelview_handle_, 1, GL_FALSE, glm::value_ptr(modelview));
-    glUniform1fv(size_handle_, 1, &kParticleRadius);
+    setMVPUniform(program_, projection);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture_handle_);
     glBindVertexArray(array_object_);
