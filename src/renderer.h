@@ -47,21 +47,27 @@ class Drawable {
 
 class Drawable3D {
   public:
-    Drawable3D() : transform_(1.0f) {};
+    Drawable3D() : transform2D_(1.0f), transform3D_(1.0f) {}
     virtual ~Drawable3D() {}
     // Make the GL calls to draw this object.
-    virtual void draw(glm::mat4 projection) = 0;
+    virtual void draw(glm::mat4 parent_transform3D, glm::mat3 parent_transform2D) = 0;
     // The local transform of the drawable.
-    glm::mat4 transform() { return transform_; }
-    void setTransform(const glm::mat4 &transform) { transform_ = transform; }
-    // Multiplies this shapes transform in with the rest of the stack.
-    glm::mat4 mvp(glm::mat4 projection) { return projection * transform(); }
+    glm::mat4 transform3D() { return transform3D_; }
+    void setTransform3D(const glm::mat4 &transform) { transform3D_ = transform; }
+    glm::mat3 transform2D() { return transform2D_; }
+    void setTransform2D(const glm::mat3 &transform) { transform2D_ = transform; }
     // Helpers for setting common uniforms in our shaders.
-    void setMVPUniform(Program *program, glm::mat4 projection) {
-      glUniformMatrix4fv(program->uniformHandle("mvp"), 1, GL_FALSE, glm::value_ptr(mvp(projection))); 
+    void setTransform3DUniform(Program *program, glm::mat4 parent_transform) {
+      glUniformMatrix4fv(program->uniformHandle("transform3D"), 1, GL_FALSE, glm::value_ptr(parent_transform * transform3D_)); 
     }
+    // Helpers for setting common uniforms in our shaders.
+    void setTransform2DUniform(Program *program, glm::mat3 parent_transform) {
+      glUniformMatrix3fv(program->uniformHandle("transform2D"), 1, GL_FALSE, glm::value_ptr(parent_transform * transform2D_)); 
+    }
+
   private:
-    glm::mat4 transform_;
+    glm::mat4 transform3D_;
+    glm::mat3 transform2D_;
 };
 
 // Does all the setting up of OpenGL and draws all the shapes in the scene.
@@ -95,6 +101,9 @@ class Renderer {
     // Sets where the left side of the camera should be.
     void setLeftOfWindow(float x) { left_of_window_ = x; }
     float getLeftOfWindow() { return left_of_window_; }
+    // Projection matrix.
+    glm::mat4 projection() { return projection_; }
+    glm::mat4 inverseProjection() { return inverse_projection_; }
     // Stop using stencil test for particle drawing
     void stopStenciling() { do_stencil_ = false; }
     // Get a shader program by string name.
@@ -115,9 +124,9 @@ class Renderer {
     void setTextureUnits();
     // Memeber data.
     int width_, height_;
-    float aspect_;
-    float left_of_window_;
+    float aspect_, left_of_window_;
     bool do_stencil_;
+    glm::mat4 projection_, inverse_projection_;
     vector<Drawable *> draw_normal_, draw_stencil_;
     Drawable3D *particles_;
     glm::vec2 light_position_;

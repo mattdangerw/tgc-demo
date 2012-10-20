@@ -21,7 +21,7 @@ class ThoughtBubble : public GameEntity {
     glm::vec2 center() { return position_; }
     glm::vec2 velocity() { return bubble_mass_.velocity(); }
     void update(float delta_time, GameState *state);
-    void collideEmitter(Emitter &emitter, glm::vec2 old_position);
+    bool collideEmitter(glm::vec2 old_position, glm::vec2 *position, glm::vec2 *velocity);
     void stopDrawing();
 
   private:

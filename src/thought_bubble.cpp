@@ -189,46 +189,56 @@ void ThoughtBubble::update(float delta_time, GameState *state) {
 }
 
 // Large method, lot of room for optimization. But will usually exit early so seems fine for < 1000 particles.
-void ThoughtBubble::collideEmitter(Emitter &particle, glm::vec2 old_position) {
-  // Check if the particle is inside any of the bubble circles. If it is we are fine.
+// Returns true and updates position and velocity if there is a collision.
+bool ThoughtBubble::collideEmitter(glm::vec2 old_position, glm::vec2 *position, glm::vec2 *velocity) {
+  // Check if the particle is inside any of the bubble circles. If it is no collision.
   for (size_t i = 0; i < bubble_circles_.size(); ++i) {
     float intersect_radius = bubble_circles_[i].radius - kParticleRadius;
-    glm::vec2 center_to_particle = particle.position - bubble_circles_[i].center;
+    glm::vec2 center_to_particle = *position - bubble_circles_[i].center;
     if (glm::dot(center_to_particle, center_to_particle) < intersect_radius * intersect_radius) {
-      return;
+      return false;
     }
   }
   // Find one of the bubble circles the particle was in last time step, and collide with that.
   Circle *nearest_circle = NULL;
+  PointMass *nearest_stretch_mass;
   float min_distance_to_circle = std::numeric_limits<float>::max();
   for (size_t i = 0; i < bubble_circles_.size(); ++i) {
     float intersect_radius = bubble_circles_[i].radius - kParticleRadius;
     glm::vec2 center_to_old_particle = old_position - bubble_circles_[i].center;
     float signed_distance = glm::length(center_to_old_particle) - intersect_radius;
     if (signed_distance < 0.0f) {
-      glm::vec2 old_velocity = particle.velocity;
+      glm::vec2 old_velocity = *velocity;
       // This is hardly a correct reflection but assuming the change in loction is small should work fine.
-      particle.velocity = glm::reflect(particle.velocity, glm::normalize(center_to_old_particle));
+      glm::vec2 center_to_particle = old_position - bubble_circles_[i].center;
+      if (glm::dot(center_to_particle, *velocity) >= 0) {
+        *velocity = glm::reflect(*velocity, glm::normalize(center_to_particle));
+      }
       // Don't bother to calculate actual bounced position. We will just roll back the position change and leave the new velocity.
-      particle.position = old_position;
+      *position = old_position;
       // Add impulse from collision to the stretch mass.
-      glm::vec2 impulse = (particle.velocity - old_velocity) * kParticleMass;
+      glm::vec2 impulse = (*velocity - old_velocity) * kParticleMass;
       // We only care about the length of impulse as our strech masses only displace in x
       stretch_masses_[i].applyImpulse(glm::vec2(glm::length(impulse), 0.0f));
-      return;
+      return true;
     } else if (signed_distance < min_distance_to_circle) {
       min_distance_to_circle = signed_distance;
       nearest_circle = &bubble_circles_[i];
+      nearest_stretch_mass = &stretch_masses_[i];
     }
   }
   // Even the old position is outside of the entire thought bubble.
   // This is the worst case meaning the bubble has actually moved out from under the particle (not vice versa).
   // We'll find the closest point to move it back inside.
-  glm::vec2 old_velocity = particle.velocity;
+  glm::vec2 old_velocity = *velocity;
   glm::vec2 intersection_normal = glm::normalize(old_position - nearest_circle->center);
-  particle.velocity = glm::reflect(particle.velocity, intersection_normal);
-  particle.position = intersection_normal * (nearest_circle->radius - kParticleRadius) + nearest_circle->center;
-  glm::vec2 impulse = (particle.velocity - old_velocity) * kParticleMass;
+  if (glm::dot(intersection_normal, *velocity) >= 0) {
+    *velocity = glm::reflect(*velocity, intersection_normal);
+  }
+  *position = intersection_normal * (nearest_circle->radius - kParticleRadius) + nearest_circle->center;
+  glm::vec2 impulse = (*velocity - old_velocity) * kParticleMass;
+  nearest_stretch_mass->applyImpulse(glm::vec2(glm::length(impulse), 0.0f));
+  return true;
 }
 
 glm::vec2 ThoughtBubble::anchorPoint() {

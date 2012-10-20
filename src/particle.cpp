@@ -57,10 +57,11 @@ void ParticleDrawer::sendParticles(ParticleDrawInfo *particles, int num_particle
   glBufferData(GL_ARRAY_BUFFER, sizeof(ParticleDrawInfo) * num_particles, particles, GL_DYNAMIC_DRAW);
 }
 
-void ParticleDrawer::draw(glm::mat4 projection) {
+void ParticleDrawer::draw(glm::mat4 parent_transform3D, glm::mat3 parent_transform2D) {
   if (num_particles_ > 0) {
     program_->use();
-    setMVPUniform(program_, projection);
+    setTransform3DUniform(program_, parent_transform3D);
+    setTransform2DUniform(program_, parent_transform2D);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture_handle_);
     glBindVertexArray(array_object_);

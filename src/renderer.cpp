@@ -20,6 +20,8 @@ void Renderer::init(int width, int height) {
   width_ = width;
   height_ = height;
   aspect_ = static_cast<float>(width)/height;
+  projection_ = glm::perspective(35.0f, aspect_, 0.1f, 100.0f);
+  inverse_projection_ = glm::inverse(projection_);
 
   // OpenGL settings.
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -256,27 +258,25 @@ void Renderer::draw() {
     (*it)->draw(view);
   }
 
-  //if (do_stencil_) {
-  //  glEnable(GL_STENCIL_TEST);
-  //  glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-  //  glStencilFunc(GL_ALWAYS, 0, 0xFF);
-  //  glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-  //  for (it = draw_stencil_.begin(); it != draw_stencil_.end(); ++it) {
-  //    (*it)->draw(view);
-  //  }
-  //  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-  //  glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-  //  glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-  //}
+  if (do_stencil_) {
+    glEnable(GL_STENCIL_TEST);
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+    glStencilFunc(GL_ALWAYS, 0, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+    for (it = draw_stencil_.begin(); it != draw_stencil_.end(); ++it) {
+      (*it)->draw(view);
+    }
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+  }
   glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
   glEnable(GL_BLEND);
-  //glm::mat4 projection = glm::mat4(1.0f);
-  glm::mat4 projection = glm::perspective(90.0f, aspect_, 0.1f, 100.0f);
-  particles_->draw(projection);
+  particles_->draw(projection_, view);
   glDisable(GL_BLEND);
-  //if (do_stencil_) {
-  //  glDisable(GL_STENCIL_TEST);
-  //}
+  if (do_stencil_) {
+    glDisable(GL_STENCIL_TEST);
+  }
 }
 
 void Renderer::addDrawable(Drawable *object) {

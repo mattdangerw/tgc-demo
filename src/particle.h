@@ -18,7 +18,7 @@ struct Particle {
 };
 
 struct Emitter {
-  glm::vec2 position, velocity;
+  glm::vec3 position, velocity;
   glm::vec4 color;
   float particles_per_second, leftover_from_last_frame;
   float heat;
@@ -39,7 +39,7 @@ class ParticleDrawer : public Drawable3D {
     // Set up the VAOs and VBOs and what not.
     void init();
     void sendParticles(ParticleDrawInfo *particles, int num_particles);
-    void draw(glm::mat4 projection);
+    void draw(glm::mat4 parent_transform3D, glm::mat3 parent_transform2D);
 
   private:
     int num_particles_;
