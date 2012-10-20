@@ -54,7 +54,7 @@ void ParticleDrawer::init() {
 void ParticleDrawer::sendParticles(ParticleDrawInfo *particles, int num_particles) {
   num_particles_ = num_particles;
   glBindBuffer(GL_ARRAY_BUFFER, particle_buffer_object_);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(ParticleDrawInfo) * num_particles, particles, GL_DYNAMIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(ParticleDrawInfo) * num_particles, particles, GL_STREAM_DRAW);
 }
 
 void ParticleDrawer::draw(glm::mat4 parent_transform3D, glm::mat3 parent_transform2D) {

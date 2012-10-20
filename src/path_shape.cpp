@@ -155,7 +155,7 @@ void PathShape::createVAOs() {
     glBindVertexArray(solid_array_object_);
     glBindBuffer(GL_ARRAY_BUFFER, solid_vertex_buffer_);
     if (dynamic_) {
-      glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * solid_vertices_.size(), NULL, GL_DYNAMIC_DRAW);
+      glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * solid_vertices_.size(), NULL, GL_STREAM_DRAW);
     } else {
       glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * solid_vertices_.size(), &solid_vertices_[0], GL_STATIC_DRAW);
     }
@@ -169,7 +169,7 @@ void PathShape::createVAOs() {
     glBindVertexArray(quadric_array_object_);
     glBindBuffer(GL_ARRAY_BUFFER, quadric_buffers_[0]);
     if (dynamic_) {
-      glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_vertices_.size(), NULL, GL_DYNAMIC_DRAW);
+      glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_vertices_.size(), NULL, GL_STREAM_DRAW);
     } else {
       glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_vertices_.size(), &quadric_vertices_[0], GL_STATIC_DRAW);
     }
@@ -211,9 +211,9 @@ void PathShape::drawHelper(glm::mat3 view, bool asOccluder) {
   // Send position buffers if dynamic.
   if (dynamic_) {
     glBindBuffer(GL_ARRAY_BUFFER, quadric_buffers_[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_vertices_.size(), &quadric_vertices_[0], GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_vertices_.size(), &quadric_vertices_[0], GL_STREAM_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, solid_vertex_buffer_);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * solid_vertices_.size(), &solid_vertices_[0], GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * solid_vertices_.size(), &solid_vertices_[0], GL_STREAM_DRAW);
   }
 
   // Ready stencil drawing.

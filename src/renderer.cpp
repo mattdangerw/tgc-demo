@@ -212,7 +212,7 @@ void Renderer::draw() {
   view = translate2D(view, glm::vec2(-left_of_window_, 0.0f));
 
   // Sort drawables by priority.
-  std::sort(draw_normal_.begin(), draw_normal_.end(), compareDrawables);
+  std::stable_sort(draw_normal_.begin(), draw_normal_.end(), compareDrawables);
   vector<Drawable *>::iterator it;
 
   // Draw occluders to texture.

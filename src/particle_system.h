@@ -25,14 +25,19 @@ class ParticleSystem : public GameEntity {
     bool targetWasHit(Target target);
 
   private:
-    void addParticles(Emitter &emitter, float delta_time);
+    void updateEmitters(float delta_time);
+    void updateParticles(float delta_time);
+    void addParticles(int emitter_index, float delta_time);
+    void sortDepthIndex();
 
     ThoughtBubble *thought_bubble_;
     ParticleDrawInfo *render_data_;
-    list<Particle> particles_;
-    list<Emitter> emitters_;
+    vector<Emitter> emitters_;
+    vector<int> emitters_by_depth_;
+    // Need fast deletion so list.
+    map<int, list<Particle>> emitter_particles_;
     ParticleDrawer drawer_;
-    map<int, Emitter *> target_to_emitter_;
+    map<int, int> target_to_emitter_;
     bool targets_;
 };
 

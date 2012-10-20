@@ -6,6 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/color_space.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <algorithm>
 
 #include "transform2D.h"
 
@@ -32,6 +33,8 @@ static inline glm::vec3 fastRandomDirection3D() {
 }
 
 static const int kMaxParticles = 10000;
+static const float kNearZBoundary = -2.2f;
+static const float kFarZBoundary = -4.0f;
 
 static inline glm::vec3 randomColor() {
   //float hue = randomFloat(0.0f, 180.0f);
@@ -80,79 +83,97 @@ void ParticleSystem::addEmitters(int num_emitters) {
   for(int i = 0; i < num_emitters; i++) {
     Emitter to_add;
     to_add.color = glm::vec4(randomColor(), 0.4f);
-    to_add.position = glm::vec3(0.0f, 0.0f, -2.0f);
+    to_add.position = glm::vec3(0.0f, 0.0f, kFarZBoundary);
     to_add.velocity = glm::vec3(randomDirection() * 0.2f, 0.08f);
     to_add.particles_per_second = 150.0f;
     to_add.leftover_from_last_frame = 0.0f;
     to_add.heat = 3.0f;
+    emitters_by_depth_.push_back(emitters_.size());
     emitters_.push_back(to_add);
   }
 }
 
 void ParticleSystem::update(float delta_time, GameState *state) {
+  updateEmitters(delta_time);
+  updateParticles(delta_time);
+}
+
+void ParticleSystem::updateEmitters(float delta_time) {
   if (targets_) {
-    for (list<Emitter>::iterator it = emitters_.begin(); it != emitters_.end(); ++it) {
-      if (it->time_in_flight < it->time_to_target) {
-        float t = it->time_in_flight / it->time_to_target;
-        glm::vec2 start_mid = glm::mix(it->start, it->midway, t);
-        glm::vec2 mid_target = glm::mix(it->midway, it->target, t);
-        it->position = glm::vec3(glm::mix(start_mid, mid_target, t), it->position.z);
-        it->time_in_flight += delta_time;
-        addParticles(*it, delta_time);
+    for (size_t i = 0; i < emitters_.size(); i++) {
+      Emitter &emitter = emitters_[i];
+      if (emitter.time_in_flight < emitter.time_to_target) {
+        float t = emitter.time_in_flight / emitter.time_to_target;
+        glm::vec2 start_mid = glm::mix(emitter.start, emitter.midway, t);
+        glm::vec2 mid_target = glm::mix(emitter.midway, emitter.target, t);
+        emitter.position = glm::vec3(glm::mix(start_mid, mid_target, t), emitter.position.z);
+        emitter.time_in_flight += delta_time;
+        addParticles(i, delta_time);
       }
     }
   } else {
-    for (list<Emitter>::iterator it = emitters_.begin(); it != emitters_.end(); ++it) {
-      glm::vec3 old_position = it->position;
-      it->position += it->velocity * delta_time;
-      it->heat = glm::max(1.0f, it->heat - 4.0f * delta_time);
-      glm::vec3 projected_position = projectPoint(it->position);
+    for (size_t i = 0; i < emitters_.size(); i++) {
+      Emitter &emitter = emitters_[i];
+      glm::vec3 old_position = emitter.position;
+      emitter.position += emitter.velocity * delta_time;
+      emitter.heat = glm::max(1.0f, emitter.heat - 4.0f * delta_time);
+      glm::vec3 projected_position = projectPoint(emitter.position);
       glm::vec3 projected_old_position = projectPoint(old_position);
-      glm::vec3 projected_velocity = projectVector(it->velocity);
+      glm::vec3 projected_velocity = projectVector(emitter.velocity);
       glm::vec2 position2D(projected_position.x, projected_position.y);
       glm::vec2 old_position2D(projected_old_position.x, projected_old_position.y);
       glm::vec2 velocity2D(projected_velocity.x, projected_velocity.y);
       if (thought_bubble_->collideEmitter(old_position2D, &position2D, &velocity2D)) {
-        it->position = unProjectPoint(glm::vec3(position2D.x, position2D.y, projected_position.z));
+        emitter.position = unProjectPoint(glm::vec3(position2D.x, position2D.y, projected_position.z));
         glm::vec3 new_velocity = unProjectVector(glm::vec3(velocity2D.x, velocity2D.y, projected_velocity.z));
         // We'll keep the old z velocity. Not perspective correct but the effect we want.
-        it->velocity = glm::vec3(new_velocity.x, new_velocity.y, it->velocity.z);
+        emitter.velocity = glm::vec3(new_velocity.x, new_velocity.y, emitter.velocity.z);
       }
-      if (it->position.z > -1.0f) {
-        it->position.z = -1.0f;
-        it->velocity.z *= -1.0f;
-      } else if (it->position.z < -3.0f) {
-        it->position.z = -3.0f;
-        it->velocity.z *= -1.0f;
+      if (emitter.position.z > kNearZBoundary) {
+        emitter.position.z = kNearZBoundary;
+        emitter.velocity.z *= -1.0f;
+      } else if (emitter.position.z < kFarZBoundary) {
+        emitter.position.z = kFarZBoundary;
+        emitter.velocity.z *= -1.0f;
       }
-      addParticles(*it, delta_time);
+      addParticles(i, delta_time);
     }
   }
-  int index = 0;
-  for (list<Particle>::iterator it = particles_.begin(); it != particles_.end();) {
-    if (it->age > it->lifetime) {
-      it = particles_.erase(it);
-    } else {
-      glm::vec3 old_position = it->position;
-      it->position += it->velocity * delta_time;
-      it->age += delta_time;
-      it->color.a -= delta_time * it->alpha_decay;
-      render_data_[index].color = it->color;
-      render_data_[index].position = it->position;
-      ++it;
-      index++;
+}
+
+void ParticleSystem::updateParticles(float delta_time) {
+  int render_data_index = 0;
+  sortDepthIndex();
+  for (vector<int>::iterator depth_iter = emitters_by_depth_.begin(); depth_iter != emitters_by_depth_.end(); ++depth_iter) {
+    int emitter_index = *depth_iter;
+    list<Particle> &particle_list = emitter_particles_[emitter_index];
+    for (list<Particle>::iterator it = particle_list.begin(); it != particle_list.end();) {
+      if (it->age > it->lifetime) {
+        it = particle_list.erase(it);
+      } else {
+        glm::vec3 old_position = it->position;
+        it->position += it->velocity * delta_time;
+        it->age += delta_time;
+        it->color.a -= delta_time * it->alpha_decay;
+        render_data_[render_data_index].color = it->color;
+        render_data_[render_data_index].position = it->position;
+        ++it;
+        ++render_data_index;
+      }
     }
   }
-  drawer_.sendParticles(render_data_, particles_.size());
+  drawer_.sendParticles(render_data_, render_data_index);
   drawer_.setTransform2D(translate2D(glm::mat3(1.0f), thought_bubble_->center()));
 }
 
-void ParticleSystem::addParticles(Emitter &emitter, float delta_time) {
+void ParticleSystem::addParticles(int emitter_index, float delta_time) {
+  Emitter &emitter = emitters_[emitter_index];
   float float_number_to_add = emitter.particles_per_second * emitter.heat * delta_time + emitter.leftover_from_last_frame;
   int number_to_add = static_cast<int>(float_number_to_add);
   emitter.leftover_from_last_frame = float_number_to_add - number_to_add;
   for (int i = 0; i < number_to_add; i++) {
-    if (particles_.size() > kMaxParticles) return;
+    // TODO: get that line back in.
+    //if (particles_.size() > kMaxParticles) return;
     Particle to_add;
     to_add.color = emitter.color;
     to_add.color.a*=emitter.heat;
@@ -161,41 +182,52 @@ void ParticleSystem::addParticles(Emitter &emitter, float delta_time) {
     to_add.velocity = fastRandomDirection3D() * 0.02f;
     to_add.lifetime = 1.5f;
     to_add.age = 0;
-    particles_.push_back(to_add);
+    emitter_particles_[emitter_index].push_back(to_add);
   }
+}
+
+struct DepthSortFunctor {
+  bool operator() (const int left, const int right) {
+    return emitters->at(left).position.z < emitters->at(right).position.z;
+  }
+  vector<Emitter> *emitters;
+};
+
+void ParticleSystem::sortDepthIndex() {
+  DepthSortFunctor functor;
+  functor.emitters = &emitters_;
+  std::sort(emitters_by_depth_.begin(), emitters_by_depth_.end(), functor);
 }
 
 void ParticleSystem::setTargets(vector<Target> &targets) {
   targets_ = true;
-  size_t index = 0;
-  for (list<Emitter>::iterator it = emitters_.begin(); it != emitters_.end(); ++it) {
-    Emitter *emitter = &(*it);
-    emitter->start = glm::vec2(emitter->position.x, emitter->position.y);
-    if (index < targets.size()) {
-      Target target = targets[index];
+  for (size_t i = 0; i < emitters_.size(); i++) {
+    Emitter &emitter = emitters_[i];
+    emitter.start = glm::vec2(emitter.position.x, emitter.position.y);
+    if (i < targets.size()) {
+      Target target = targets[i];
       // Particle system coordinate system is centered on the thought bubble.
       // Transform target to that space.
-      emitter->target = target.position - thought_bubble_->center();
-      target_to_emitter_[target.id] = emitter;
+      emitter.target = target.position - thought_bubble_->center();
+      target_to_emitter_[target.id] = i;
     } else {
       Renderer &renderer = Renderer::instance();
       glm::vec2 randomScreenSpace(renderer.getLeftOfWindow() + randomFloat(0.0f, 1.0f) * renderer.windowWidth(),
         randomFloat(0.0f, 1.0f));
       // Transform to particle sys coordinate system.
-      emitter->target = randomScreenSpace - thought_bubble_->center();
+      emitter.target = randomScreenSpace - thought_bubble_->center();
     }
-    emitter->midway = glm::mix(emitter->start, emitter->target, 0.8f);
-    emitter->midway += randomDirection() * 0.1f;
-    emitter->time_in_flight = 0.0f;
-    emitter->time_to_target = glm::distance(emitter->start, emitter->target) * 3.0f;
-    index++;
+    emitter.midway = glm::mix(emitter.start, emitter.target, 0.8f);
+    emitter.midway += randomDirection() * 0.1f;
+    emitter.time_in_flight = 0.0f;
+    emitter.time_to_target = glm::distance(emitter.start, emitter.target) * 3.0f;
   }
 }
 
 bool ParticleSystem::targetWasHit(Target target) {
   if (target_to_emitter_.count(target.id) > 0) {
-    Emitter *emitter = target_to_emitter_[target.id];
-    return emitter->time_in_flight > emitter->time_to_target;
+    Emitter &emitter = emitters_[target_to_emitter_[target.id]];
+    return emitter.time_in_flight > emitter.time_to_target;
   }
   return true;
 }
