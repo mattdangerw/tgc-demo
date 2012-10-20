@@ -200,9 +200,11 @@ void Renderer::setTextureUnits() {
   glUniform1i(particles.uniformHandle("color_texture"), 0);
 }
 
-bool compareDrawables(const Drawable *left, const Drawable *right) {
-  return left->displayPriority() < right->displayPriority();
-}
+struct PrioritySortFunctor {
+  bool operator() (const Drawable *left, const Drawable *right) {
+    return left->displayPriority() < right->displayPriority();
+  }
+};
 
 void Renderer::draw() {
   // 2D rendering modelview
@@ -212,7 +214,7 @@ void Renderer::draw() {
   view = translate2D(view, glm::vec2(-left_of_window_, 0.0f));
 
   // Sort drawables by priority.
-  std::stable_sort(draw_normal_.begin(), draw_normal_.end(), compareDrawables);
+  std::stable_sort(draw_normal_.begin(), draw_normal_.end(), PrioritySortFunctor());
   vector<Drawable *>::iterator it;
 
   // Draw occluders to texture.

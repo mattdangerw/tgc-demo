@@ -114,16 +114,13 @@ void ParticleSystem::updateEmitters(float delta_time) {
   } else {
     for (size_t i = 0; i < emitters_.size(); i++) {
       Emitter &emitter = emitters_[i];
-      glm::vec3 old_position = emitter.position;
       emitter.position += emitter.velocity * delta_time;
       emitter.heat = glm::max(1.0f, emitter.heat - 4.0f * delta_time);
       glm::vec3 projected_position = projectPoint(emitter.position);
-      glm::vec3 projected_old_position = projectPoint(old_position);
       glm::vec3 projected_velocity = projectVector(emitter.velocity);
       glm::vec2 position2D(projected_position.x, projected_position.y);
-      glm::vec2 old_position2D(projected_old_position.x, projected_old_position.y);
       glm::vec2 velocity2D(projected_velocity.x, projected_velocity.y);
-      if (thought_bubble_->collideEmitter(old_position2D, &position2D, &velocity2D)) {
+      if (thought_bubble_->collideEmitter(&position2D, &velocity2D)) {
         emitter.position = unProjectPoint(glm::vec3(position2D.x, position2D.y, projected_position.z));
         glm::vec3 new_velocity = unProjectVector(glm::vec3(velocity2D.x, velocity2D.y, projected_velocity.z));
         // We'll keep the old z velocity. Not perspective correct but the effect we want.
