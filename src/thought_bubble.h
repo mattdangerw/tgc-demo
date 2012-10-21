@@ -33,10 +33,10 @@ class ThoughtBubble : public GameEntity {
     Character *character_;
     PointMass bubble_mass_;
     vector<Circle> bubble_circles_, sub_bubble_circles_;
+    float circles_spring_constant_;
     vector<float> rest_radii_;
     vector<PointMass> stretch_masses_;
     CircleDrawer circle_drawer_, sub_circle_drawer_;
-    float circles_spring_constant_;
 
     // For pre explosion animation
     bool ready_to_animate_, in_position_;

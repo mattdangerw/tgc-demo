@@ -20,7 +20,7 @@ void Renderer::init(int width, int height) {
   width_ = width;
   height_ = height;
   aspect_ = static_cast<float>(width)/height;
-  projection_ = glm::perspective(35.0f, aspect_, 0.1f, 100.0f);
+  projection_ = glm::perspective(35.0f, 1.0f, 0.1f, 100.0f);
   inverse_projection_ = glm::inverse(projection_);
 
   // OpenGL settings.
@@ -177,6 +177,7 @@ void Renderer::setAttributesAndLink(Program &program) {
   program.setAttributeHandle("position", 0);
   program.setAttributeHandle("color", 1);
   program.setAttributeHandle("tex_coord", 2);
+  // For particles (intanced quads with a translation to displace).
   program.setAttributeHandle("translate", 3);
   program.link();
 }
@@ -214,8 +215,7 @@ void Renderer::draw() {
   view = translate2D(view, glm::vec2(-left_of_window_, 0.0f));
 
   // Sort drawables by priority.
-  std::stable_sort(draw_normal_.begin(), draw_normal_.end(), PrioritySortFunctor());
-  vector<Drawable *>::iterator it;
+  std::stable_sort(draw2D_.begin(), draw2D_.end(), PrioritySortFunctor());
 
   // Draw occluders to texture.
   //glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -224,7 +224,7 @@ void Renderer::draw() {
   glDepthMask(GL_TRUE);
   glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glDepthMask(GL_FALSE);
-  for (it = draw_normal_.begin(); it != draw_normal_.end(); ++it) {
+  for (vector<Drawable *>::iterator it = draw2D_.begin(); it != draw2D_.end(); ++it) {
     if ((*it)->occluder()) (*it)->drawOcclude(view);
   }
   
@@ -256,7 +256,7 @@ void Renderer::draw() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  for (it = draw_normal_.begin(); it != draw_normal_.end(); ++it) {
+  for (vector<Drawable *>::iterator it = draw2D_.begin(); it != draw2D_.end(); ++it) {
     (*it)->draw(view);
   }
 
@@ -265,7 +265,7 @@ void Renderer::draw() {
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     glStencilFunc(GL_ALWAYS, 0, 0xFF);
     glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-    for (it = draw_stencil_.begin(); it != draw_stencil_.end(); ++it) {
+    for (vector<Drawable *>::iterator it = draw_stencil_.begin(); it != draw_stencil_.end(); ++it) {
       (*it)->draw(view);
     }
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -274,7 +274,9 @@ void Renderer::draw() {
   }
   glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
   glEnable(GL_BLEND);
-  particles_->draw(projection_, view);
+  for (vector<Drawable3D *>::iterator it = draw3D_.begin(); it != draw3D_.end(); ++it) {
+    (*it)->draw(projection_, view);
+  }
   glDisable(GL_BLEND);
   if (do_stencil_) {
     glDisable(GL_STENCIL_TEST);
@@ -282,14 +284,14 @@ void Renderer::draw() {
 }
 
 void Renderer::addDrawable(Drawable *object) {
-  draw_normal_.push_back(object);
+  draw2D_.push_back(object);
 }
 
 void Renderer::removeDrawable(Drawable *object) {
   vector<Drawable *>::iterator it;
-  for (it = draw_normal_.begin(); it != draw_normal_.end(); ++it) {
+  for (it = draw2D_.begin(); it != draw2D_.end(); ++it) {
     if (*it == object) {
-      draw_normal_.erase(it);
+      draw2D_.erase(it);
       return;
     }
   }
@@ -303,7 +305,21 @@ void Renderer::removeStencilShape(Drawable *object) {
   vector<Drawable *>::iterator it;
   for (it = draw_stencil_.begin(); it != draw_stencil_.end(); ++it) {
     if (*it == object) {
-      draw_normal_.erase(it);
+      draw2D_.erase(it);
+      return;
+    }
+  }
+}
+
+void Renderer::addDrawable3D(Drawable3D *object) {
+  draw3D_.push_back(object);
+}
+
+void Renderer::removeDrawable3D(Drawable3D *object) {
+  vector<Drawable3D *>::iterator it;
+  for (it = draw3D_.begin(); it != draw3D_.end(); ++it) {
+    if (*it == object) {
+      draw3D_.erase(it);
       return;
     }
   }

@@ -46,7 +46,6 @@ void ParticleDrawer::init() {
   program_->use();
   glUniform1fv(program_->uniformHandle("size"), 1, &kParticleRadius);
   // TODO: take these out in all files!
-  glActiveTexture(GL_TEXTURE0);
   texture_handle_ = Renderer::instance().getTexture("textures/particle.dds");
   glUniform1i(program_->uniformHandle("color_texture"), 0);
 }

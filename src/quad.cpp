@@ -68,7 +68,6 @@ void TexturedQuad::init(string texture_file) {
   shadowed_program_ = Renderer::instance().getProgram("textured_with_shadows");
   Quad::init();
 
-  glActiveTexture(GL_TEXTURE0);
   texture_handle_ = Renderer::instance().getTexture(texture_file);
   glGenBuffers(1, &texture_buffer_);
   glBindVertexArray(array_object_);

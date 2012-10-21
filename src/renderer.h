@@ -83,17 +83,17 @@ class Renderer {
     void init(int width, int height);
     // Renders the scene.
     void draw();
-    // Adds a drawable object to the renderer.
+    // Adds a 2D drawable object to the renderer.
     // Not memory managed! Game entities should allocate and free drawable objects.
+    // Remove to stop drawing, when object deleted or to set invisible
     void addDrawable(Drawable *object);
-    // Removes a drawable object from the renderer.
-    // Use this before deleting a drawable or to make the drawable invisible.
     void removeDrawable(Drawable *object);
     // Adds a shape to be drawn into the stencil buffer before drawing the particles.
     void addStencilShape(Drawable *object);
     void removeStencilShape(Drawable *object);
     // Adds the particles which are drawn with different opengl setting. and maybe 3d?
-    void addParticles(Drawable3D *particles) { particles_ = particles; }
+    void addDrawable3D(Drawable3D *object);
+    void removeDrawable3D(Drawable3D *object);
     // Sets location of our light source for the god rays.
     void setLightPosition(glm::vec2 position) { light_position_ = position; }
     // Gets the length in x axis of the area the camera will render.
@@ -127,8 +127,8 @@ class Renderer {
     float aspect_, left_of_window_;
     bool do_stencil_;
     glm::mat4 projection_, inverse_projection_;
-    vector<Drawable *> draw_normal_, draw_stencil_;
-    Drawable3D *particles_;
+    vector<Drawable *> draw2D_, draw_stencil_;
+    vector<Drawable3D *> draw3D_;
     glm::vec2 light_position_;
     map<string, Program> programs_;
     map<string, GLuint> textures_;

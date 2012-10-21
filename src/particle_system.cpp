@@ -76,7 +76,7 @@ ParticleSystem::~ParticleSystem() {
 void ParticleSystem::init(ThoughtBubble *thought_bubble) {
   thought_bubble_ = thought_bubble;
   drawer_.init();
-  Renderer::instance().addParticles(&drawer_);
+  Renderer::instance().addDrawable3D(&drawer_);
 }
 
 void ParticleSystem::addEmitters(int num_emitters) {
@@ -104,9 +104,9 @@ void ParticleSystem::updateEmitters(float delta_time) {
       Emitter &emitter = emitters_[i];
       if (emitter.time_in_flight < emitter.time_to_target) {
         float t = emitter.time_in_flight / emitter.time_to_target;
-        glm::vec2 start_mid = glm::mix(emitter.start, emitter.midway, t);
-        glm::vec2 mid_target = glm::mix(emitter.midway, emitter.target, t);
-        emitter.position = glm::vec3(glm::mix(start_mid, mid_target, t), emitter.position.z);
+        glm::vec3 start_mid = glm::mix(emitter.start, emitter.midway, t);
+        glm::vec3 mid_target = glm::mix(emitter.midway, emitter.target, t);
+        emitter.position = glm::mix(start_mid, mid_target, t);
         emitter.time_in_flight += delta_time;
         addParticles(i, delta_time);
       }
@@ -200,22 +200,23 @@ void ParticleSystem::setTargets(vector<Target> &targets) {
   targets_ = true;
   for (size_t i = 0; i < emitters_.size(); i++) {
     Emitter &emitter = emitters_[i];
-    emitter.start = glm::vec2(emitter.position.x, emitter.position.y);
+    emitter.start = emitter.position;
     if (i < targets.size()) {
       Target target = targets[i];
       // Particle system coordinate system is centered on the thought bubble.
       // Transform target to that space.
-      emitter.target = target.position - thought_bubble_->center();
+      emitter.target = unProjectPoint(glm::vec3(target.position - thought_bubble_->center(), 0.95f));
       target_to_emitter_[target.id] = i;
     } else {
       Renderer &renderer = Renderer::instance();
       glm::vec2 randomScreenSpace(renderer.getLeftOfWindow() + randomFloat(0.0f, 1.0f) * renderer.windowWidth(),
         randomFloat(0.0f, 1.0f));
       // Transform to particle sys coordinate system.
-      emitter.target = randomScreenSpace - thought_bubble_->center();
+      emitter.target = unProjectPoint(glm::vec3(randomScreenSpace - thought_bubble_->center(), 0.95f));
     }
-    emitter.midway = glm::mix(emitter.start, emitter.target, 0.8f);
-    emitter.midway += randomDirection() * 0.1f;
+    emitter.midway = glm::vec3(0.0f, 0.0f, 1.0f);//glm::mix(emitter.start, emitter.target, 0.8f);
+    //emitter.midway.z = -0.5f;
+    emitter.midway += randomDirection3D() * 0.1f;
     emitter.time_in_flight = 0.0f;
     emitter.time_to_target = glm::distance(emitter.start, emitter.target) * 3.0f;
   }

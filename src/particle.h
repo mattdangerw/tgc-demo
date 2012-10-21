@@ -23,7 +23,7 @@ struct Emitter {
   float particles_per_second, leftover_from_last_frame;
   float heat;
   //Stuff for explosion effect.
-  glm::vec2 target, start, midway;
+  glm::vec3 target, start, midway;
   float time_to_target, time_in_flight;
 };
 

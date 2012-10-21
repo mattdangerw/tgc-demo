@@ -12,10 +12,6 @@ in vec2 frag_tex_coord;
 
 out vec4 out_color;
 
-bool occluder(float tex_color) {
-  return tex_color < 1.0;
-}
-
 vec2 sample_dest() {
   float frac_to_top = (1.0 - frag_tex_coord.y) / (light_position.y - frag_tex_coord.y);
   return mix(frag_tex_coord, light_position, frac_to_top);

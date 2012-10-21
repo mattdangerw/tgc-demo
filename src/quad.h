@@ -15,7 +15,7 @@ class Quad : public Drawable {
     void setOccluderColor(glm::vec4 color) { occluder_color_ = color; }
     virtual void setCorners(glm::vec2 min, glm::vec2 max);
     virtual void draw(glm::mat3 veiw);
-    virtual void drawOcclude(glm::mat3 view);
+    void drawOcclude(glm::mat3 view);
     void getCorners(glm::vec2 *min, glm::vec2 *max);
     void xExtent(float *x_begin, float *x_end);
   protected:
