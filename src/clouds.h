@@ -13,11 +13,20 @@
 using std::list;
 using std::map;
 
+enum CloudType {
+  BIG_CLOUD = 0,
+  MEDIUM_CLOUD,
+  SMALL_CLOUD
+};
+
 class Cloud {
   public:
     Cloud(glm::vec2 position, float velocity, float scale, float shade);
     ~Cloud();
-    void init();
+    void init(CloudType type);
+    void initBigCloudShape();
+    void initMediumCloudShape();
+    void initSmallCloudShape();
     // Gets the position of the bottom left corner of the cloud.
     glm::vec2 position() { return position_; }
     glm::vec2 center();

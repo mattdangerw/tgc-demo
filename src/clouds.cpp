@@ -30,6 +30,10 @@ static inline float randomFloat(float min, float max) {
   return min + rand()/(RAND_MAX/(max - min));
 }
 
+static inline int randomInt(int min, int max) {
+  return min + rand() % (max-min);
+}
+
 Cloud::Cloud(glm::vec2 position, float velocity, float scale, float shade)
   : position_(position),
     velocity_(velocity),
@@ -40,15 +44,58 @@ Cloud::~Cloud() {
   Renderer::instance().removeDrawable(&shape_);
 }
 
-void Cloud::init() {
+void Cloud::init(CloudType type) {
   quad_.init("textures/paper3.dds");
   quad_.setColorMask(glm::vec4(shade_, shade_, shade_, 1.0f));
   quad_.setTextureScale(glm::vec2(scale_));
-  shape_.init("paths/cloud.path", &quad_, true, false);
-  //shape_.setOccluderColor(glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
+  switch (type) {
+    case BIG_CLOUD:
+      initBigCloudShape();
+      break;
+    case MEDIUM_CLOUD:
+      initMediumCloudShape();
+      break;
+    case SMALL_CLOUD:
+      initSmallCloudShape();
+      break;
+  }
   width_ = shape_.width() * scale_;
   Renderer::instance().addDrawable(&shape_);
   updateShapeTransform();
+}
+
+void Cloud::initBigCloudShape() {
+  vector<string> filenames;
+  vector<float> durations;
+  filenames.push_back("paths/big_cloud1.path");
+  durations.push_back(25.0f);
+  filenames.push_back("paths/big_cloud2.path");
+  durations.push_back(25.0f);
+  filenames.push_back("paths/big_cloud3.path");
+  durations.push_back(25.0f);
+  shape_.init(filenames, durations, &quad_);
+}
+
+void Cloud::initMediumCloudShape() {
+  vector<string> filenames;
+  vector<float> durations;
+  filenames.push_back("paths/medium_cloud1.path");
+  durations.push_back(18.0f);
+  filenames.push_back("paths/medium_cloud2.path");
+  durations.push_back(18.0f);
+  filenames.push_back("paths/medium_cloud3.path");
+  durations.push_back(18.0f);
+  shape_.init(filenames, durations, &quad_);
+}
+
+void Cloud::initSmallCloudShape() {
+  vector<string> filenames;
+  vector<float> durations;
+  filenames.push_back("paths/small_cloud1.path");
+  durations.push_back(15.0f);
+  filenames.push_back("paths/small_cloud2.path");
+  durations.push_back(15.0f);
+  shape_.init(filenames, durations, &quad_);
 }
 
 glm::vec2 Cloud::center() {
@@ -56,6 +103,7 @@ glm::vec2 Cloud::center() {
 }
 
 void Cloud::update(float delta_time) {
+  shape_.animate(delta_time);
   position_.x -= velocity_ * delta_time;
   updateShapeTransform();
 }
@@ -127,7 +175,7 @@ void CloudManager::addRandomCloud(float x_position) {
     float y_position = randomFloat(kCloudMinY, kCloudMaxY - scale);
     glm::vec2 position = glm::vec2(x_position, y_position);
     Cloud *cloud = new Cloud(position, velocity, scale, shade);
-    cloud->init();
+    cloud->init(static_cast<CloudType>(randomInt(0, 3)));
     clouds_.push_back(cloud);
 }
 

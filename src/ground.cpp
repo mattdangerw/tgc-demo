@@ -197,7 +197,7 @@ void Ground::initPathShape() {
   end.type = ON_PATH;
   path.push_back(end);
   quad_.init("textures/ground.dds");
-  shape_.init(path, &quad_, true, false);
+  shape_.init(path, &quad_);
   //shape_.setOccluder(false);
   Renderer::instance().addDrawable(&shape_);
 }
