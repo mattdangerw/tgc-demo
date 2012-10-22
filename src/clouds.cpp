@@ -10,7 +10,7 @@
 
 static const float kCloudMinScale = 0.18f;
 static const float kCloudMaxScale = 0.3f;
-static const float kCloudMinY = 0.6f;
+static const float kCloudMinY = 0.7f;
 static const float kCloudMaxY = 1.0f;
 static const float kCloudMinXDistance = 0.4f;
 static const float kCloudMaxXDistance = 0.5f;
@@ -175,7 +175,13 @@ void CloudManager::addRandomCloud(float x_position) {
     float y_position = randomFloat(kCloudMinY, kCloudMaxY - scale);
     glm::vec2 position = glm::vec2(x_position, y_position);
     Cloud *cloud = new Cloud(position, velocity, scale, shade);
-    cloud->init(static_cast<CloudType>(randomInt(0, 3)));
+    CloudType type = BIG_CLOUD;
+    if (scale < 0.21) {
+      type = SMALL_CLOUD;
+    } else if (scale < .25) {
+      type = MEDIUM_CLOUD;
+    }
+    cloud->init(type);
     clouds_.push_back(cloud);
 }
 
