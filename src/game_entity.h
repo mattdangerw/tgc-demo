@@ -6,15 +6,9 @@
 
 using std::vector;
 
-static int targetID = 0;
-
 class GameEntity;
 
 struct Target {
-  Target() {
-    id = targetID;
-    targetID++;
-  }
   glm::vec2 position;
   int id;
   GameEntity *entity;

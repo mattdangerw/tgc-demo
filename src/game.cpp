@@ -71,20 +71,23 @@ void Game::update() {
       (*it)->getTargets(targets_);
     }
     particle_system_.setTargets(targets_);
-    thought_bubble_.stopDrawing();
+    //thought_bubble_.stopDrawing();
     Renderer::instance().stopStenciling();
   }
 
   if (state_ == EXPLODING) {
     if (targets_.empty()) {
       time_in_exploding_ += delta_time;
-      if (time_in_exploding_ > 2.0f)
+      thought_bubble_.stopDrawing();
+      if (time_in_exploding_ > 2.0f) {
         state_ = ENDING;
+      }
     } else {
       for (vector<Target>::iterator it = targets_.begin(); it != targets_.end();) {
         if(particle_system_.targetWasHit(*it)) {
           it->entity->colorTarget(*it);
           it = targets_.erase(it);
+          thought_bubble_.shrink(0.7f);
         } else {
           ++it;
         }

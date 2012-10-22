@@ -7,7 +7,7 @@
 
 static Game *game = NULL;
 // Set false when debugging!!
-static bool fullscreen = false;
+static bool fullscreen = true;
 
 void cleanupAndExit(int exit_code) {
   glfwTerminate();

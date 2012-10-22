@@ -3,6 +3,7 @@
 
 #include <string>
 #include <list>
+#include <vector>
 #include <map>
 #include <glm/glm.hpp>
 
@@ -13,6 +14,33 @@
 using std::string;
 using std::list;
 using std::map;
+using std::vector;
+
+class EmitterTrack {
+  public:
+    EmitterTrack() : segment_(0), current_time_(0.0f), start_(glm::vec3(0.0f)) {}
+    ~EmitterTrack() {}
+    void setStart(glm::vec3 start) { start_ = start; }
+    void addDestination(glm::vec3 control, glm::vec3 destination, float time);
+    glm::vec3 step(float delta_time);
+    bool done() { return segment_ == controls_.size(); }
+  private:
+    int segment_;
+    float current_time_;
+    glm::vec3 start_;
+    vector<glm::vec3> controls_;
+    vector<glm::vec3> destinations_;
+    vector<float> times_;
+};
+
+struct Emitter {
+  glm::vec3 position, velocity;
+  glm::vec4 color;
+  float particles_per_second, leftover_from_last_frame;
+  float heat;
+  float time_till_escape;
+  EmitterTrack track;
+};
 
 class ParticleSystem : public GameEntity {
   public:

@@ -155,7 +155,7 @@ void ThoughtBubble::init(Character *character) {
 }
 
 void ThoughtBubble::update(float delta_time, GameState *state) {
-  if (*state == EXPLODING || *state == ENDING) return;
+  if (*state == ENDING) return;
   // A simple spring keeps our point mass following the character.
   // We need to calculate forces on out point mass and update the physics sim.
   glm::vec2 spring_anchor, spring_force;
@@ -199,7 +199,7 @@ void ThoughtBubble::update(float delta_time, GameState *state) {
           time_in_flight_+=delta_time;
       }
     }
-  } else {
+  } else if (*state != EXPLODING) {
     spring_anchor = anchorPoint();
     // Let the actual spring anchor drift horizantally a bit.
     spring_anchor.x += glm::clamp(bubble_mass_.position().x - spring_anchor.x, -kHorizantalLeeway, kHorizantalLeeway);
@@ -279,6 +279,12 @@ bool ThoughtBubble::collideEmitter(glm::vec2 *position, glm::vec2 *velocity) {
 
 glm::vec2 ThoughtBubble::anchorPoint() {
   return character_->groundPosition() + glm::vec2(0.0f, kCharacterDistance);
+}
+
+void ThoughtBubble::shrink(float scale) {
+  for (vector<float>::iterator it = rest_radii_.begin(); it != rest_radii_.end(); ++it) {
+    *it *= scale;
+  }
 }
 
 void ThoughtBubble::stopDrawing() {

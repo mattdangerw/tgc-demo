@@ -17,16 +17,6 @@ struct Particle {
   float age, lifetime, alpha_decay;
 };
 
-struct Emitter {
-  glm::vec3 position, velocity;
-  glm::vec4 color;
-  float particles_per_second, leftover_from_last_frame;
-  float heat;
-  //Stuff for explosion effect.
-  glm::vec3 target, start, midway;
-  float time_to_target, time_in_flight;
-};
-
 struct ParticleDrawInfo {
   glm::vec3 position;
   glm::vec4 color;

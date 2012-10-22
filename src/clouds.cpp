@@ -92,9 +92,9 @@ void Cloud::initSmallCloudShape() {
   vector<string> filenames;
   vector<float> durations;
   filenames.push_back("paths/small_cloud1.path");
-  durations.push_back(15.0f);
+  durations.push_back(12.0f);
   filenames.push_back("paths/small_cloud2.path");
-  durations.push_back(15.0f);
+  durations.push_back(12.0f);
   shape_.init(filenames, durations, &quad_);
 }
 
@@ -195,6 +195,7 @@ void CloudManager::getTargets(vector<Target> &targets) {
       Target target;
       target.position = cloud->center();
       target.entity = this;
+      target.id = targets.size();
       targets.push_back(target);
       target_to_cloud_[target.id] = cloud;
     }
