@@ -47,33 +47,40 @@ void ThoughtBubble::init(Character *character) {
   position_ = anchorPoint();
 
   // Create collection of circles that make the thought bubble.
+  glm::vec4 color(0.3f, 0.3f, 0.3f, 1.0f);
   Circle circle;
   circle.center = glm::vec2(-0.035f, -0.035f);
   circle.radius = 0.1f;
+  circle.color = color;
   bubble_circles_.push_back(circle);
   rest_radii_.push_back(circle.radius);
   circle.center = glm::vec2(0.05f, -0.032f);
   circle.radius = 0.1f;
+  circle.color = color;
   bubble_circles_.push_back(circle);
   rest_radii_.push_back(circle.radius);
   circle.center = glm::vec2(0.1f, 0.01f);
   circle.radius = 0.09f;
+  circle.color = color;
   bubble_circles_.push_back(circle);
   rest_radii_.push_back(circle.radius);
   circle.center = glm::vec2(-0.09f, 0.0f);
   circle.radius = 0.09f;
+  circle.color = color;
   bubble_circles_.push_back(circle);
   rest_radii_.push_back(circle.radius);
   circle.center = glm::vec2(0.04f, 0.06f);
   circle.radius = 0.1f;
+  circle.color = color;
   bubble_circles_.push_back(circle);
   rest_radii_.push_back(circle.radius);
   circle.center = glm::vec2(-0.05f, 0.05f);
   circle.radius = 0.1f;
+  circle.color = color;
   bubble_circles_.push_back(circle);
   rest_radii_.push_back(circle.radius);
   // sub circles.
-  glm::vec4 sub_color(0.2f, 0.2f, 0.2f, 1.0f);
+  glm::vec4 sub_color(0.3f, 0.3f, 0.3f, 1.0f);
   circle.center = glm::vec2(0.0f, -0.03f);
   circle.radius = 0.11f;
   circle.color = sub_color;
@@ -104,10 +111,17 @@ void ThoughtBubble::init(Character *character) {
 
   // Ready the circle drawer.
   circle_drawer_.init(&bubble_circles_);
+  circle_drawer_.changeRadii(0.01f);
   circle_drawer_.setDisplayPriority(100);
   circle_drawer_.setOccluder(false);
   Renderer::instance().addDrawable(&circle_drawer_);
-  Renderer::instance().addStencilShape(&circle_drawer_);
+  // Ready the circle drawer.
+  circle_inside_drawer_.init(&bubble_circles_);
+  circle_inside_drawer_.addScreenSpaceTexture("textures/motion_blur1.dds");
+  circle_inside_drawer_.setDisplayPriority(101);
+  circle_inside_drawer_.setOccluder(false);
+  Renderer::instance().addDrawable(&circle_inside_drawer_);
+  Renderer::instance().addStencilShape(&circle_inside_drawer_);
   // same for sub bubble
   sub_circle_drawer_.init(&sub_bubble_circles_);
   sub_circle_drawer_.setDisplayPriority(99);
@@ -170,6 +184,7 @@ void ThoughtBubble::update(float delta_time, GameState *state) {
   }
   // Update drawable.
   circle_drawer_.setTransform(translate2D(glm::mat3(1.0f), position_));
+  circle_inside_drawer_.setTransform(translate2D(glm::mat3(1.0f), position_));
   glm::mat3 sub_transform(1.0f);
   glm::vec2 character_position = character_->groundPosition();
   glm::vec2 bubble_edge = position_ + glm::normalize(character_position - position_) * .14f;
@@ -229,5 +244,6 @@ glm::vec2 ThoughtBubble::anchorPoint() {
 
 void ThoughtBubble::stopDrawing() {
   Renderer::instance().removeDrawable(&circle_drawer_);
+  Renderer::instance().removeDrawable(&circle_inside_drawer_);
   Renderer::instance().removeDrawable(&sub_circle_drawer_);
 }

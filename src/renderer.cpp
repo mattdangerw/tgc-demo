@@ -115,7 +115,8 @@ void Renderer::setupFBOs() {
 
 void Renderer::loadShaders() {
   Shader general_vert, textured_frag, textured_with_shadows_frag, colored_frag, minimal_frag,
-    quadric_frag, circles_frag, particles_vert, particles_frag, shadows_vert, shadows_frag;
+    quadric_frag, circles_frag, particles_vert, particles_frag, shadows_vert, shadows_frag,
+    circles_textured_frag, circles_screen_textured_frag;
 
   general_vert.load("src/shaders/general.vert", GL_VERTEX_SHADER);
   textured_frag.load("src/shaders/textured.frag", GL_FRAGMENT_SHADER);
@@ -154,6 +155,18 @@ void Renderer::loadShaders() {
   circles.addShader(&circles_frag);
   setAttributesAndLink(circles);
   
+  circles_textured_frag.load("src/shaders/circles_textured.frag", GL_FRAGMENT_SHADER);
+  Program &circles_textured = programs_["circles_textured"];
+  circles_textured.addShader(&general_vert);
+  circles_textured.addShader(&circles_textured_frag);
+  setAttributesAndLink(circles_textured);
+
+  circles_screen_textured_frag.load("src/shaders/circles_screen_textured.frag", GL_FRAGMENT_SHADER);
+  Program &circles_screen_textured = programs_["circles_screen_textured"];
+  circles_screen_textured.addShader(&general_vert);
+  circles_screen_textured.addShader(&circles_screen_textured_frag);
+  setAttributesAndLink(circles_screen_textured);
+
   particles_vert.load("src/shaders/particles.vert", GL_VERTEX_SHADER);
   particles_frag.load("src/shaders/particles.frag", GL_FRAGMENT_SHADER);
   Program &particles = programs_["particles"];
@@ -177,8 +190,9 @@ void Renderer::setAttributesAndLink(Program &program) {
   program.setAttributeHandle("position", 0);
   program.setAttributeHandle("color", 1);
   program.setAttributeHandle("tex_coord", 2);
+  program.setAttributeHandle("bezier_coord", 3);
   // For particles (intanced quads with a translation to displace).
-  program.setAttributeHandle("translate", 3);
+  program.setAttributeHandle("translate", 4);
   program.link();
 }
 
@@ -186,6 +200,14 @@ void Renderer::setTextureUnits() {
   Program &textured = programs_["textured"];
   textured.use();
   glUniform1i(textured.uniformHandle("color_texture"), 0);
+
+  Program &circles_textured = programs_["circles_textured"];
+  circles_textured.use();
+  glUniform1i(circles_textured.uniformHandle("color_texture"), 0);
+
+  Program &circles_screen_textured = programs_["circles_screen_textured"];
+  circles_screen_textured.use();
+  glUniform1i(circles_screen_textured.uniformHandle("color_texture"), 0);
 
   Program &textured_with_shadows = programs_["textured_with_shadows"];
   textured_with_shadows.use();

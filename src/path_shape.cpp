@@ -178,7 +178,7 @@ void PathShape::createVAOs() {
     glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
     glBindBuffer(GL_ARRAY_BUFFER, quadric_buffers_[1]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_bezier_coords_.size(), &quadric_bezier_coords_[0], GL_STATIC_DRAW);
-    handle = quadric_program_->attributeHandle("tex_coord");
+    handle = quadric_program_->attributeHandle("bezier_coord");
     glEnableVertexAttribArray(handle);
     glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
   }

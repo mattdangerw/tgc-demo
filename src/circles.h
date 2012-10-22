@@ -20,16 +20,20 @@ class CircleDrawer : public Drawable {
     ~CircleDrawer();
     // Set up the VAOs and VBOs and what not.
     void init(vector<Circle> *circles);
+    void addScreenSpaceTexture(string texture_filename);
+    void changeRadii(float delta_radius) { delta_radius_ = delta_radius; }
     void draw(glm::mat3 view) { drawHelper(view, false); }
     void drawOcclude(glm::mat3 view) { drawHelper(view, true); }
 
   private:
     void drawHelper(glm::mat3 view, bool asOccluder);
     vector<Circle> *circles_;
+    float delta_radius_;
+    bool with_texture_;
     // GL stuff
-    Program *program_;
+    Program *colored_program_, *textured_program_;
     GLuint array_object_, buffer_object_;
-    GLint modelview_handle_, color_handle_;
+    GLuint texture_handle_;
 };
 
 #endif  // SRC_CIRCLES_H_

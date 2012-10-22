@@ -36,7 +36,7 @@ class ThoughtBubble : public GameEntity {
     float circles_spring_constant_;
     vector<float> rest_radii_;
     vector<PointMass> stretch_masses_;
-    CircleDrawer circle_drawer_, sub_circle_drawer_;
+    CircleDrawer circle_drawer_, circle_inside_drawer_, sub_circle_drawer_;
 
     // For pre explosion animation
     bool ready_to_animate_, in_position_;
