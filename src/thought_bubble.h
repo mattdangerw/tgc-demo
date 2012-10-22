@@ -10,8 +10,25 @@
 #include "particle.h"
 #include "game_entity.h"
 #include "circles.h"
+#include "quad.h"
 
 using std::vector;
+
+class SubBubble: public Drawable  {
+  public:
+    SubBubble() {}
+    ~SubBubble() {}
+    void init(vector<Circle> *circles, float texture_scale, float darkness);
+    void draw(glm::mat3 view) {
+      view = modelview(view);
+      outer_drawer_.draw(view);
+      //inner_drawer_.draw(view);
+    }
+    void drawOcclude(glm::mat3 view) {}
+  private:
+    CircleDrawer outer_drawer_;//, inner_drawer_;
+    TexturedQuad outer_fill_;//, inner_fill_;
+};
 
 class ThoughtBubble : public GameEntity {
   public:
@@ -36,7 +53,9 @@ class ThoughtBubble : public GameEntity {
     float circles_spring_constant_;
     vector<float> rest_radii_;
     vector<PointMass> stretch_masses_;
-    CircleDrawer circle_drawer_, circle_inside_drawer_, sub_circle_drawer_;
+    CircleDrawer circle_drawer_, circle_inside_drawer_;
+    TexturedQuad fill_;
+    SubBubble sub_bubble_, sub_bubble2_, sub_bubble3_;
 
     // For pre explosion animation
     bool ready_to_animate_, in_position_;

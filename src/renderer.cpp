@@ -155,12 +155,6 @@ void Renderer::loadShaders() {
   circles.addShader(&circles_frag);
   setAttributesAndLink(circles);
   
-  circles_textured_frag.load("src/shaders/circles_textured.frag", GL_FRAGMENT_SHADER);
-  Program &circles_textured = programs_["circles_textured"];
-  circles_textured.addShader(&general_vert);
-  circles_textured.addShader(&circles_textured_frag);
-  setAttributesAndLink(circles_textured);
-
   circles_screen_textured_frag.load("src/shaders/circles_screen_textured.frag", GL_FRAGMENT_SHADER);
   Program &circles_screen_textured = programs_["circles_screen_textured"];
   circles_screen_textured.addShader(&general_vert);
@@ -200,10 +194,6 @@ void Renderer::setTextureUnits() {
   Program &textured = programs_["textured"];
   textured.use();
   glUniform1i(textured.uniformHandle("color_texture"), 0);
-
-  Program &circles_textured = programs_["circles_textured"];
-  circles_textured.use();
-  glUniform1i(circles_textured.uniformHandle("color_texture"), 0);
 
   Program &circles_screen_textured = programs_["circles_screen_textured"];
   circles_screen_textured.use();

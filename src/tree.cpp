@@ -26,7 +26,7 @@ void Tree::draw(glm::mat3 view) {
 }
 
 void Tree::drawOcclude(glm::mat3 view) {
-  view = view * transform();
+  view = modelview(view);
   trunk_shape_.drawOcclude(view);
   leaves_shape_.drawOcclude(view);
 }

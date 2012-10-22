@@ -8,7 +8,7 @@
 #include "transform2D.h"
 
 static const float kCharacterDistance = 0.35f;
-static const float kHorizantalLeeway = 0.15f;
+static const float kHorizantalLeeway = 0.18f;
 static const float kBubbleSpringConstant = 120.0f;
 
 //StretchyCircle::StretchyCircle(glm::vec2 center, float rest_radius) 
@@ -31,13 +31,27 @@ static const float kBubbleSpringConstant = 120.0f;
 //  spring_mass_.update(delta_time);
 //}
 
+void SubBubble::init(vector<Circle> *circles, float texture_scale, float darkness) {
+  outer_fill_.init("textures/thought_bubble.dds");
+  outer_fill_.setTextureScale(glm::vec2(texture_scale));
+  outer_fill_.setCorners(glm::vec2(-0.3f, -0.2f), glm::vec2(0.3f, 0.2f));
+  outer_fill_.setColorMask(glm::vec4(darkness, darkness, darkness, 1.0f));
+  outer_drawer_.init(circles);
+  //outer_drawer_.changeRadii(border_width);
+  outer_drawer_.useQuad(&outer_fill_);
+  //inner_fill_.init("textures/inner_thought_bubble.dds");
+  //inner_fill_.setTextureScale(glm::vec2(texture_scale));
+  //inner_fill_.setCorners(glm::vec2(-0.3f, -0.2f), glm::vec2(0.3f, 0.2f));
+  //inner_drawer_.init(circles);
+  //inner_drawer_.useQuad(&inner_fill_);
+}
+
 ThoughtBubble::ThoughtBubble()
   : ready_to_animate_(false),
     circles_spring_constant_(200.0f) {}
 
 ThoughtBubble::~ThoughtBubble() {
-  Renderer::instance().removeDrawable(&circle_drawer_);
-  Renderer::instance().removeDrawable(&sub_circle_drawer_);
+  stopDrawing();
 }
 
 void ThoughtBubble::init(Character *character) {
@@ -79,7 +93,7 @@ void ThoughtBubble::init(Character *character) {
   circle.color = color;
   bubble_circles_.push_back(circle);
   rest_radii_.push_back(circle.radius);
-  // sub circles.
+  // Sub-bubble circles.
   glm::vec4 sub_color(0.3f, 0.3f, 0.3f, 1.0f);
   circle.center = glm::vec2(0.0f, -0.03f);
   circle.radius = 0.11f;
@@ -110,23 +124,34 @@ void ThoughtBubble::init(Character *character) {
   }
 
   // Ready the circle drawer.
+  fill_.init("textures/thought_bubble.dds");
+  fill_.setTextureScale(glm::vec2(2.0f));
+  fill_.setCorners(glm::vec2(-0.3f, -0.2f), glm::vec2(0.3f, 0.2f));
   circle_drawer_.init(&bubble_circles_);
+  circle_drawer_.useQuad(&fill_);
   circle_drawer_.changeRadii(0.01f);
   circle_drawer_.setDisplayPriority(100);
   circle_drawer_.setOccluder(false);
   Renderer::instance().addDrawable(&circle_drawer_);
   // Ready the circle drawer.
   circle_inside_drawer_.init(&bubble_circles_);
-  circle_inside_drawer_.addScreenSpaceTexture("textures/motion_blur1.dds");
+  circle_inside_drawer_.useScreenSpaceTexture("textures/motion_blur1.dds");
   circle_inside_drawer_.setDisplayPriority(101);
   circle_inside_drawer_.setOccluder(false);
   Renderer::instance().addDrawable(&circle_inside_drawer_);
   Renderer::instance().addStencilShape(&circle_inside_drawer_);
   // same for sub bubble
-  sub_circle_drawer_.init(&sub_bubble_circles_);
-  sub_circle_drawer_.setDisplayPriority(99);
-  sub_circle_drawer_.setOccluder(false);
-  Renderer::instance().addDrawable(&sub_circle_drawer_);
+  sub_bubble_.init(&sub_bubble_circles_, 1.0f, 0.85f);
+  sub_bubble_.setDisplayPriority(99);
+  Renderer::instance().addDrawable(&sub_bubble_);
+
+  sub_bubble2_.init(&sub_bubble_circles_, 0.5f, 0.7f);
+  sub_bubble2_.setDisplayPriority(98);
+  Renderer::instance().addDrawable(&sub_bubble2_);
+
+  sub_bubble3_.init(&sub_bubble_circles_, 0.3f, 0.55f);
+  sub_bubble3_.setDisplayPriority(97);
+  Renderer::instance().addDrawable(&sub_bubble3_);
 }
 
 void ThoughtBubble::update(float delta_time, GameState *state) {
@@ -136,7 +161,9 @@ void ThoughtBubble::update(float delta_time, GameState *state) {
   glm::vec2 spring_anchor, spring_force;
   if (*state == PRE_EXPLODING) {
     if (!ready_to_animate_) {
-      Renderer::instance().removeDrawable(&sub_circle_drawer_);
+      Renderer::instance().removeDrawable(&sub_bubble_);
+      Renderer::instance().removeDrawable(&sub_bubble2_);
+      Renderer::instance().removeDrawable(&sub_bubble3_);
       Renderer &renderer = Renderer::instance();
       start_ = bubble_mass_.position();
       end_ = glm::vec2(renderer.getLeftOfWindow() + renderer.windowWidth()/2, 0.75f);
@@ -186,11 +213,23 @@ void ThoughtBubble::update(float delta_time, GameState *state) {
   circle_drawer_.setTransform(translate2D(glm::mat3(1.0f), position_));
   circle_inside_drawer_.setTransform(translate2D(glm::mat3(1.0f), position_));
   glm::mat3 sub_transform(1.0f);
-  glm::vec2 character_position = character_->groundPosition();
-  glm::vec2 bubble_edge = position_ + glm::normalize(character_position - position_) * .14f;
-  sub_transform = translate2D(sub_transform, glm::mix(bubble_edge, character_position, 0.2f));
-  sub_transform = scale2D(sub_transform, glm::vec2(0.3f));
-  sub_circle_drawer_.setTransform(sub_transform);
+  glm::vec2 character_position = character_->position();//groundPosition();
+  glm::vec2 bubble_edge = position_ + glm::normalize(character_position - position_) * .05f;
+  sub_transform = translate2D(sub_transform, glm::mix(bubble_edge, character_position, 0.1f));
+  sub_transform = translate2D(sub_transform, glm::vec2(0.0f, -0.1f));
+  sub_transform = scale2D(sub_transform, glm::vec2(0.32f));
+  sub_bubble_.setTransform(sub_transform);
+
+  glm::mat3 sub_transform2(1.0f);
+  sub_transform2 = translate2D(sub_transform2, glm::mix(bubble_edge, character_position, 0.45f));
+  sub_transform2 = translate2D(sub_transform2, glm::vec2(0.0f, -0.07f));
+  sub_transform2 = scale2D(sub_transform2, glm::vec2(0.2f));
+  sub_bubble2_.setTransform(sub_transform2);
+
+  glm::mat3 sub_transform3(1.0f);
+  sub_transform3 = translate2D(sub_transform3, glm::mix(bubble_edge, character_position, 0.8f));
+  sub_transform3 = scale2D(sub_transform3, glm::vec2(0.14f));
+  sub_bubble3_.setTransform(sub_transform3);
 
   // Update our stretch masses. And assign new radius to circle based on stretch
   for (size_t i = 0; i < bubble_circles_.size(); ++i) {
@@ -245,5 +284,7 @@ glm::vec2 ThoughtBubble::anchorPoint() {
 void ThoughtBubble::stopDrawing() {
   Renderer::instance().removeDrawable(&circle_drawer_);
   Renderer::instance().removeDrawable(&circle_inside_drawer_);
-  Renderer::instance().removeDrawable(&sub_circle_drawer_);
+  Renderer::instance().removeDrawable(&sub_bubble_);
+  Renderer::instance().removeDrawable(&sub_bubble2_);
+  Renderer::instance().removeDrawable(&sub_bubble3_);
 }
