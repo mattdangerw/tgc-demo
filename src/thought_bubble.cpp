@@ -11,26 +11,6 @@ static const float kCharacterDistance = 0.35f;
 static const float kHorizantalLeeway = 0.18f;
 static const float kBubbleSpringConstant = 120.0f;
 
-//StretchyCircle::StretchyCircle(glm::vec2 center, float rest_radius) 
-//  : center_(center),
-//    rest_radius_(rest_radius) {
-//  spring_mass_ = PointMass(glm::vec2(rest_radius, 0.0f), glm::vec2(), 1.0f, 30.0f);
-//}
-//
-//float StretchyCircle::radius() {
-//  return spring_mass_.position().x;
-//}
-//
-//void StretchyCircle::addImpulse(glm::vec2 impulse) {
-//  spring_mass_.applyImpulse(glm::vec2(glm::length(impulse), 0.0f));
-//}
-//
-//void StretchyCircle::update(float delta_time) {
-//  float spring_force = -kCirclesSpringConstant * (radius() - rest_radius_);
-//  spring_mass_.applyForce(glm::vec2(spring_force, 0.0f));
-//  spring_mass_.update(delta_time);
-//}
-
 void SubBubble::init(vector<Circle> *circles, float texture_scale, float darkness) {
   outer_fill_.init("textures/thought_bubble.dds");
   outer_fill_.setTextureScale(glm::vec2(texture_scale));
@@ -282,8 +262,11 @@ glm::vec2 ThoughtBubble::anchorPoint() {
 }
 
 void ThoughtBubble::shrink(float scale) {
-  for (vector<float>::iterator it = rest_radii_.begin(); it != rest_radii_.end(); ++it) {
-    *it *= scale;
+  for (size_t i = 0; i < bubble_circles_.size(); i++) {
+    float new_rest = rest_radii_[i] * 0.7;
+    float delta_rest = rest_radii_[i] - new_rest;
+    stretch_masses_[i].setPosition(stretch_masses_[i].position() + glm::vec2(delta_rest, 0.0f));
+    rest_radii_[i] = new_rest;
   }
 }
 

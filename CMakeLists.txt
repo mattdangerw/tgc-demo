@@ -37,6 +37,7 @@ add_executable(tgc-demo
   src/point_mass.h
   src/quad.cpp
   src/quad.h
+  src/random.h
   src/renderer.cpp
   src/renderer.h
   src/shader_program.cpp

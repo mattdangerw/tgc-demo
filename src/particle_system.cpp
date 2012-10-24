@@ -9,60 +9,20 @@
 #include <algorithm>
 
 #include "transform2D.h"
+#include "random.h"
 
 static const int kMaxParticles = 10000;
 static const float kNearZBoundary = -2.2f;
 static const float kFarZBoundary = -4.0f;
-
-static inline float randomFloat(float min, float max) {
-  return min + rand()/(RAND_MAX/(max - min));
-}
-
-static inline glm::vec2 randomDirection() {
-  glm::vec2 direction = glm::vec2(randomFloat(-1.0f, 1.0f), randomFloat(-1.0f, 1.0f));
-  return glm::normalize(direction);
-}
-
-static inline glm::vec3 randomDirection3D() {
-  glm::vec3 direction = glm::vec3(randomFloat(-1.0f, 1.0f), randomFloat(-1.0f, 1.0f), randomFloat(-1.0f, 1.0f));
-  return glm::normalize(direction);
-}
-
-static inline glm::vec2 fastRandomDirection() {
-  return glm::vec2(randomFloat(-1.0f, 1.0f), randomFloat(-1.0f, 1.0f));
-}
-
-static inline glm::vec3 fastRandomDirection3D() {
-  return glm::vec3(randomFloat(-1.0f, 1.0f), randomFloat(-1.0f, 1.0f), randomFloat(-1.0f, 1.0f));
-}
-
-static inline glm::vec3 randomColor() {
-  //float hue = randomFloat(0.0f, 180.0f);
-  //float saturation = randomFloat(0.5f, 1.0f);
-  //float value = randomFloat(0.5f, 1.0f);
-  //glm::vec3 hsv(hue, saturation, value);
-  //return glm::rgbColor(hsv);
-  return glm::vec3(randomFloat(0.2f, 1.0f), randomFloat(0.2f, 1.0f), randomFloat(0.2f, 1.0f));
-}
 
 static inline glm::vec3 projectPoint(glm::vec3 point) {
   glm::vec4 projected = Renderer::instance().projection() * glm::vec4(point, 1.0);
   return glm::vec3(projected.x, projected.y, projected.z) / projected.w;
 }
 
-static inline glm::vec3 projectVector(glm::vec3 vector) {
-  glm::vec4 projected = Renderer::instance().projection() * glm::vec4(vector, 0.0);
-  return glm::vec3(projected.x, projected.y, projected.z);
-}
-
 static inline glm::vec3 unProjectPoint(glm::vec3 point) {
-  glm::vec4 projected = Renderer::instance().inverseProjection() * glm::vec4(point, 1.0);
-  return glm::vec3(projected.x, projected.y, projected.z) / projected.w;
-}
-
-static inline glm::vec3 unProjectVector(glm::vec3 vector) {
-  glm::vec4 projected = Renderer::instance().inverseProjection() * glm::vec4(vector, 0.0);
-  return glm::vec3(projected.x, projected.y, projected.z);
+  glm::vec4 unprojected = Renderer::instance().inverseProjection() * glm::vec4(point, 1.0);
+  return glm::vec3(unprojected.x, unprojected.y, unprojected.z) / unprojected.w;
 }
 
 void EmitterTrack::addDestination(glm::vec3 control, glm::vec3 destination, float time) {
@@ -141,14 +101,11 @@ void ParticleSystem::updateEmitters(float delta_time) {
       emitter.position += emitter.velocity * delta_time;
       emitter.heat = glm::max(1.0f, emitter.heat - 4.0f * delta_time);
       glm::vec3 projected_position = projectPoint(emitter.position);
-      glm::vec3 projected_velocity = projectVector(emitter.velocity);
       glm::vec2 position2D(projected_position.x, projected_position.y);
-      glm::vec2 velocity2D(projected_velocity.x, projected_velocity.y);
+      glm::vec2 velocity2D(emitter.velocity.x, emitter.velocity.y);
       if (thought_bubble_->collideEmitter(&position2D, &velocity2D)) {
         emitter.position = unProjectPoint(glm::vec3(position2D.x, position2D.y, projected_position.z));
-        glm::vec3 new_velocity = unProjectVector(glm::vec3(velocity2D.x, velocity2D.y, projected_velocity.z));
-        // We'll keep the old z velocity. Not perspective correct but the effect we want.
-        emitter.velocity = glm::vec3(new_velocity.x, new_velocity.y, emitter.velocity.z);
+        emitter.velocity = glm::vec3(velocity2D.x, velocity2D.y, emitter.velocity.z);
       }
       if (emitter.position.z > kNearZBoundary) {
         emitter.position.z = kNearZBoundary;
@@ -229,7 +186,7 @@ void ParticleSystem::setTargets(vector<Target> &targets) {
     emitter.track.setStart(emitter.position);
     glm::vec3 control = glm::vec3(0.0f, 0.0f, -1.7f);
     glm::vec3 destination = glm::vec3(0.0, 0.0, -1.1f);
-    emitter.track.addDestination(control, destination, 0.7f);
+    emitter.track.addDestination(control, destination, 1.0f);
     control = glm::vec3(0.0f, 0.0f, -0.7f);
     if (i < targets.size()) {
       Target target = targets[i];
@@ -249,7 +206,7 @@ void ParticleSystem::setTargets(vector<Target> &targets) {
       // Release at random time over the interval of real targets.
       emitter.time_till_escape = randomFloat(0.0f, time_till_escape - delta_escape);
     }
-    emitter.track.addDestination(control, destination, 1.0f);
+    emitter.track.addDestination(control, destination, 1.5f);
     //emitter.midway = glm::mix(emitter.start, emitter.target, 0.8f);
     //emitter.midway += randomDirection3D() * 0.1f;
     //emitter.time_in_flight = 0.0f;

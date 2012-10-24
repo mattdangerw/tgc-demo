@@ -7,6 +7,7 @@
 #include "transform2D.h"
 #include "path_shape.h"
 #include "quad.h"
+#include "random.h"
 
 static const float kCloudMinScale = 0.18f;
 static const float kCloudMaxScale = 0.3f;
@@ -25,14 +26,6 @@ static const glm::vec4 kCloudColors[5] = {glm::vec4(1.0f, 0.6f, 0.5f, 1.0f),  //
                                           glm::vec4(1.0f, 0.65f, .85f, 1.0f), // pinkish
                                           glm::vec4(.97f, 0.75f, .97f, 1.0f), // i forget
                                           glm::vec4(0.7f, 0.65f, 1.0f, 1.0f)}; // purple
-
-static inline float randomFloat(float min, float max) {
-  return min + rand()/(RAND_MAX/(max - min));
-}
-
-static inline int randomInt(int min, int max) {
-  return min + rand() % (max-min);
-}
 
 Cloud::Cloud(glm::vec2 position, float velocity, float scale, float shade)
   : position_(position),

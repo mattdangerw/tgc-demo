@@ -11,6 +11,8 @@ class PointMass {
     void applyForce(glm::vec2 force);
     void applyImpulse(glm::vec2 force);
     void update(float delta_time);
+    // Screw physics. Move this where you want.
+    void setPosition(glm::vec2 position) { position_ = position; }
     glm::vec2 position() { return position_; }
     glm::vec2 velocity() { return velocity_; }
 

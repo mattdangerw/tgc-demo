@@ -1,11 +1,9 @@
 #include "jumping_crowd.h"
 
+#include "random.h"
+
 static const float kActivateDistance = 0.1f;
 static const float kGravity = -8.0f;
-
-static inline float randomFloat(float min, float max) {
-  return min + rand()/(RAND_MAX/(max - min));
-}
 
 JumpingCrowd::JumpingCrowd() {}
 

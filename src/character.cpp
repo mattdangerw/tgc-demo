@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 
 #include "transform2D.h"
+#include "random.h"
 
 static const float kSpeed = 0.4f;
 static const float kPlayerWidth = 0.008f;
@@ -10,10 +11,6 @@ static const float kGrowthRate = 0.004f;
 static const float kHeightAboveGround = 0.0f;
 static const float kGravity = -8.0f;
 static const float kInitialJumpVelocity = 1.2f;
-
-static inline float randomFloat(float min, float max) {
-  return min + rand()/(RAND_MAX/(max - min));
-}
 
 Character::Character()
   : position_(),
