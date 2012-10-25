@@ -23,7 +23,7 @@ struct PathVertex {
   PathVertexType type;
 };
 
-class PathShape : public Drawable {
+class PathShape : public Drawable2D {
   public:
     PathShape();
     ~PathShape();

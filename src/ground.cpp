@@ -78,7 +78,7 @@ void Ground::init() {
   background_.setCorners(glm::vec2(0.0f, 0.0f), glm::vec2(width(), 1.0f));
   background_.setOccluder(false);
   background_.setShadowed(true);
-  Renderer::instance().addDrawable(&background_);
+  Renderer::instance().addDrawable2D(&background_);
   initTrees();
 
   Renderer::instance().setLightPosition(glm::vec2(5.0f, 10.0f));
@@ -177,7 +177,7 @@ void Ground::initTrees() {
   tree->setDisplayPriority(1);
 
   for (vector<Tree>::iterator it = trees_.begin(); it != trees_.end(); ++it) {
-    Renderer::instance().addDrawable(&(*it));
+    Renderer::instance().addDrawable2D(&(*it));
   }
 }
 
@@ -199,7 +199,7 @@ void Ground::initPathShape() {
   quad_.init("textures/ground.dds");
   shape_.init(path, &quad_);
   //shape_.setOccluder(false);
-  Renderer::instance().addDrawable(&shape_);
+  Renderer::instance().addDrawable2D(&shape_);
 }
 
 float Ground::width() {

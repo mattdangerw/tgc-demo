@@ -13,10 +13,10 @@ using std::string;
 using std::vector;
 using std::map;
 
-class Drawable {
+class Drawable2D {
   public:
-    Drawable() : transform_(1.0f), priority_(0), occluder_(true) {};
-    virtual ~Drawable() {}
+    Drawable2D() : transform_(1.0f), priority_(0), occluder_(true) {};
+    virtual ~Drawable2D() {}
     // Make the GL calls to draw this object.
     virtual void draw(glm::mat3 view) = 0;
     virtual void drawOcclude(glm::mat3 view) = 0;
@@ -86,11 +86,11 @@ class Renderer {
     // Adds a 2D drawable object to the renderer.
     // Not memory managed! Game entities should allocate and free drawable objects.
     // Remove to stop drawing, when object deleted or to set invisible
-    void addDrawable(Drawable *object);
-    void removeDrawable(Drawable *object);
+    void addDrawable2D(Drawable2D *object);
+    void removeDrawable2D(Drawable2D *object);
     // Adds a shape to be drawn into the stencil buffer before drawing the particles.
-    void addStencilShape(Drawable *object);
-    void removeStencilShape(Drawable *object);
+    void addStencilShape(Drawable2D *object);
+    void removeStencilShape(Drawable2D *object);
     // Adds the particles which are drawn with different opengl setting. and maybe 3d?
     void addDrawable3D(Drawable3D *object);
     void removeDrawable3D(Drawable3D *object);
@@ -127,7 +127,7 @@ class Renderer {
     float aspect_, left_of_window_;
     bool do_stencil_;
     glm::mat4 projection_, inverse_projection_;
-    vector<Drawable *> draw2D_, draw_stencil_;
+    vector<Drawable2D *> draw2D_, draw_stencil_;
     vector<Drawable3D *> draw3D_;
     glm::vec2 light_position_;
     map<string, Program> programs_;

@@ -8,7 +8,7 @@
 #include "shader_program.h"
 #include "renderer.h"
 
-class Quad : public Drawable {
+class Quad : public Drawable2D {
   public:
     Quad();
     void init();

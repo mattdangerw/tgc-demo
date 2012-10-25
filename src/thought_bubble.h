@@ -14,7 +14,7 @@
 
 using std::vector;
 
-class SubBubble: public Drawable  {
+class SubBubble: public Drawable2D  {
   public:
     SubBubble() {}
     ~SubBubble() {}

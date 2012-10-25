@@ -34,7 +34,7 @@ Cloud::Cloud(glm::vec2 position, float velocity, float scale, float shade)
     shade_(shade) {}
 
 Cloud::~Cloud() {
-  Renderer::instance().removeDrawable(&shape_);
+  Renderer::instance().removeDrawable2D(&shape_);
 }
 
 void Cloud::init(CloudType type) {
@@ -53,7 +53,7 @@ void Cloud::init(CloudType type) {
       break;
   }
   width_ = shape_.width() * scale_;
-  Renderer::instance().addDrawable(&shape_);
+  Renderer::instance().addDrawable2D(&shape_);
   updateShapeTransform();
 }
 

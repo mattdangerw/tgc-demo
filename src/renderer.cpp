@@ -214,7 +214,7 @@ void Renderer::setTextureUnits() {
 }
 
 struct PrioritySortFunctor {
-  bool operator() (const Drawable *left, const Drawable *right) {
+  bool operator() (const Drawable2D *left, const Drawable2D *right) {
     return left->displayPriority() < right->displayPriority();
   }
 };
@@ -236,7 +236,7 @@ void Renderer::draw() {
   glDepthMask(GL_TRUE);
   glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glDepthMask(GL_FALSE);
-  for (vector<Drawable *>::iterator it = draw2D_.begin(); it != draw2D_.end(); ++it) {
+  for (vector<Drawable2D *>::iterator it = draw2D_.begin(); it != draw2D_.end(); ++it) {
     if ((*it)->occluder()) (*it)->drawOcclude(view);
   }
   
@@ -268,7 +268,7 @@ void Renderer::draw() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  for (vector<Drawable *>::iterator it = draw2D_.begin(); it != draw2D_.end(); ++it) {
+  for (vector<Drawable2D *>::iterator it = draw2D_.begin(); it != draw2D_.end(); ++it) {
     (*it)->draw(view);
   }
 
@@ -277,7 +277,7 @@ void Renderer::draw() {
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     glStencilFunc(GL_ALWAYS, 0, 0xFF);
     glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-    for (vector<Drawable *>::iterator it = draw_stencil_.begin(); it != draw_stencil_.end(); ++it) {
+    for (vector<Drawable2D *>::iterator it = draw_stencil_.begin(); it != draw_stencil_.end(); ++it) {
       (*it)->draw(view);
     }
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -295,12 +295,12 @@ void Renderer::draw() {
   }
 }
 
-void Renderer::addDrawable(Drawable *object) {
+void Renderer::addDrawable2D(Drawable2D *object) {
   draw2D_.push_back(object);
 }
 
-void Renderer::removeDrawable(Drawable *object) {
-  vector<Drawable *>::iterator it;
+void Renderer::removeDrawable2D(Drawable2D *object) {
+  vector<Drawable2D *>::iterator it;
   for (it = draw2D_.begin(); it != draw2D_.end(); ++it) {
     if (*it == object) {
       draw2D_.erase(it);
@@ -309,12 +309,12 @@ void Renderer::removeDrawable(Drawable *object) {
   }
 }
 
-void Renderer::addStencilShape(Drawable *object) {
+void Renderer::addStencilShape(Drawable2D *object) {
   draw_stencil_.push_back(object);
 }
 
-void Renderer::removeStencilShape(Drawable *object) {
-  vector<Drawable *>::iterator it;
+void Renderer::removeStencilShape(Drawable2D *object) {
+  vector<Drawable2D *>::iterator it;
   for (it = draw_stencil_.begin(); it != draw_stencil_.end(); ++it) {
     if (*it == object) {
       draw2D_.erase(it);

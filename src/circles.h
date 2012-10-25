@@ -15,7 +15,7 @@ struct Circle {
   float radius;
 };
 
-class CircleDrawer : public Drawable {
+class CircleDrawer : public Drawable2D {
   public:
     CircleDrawer();
     ~CircleDrawer();
