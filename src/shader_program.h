@@ -23,6 +23,7 @@ class Program {
   public:
     Program();
     ~Program();
+    void create();
     void addShader(Shader *shader);
     void link();
     void use();

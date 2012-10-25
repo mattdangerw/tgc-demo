@@ -7,7 +7,7 @@
 
 static Game *game = NULL;
 // Set false when debugging!!
-static bool fullscreen = false;
+static bool fullscreen = true;
 
 void cleanupAndExit(int exit_code) {
   glfwTerminate();
@@ -41,8 +41,8 @@ int main(int argc, char *argv[]) {
   printf("Press enter to continue...");
   std::getchar();
 
-  glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
-  glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 3);
+  //glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
+  //glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 3);
   //glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 8);
   int screen_mode = fullscreen ? GLFW_FULLSCREEN : GLFW_WINDOW;

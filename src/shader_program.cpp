@@ -52,12 +52,15 @@ Program::~Program() {
   if (handle_ != 0) glDeleteProgram(handle_);
 }
 
+void Program::create() {
+  handle_ = glCreateProgram();
+}
+
 void Program::addShader(Shader *shader) {
   shaders_.push_back(shader);
 }
 
 void Program::link() {
-  handle_ = glCreateProgram();
   for (vector<Shader *>::iterator it = shaders_.begin(); it != shaders_.end(); ++it) {
     glAttachShader(handle_, (*it)->handle());
   }

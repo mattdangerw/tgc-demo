@@ -28,7 +28,7 @@ void SubBubble::init(vector<Circle> *circles, float texture_scale, float darknes
 
 ThoughtBubble::ThoughtBubble()
   : ready_to_animate_(false),
-    circles_spring_constant_(200.0f) {}
+    circles_spring_constant_(100.0f) {}
 
 ThoughtBubble::~ThoughtBubble() {
   stopDrawing();
@@ -161,7 +161,7 @@ void ThoughtBubble::update(float delta_time, GameState *state) {
         *state = EXPLODING;
       } else {
         time_in_position_+=delta_time;
-        circles_spring_constant_ -= delta_time * 40.0f;
+        circles_spring_constant_ -= delta_time * 20.0f;
       }
     } else {
       if (time_in_flight_ > time_to_destination_) {

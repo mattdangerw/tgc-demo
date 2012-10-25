@@ -179,13 +179,13 @@ void Renderer::loadShaders() {
 }
 
 void Renderer::setAttributesAndLink(Program &program) {
+  program.create();
   // Keep our vertex attributes in a consistent location accross programs.
   // This way we can VAOs with different programs without worrying.
   program.setAttributeHandle("position", 0);
   program.setAttributeHandle("color", 1);
   program.setAttributeHandle("tex_coord", 2);
   program.setAttributeHandle("bezier_coord", 3);
-  // For particles (intanced quads with a translation to displace).
   program.setAttributeHandle("translate", 4);
   program.link();
 }
