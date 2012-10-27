@@ -34,7 +34,7 @@ Cloud::Cloud(glm::vec2 position, float velocity, float scale, float shade)
     shade_(shade) {}
 
 Cloud::~Cloud() {
-  Renderer::instance().removeDrawable2D(&shape_);
+  shape_.setParent(NULL);
 }
 
 void Cloud::init(CloudType type) {
@@ -53,7 +53,6 @@ void Cloud::init(CloudType type) {
       break;
   }
   width_ = shape_.width() * scale_;
-  Renderer::instance().addDrawable2D(&shape_);
   updateShapeTransform();
 }
 
@@ -103,7 +102,7 @@ void Cloud::update(float delta_time) {
 
 void Cloud::updateShapeTransform() {
   glm::mat3 shape_transform = scale2D(translate2D(glm::mat3(1.0f), position_), glm::vec2(scale_));
-  shape_.setTransform(shape_transform);
+  shape_.setRelativeTransform(shape_transform);
 }
 
 

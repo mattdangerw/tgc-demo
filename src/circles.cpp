@@ -42,57 +42,59 @@ void CircleDrawer::useScreenSpaceTexture(string texture_filename) {
 void CircleDrawer::useQuad(Quad *quad) {
   use_quad_ = true;
   fill_ = quad;
+  fill_->setParent(this);
+  fill_->setIsVisible(false);
 }
 
-void CircleDrawer::drawOcclude(glm::mat3 view) {
-  colored_program_->use();
-  glUniform4fv(colored_program_->uniformHandle("color"), 1, glm::value_ptr(glm::vec4(occluder_color_)));
-  makeDrawCalls(view, colored_program_, false);
-}
-
-void CircleDrawer::draw(glm::mat3 view) {
+void CircleDrawer::draw() {
   if (use_texture_) {
-    drawWithScreenTexture(view);
+    drawWithScreenTexture();
   } else if (use_quad_) {
-    drawWithQuad(view);
+    drawWithQuad();
   } else {
-    drawColored(view);
+    drawColored();
   }
 }
 
-void CircleDrawer::drawColored(glm::mat3 view) {
+void CircleDrawer::drawOccluder() {
   colored_program_->use();
-  makeDrawCalls(view, colored_program_, true);
+  glUniform4fv(colored_program_->uniformHandle("color"), 1, glm::value_ptr(glm::vec4(occluder_color_)));
+  makeDrawCalls(colored_program_, false);
 }
 
-void CircleDrawer::drawWithScreenTexture(glm::mat3 view) {
+void CircleDrawer::drawColored() {
+  colored_program_->use();
+  makeDrawCalls(colored_program_, true);
+}
+
+void CircleDrawer::drawWithScreenTexture() {
   textured_program_->use();
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture_handle_);
-  makeDrawCalls(view, textured_program_, false);
+  makeDrawCalls(textured_program_, false);
 }
 
-void CircleDrawer::drawWithQuad(glm::mat3 view) {
+void CircleDrawer::drawWithQuad() {
   glEnable(GL_STENCIL_TEST);
   glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
   glStencilFunc(GL_ALWAYS, 0, 0xFF);
   glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
   colored_program_->use();
-  makeDrawCalls(view, colored_program_, false);
+  makeDrawCalls(colored_program_, false);
   glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
   glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
   glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO);
-  fill_->draw(modelview(view));
+  fill_->draw();
   glDisable(GL_STENCIL_TEST);
 }
 
-void CircleDrawer::makeDrawCalls(glm::mat3 view, Program *program, bool sendColors) {
+void CircleDrawer::makeDrawCalls(Program *program, bool sendColors) {
   glEnable(GL_DEPTH_TEST);
   for (vector<Circle>::iterator it = circles_->begin(); it != circles_->end(); ++it) {
     glm::mat3 circle_transform(1.0f);
     circle_transform = translate2D(circle_transform, it->center);
     circle_transform = scale2D(circle_transform, glm::vec2(it->radius + delta_radius_));
-    glUniformMatrix3fv(program->uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(modelview(view) * circle_transform));
+    glUniformMatrix3fv(program->uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform() * circle_transform));
     if (sendColors) {
       glUniform4fv(program->uniformHandle("color"), 1, glm::value_ptr(it->color));
     }

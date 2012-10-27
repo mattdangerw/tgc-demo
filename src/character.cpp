@@ -25,7 +25,7 @@ void Character::init(Ground *ground) {
   circle_->radius = 0.001f;
   drawer_.init(&circle_vector_);
   drawer_.setDisplayPriority(5);
-  Renderer::instance().addDrawable2D(&drawer_);
+  drawer_.setIsVisible(true);
   ground_ = ground;
   position_.x = kPlayerWidth;
   updateY(0.0f);

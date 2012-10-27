@@ -10,25 +10,17 @@ void Tree::init() {
   trunk_quad_.init("textures/bark.dds");
   trunk_quad_.setTextureScale(glm::vec2(0.2f));
   trunk_shape_.init("paths/trunk.path", &trunk_quad_);
+  trunk_shape_.setParent(this);
+  trunk_shape_.setIsVisible(false);
   leaves_quad_.init("textures/leaves.dds");
   leaves_quad_.setTextureScale(glm::vec2(0.2f));
   leaves_shape_.init("paths/leaves.path", &leaves_quad_);
+  leaves_shape_.setParent(this);
+  leaves_shape_.setIsVisible(false);
   glm::mat3 transform(1.0f);
   transform = translate2D(transform, glm::vec2(-0.25f, 0.8f));
   transform = scale2D(transform, glm::vec2(0.8f));
-  leaves_shape_.setTransform(transform);
-}
-
-void Tree::draw(glm::mat3 view) {
-  view = view * transform();
-  trunk_shape_.draw(view);
-  leaves_shape_.draw(view);
-}
-
-void Tree::drawOcclude(glm::mat3 view) {
-  view = modelview(view);
-  trunk_shape_.drawOcclude(view);
-  leaves_shape_.drawOcclude(view);
+  leaves_shape_.setRelativeTransform(transform);
 }
 
 void Tree::setColor(glm::vec4 color){
@@ -38,4 +30,14 @@ void Tree::setColor(glm::vec4 color){
   leaves_quad_.init("textures/bark.dds");
   leaves_quad_.setTextureScale(glm::vec2(0.2f));
   leaves_quad_.setColorMask(color);
+}
+
+void Tree::draw() {
+  trunk_shape_.draw();
+  leaves_shape_.draw();
+}
+
+void Tree::drawOccluder() {
+  trunk_shape_.drawOccluder();
+  leaves_shape_.drawOccluder();
 }

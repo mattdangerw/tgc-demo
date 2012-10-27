@@ -35,7 +35,6 @@ void JumpingCrowd::init(Character *character, Ground *ground, vector<float> x_po
   // Ready drawable.
   drawer_.init(&crowd_);
   drawer_.setDisplayPriority(2);
-  Renderer::instance().addDrawable2D(&drawer_);
 }
 
 void JumpingCrowd::update(float delta_time, GameState *state) {

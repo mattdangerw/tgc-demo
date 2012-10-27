@@ -11,11 +11,11 @@
 class Quad : public Drawable2D {
   public:
     Quad();
-    void init();
-    void setOccluderColor(glm::vec4 color) { occluder_color_ = color; }
+    virtual void init();
     virtual void setCorners(glm::vec2 min, glm::vec2 max);
-    virtual void draw(glm::mat3 veiw);
-    void drawOcclude(glm::mat3 view);
+    virtual void draw();
+    void setOccluderColor(glm::vec4 color) { occluder_color_ = color; }
+    void drawOccluder();
     void getCorners(glm::vec2 *min, glm::vec2 *max);
     void xExtent(float *x_begin, float *x_end);
   protected:
@@ -38,7 +38,7 @@ class TexturedQuad : public Quad {
     void setTextureScale(glm::vec2 scale) { tex_scale_ = scale; }
     void setColorMask(glm::vec4 color_mask) { color_mask_ = color_mask; }
     void setCorners(glm::vec2 min, glm::vec2 max);
-    void draw(glm::mat3 view);
+    void draw();
 
   private:
     bool shadowed_;
@@ -56,7 +56,7 @@ class ColoredQuad : public Quad {
     ~ColoredQuad();
     void init();
     void setColor(glm::vec4 color) { color_ = color; }
-    void draw(glm::mat3 view);
+    void draw();
 
   private:
     glm::vec4 color_;

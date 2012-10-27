@@ -19,9 +19,8 @@ class SubBubble: public Drawable2D  {
     SubBubble() {}
     ~SubBubble() {}
     void init(vector<Circle> *circles, float texture_scale, float darkness);
-    void draw(glm::mat3 view) {
-      view = modelview(view);
-      outer_drawer_.draw(view);
+    void draw() {
+      outer_drawer_.draw();
       //inner_drawer_.draw(view);
     }
     void drawOcclude(glm::mat3 view) {}

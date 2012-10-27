@@ -29,7 +29,7 @@ class Ground : public GameEntity {
     PathShape shape_;
     TexturedQuad quad_;
     TexturedQuad background_;
-    vector<Tree> trees_;
+    Tree trees_[10];
     int ground_target_id_, background_target_id_, tree6_target_id_,
       tree7_target_id_, tree8_target_id_, tree9_target_id_;
 };

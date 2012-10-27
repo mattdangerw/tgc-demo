@@ -38,17 +38,17 @@ void Quad::getCorners(glm::vec2 *min, glm::vec2 *max) {
   *max = vertices_[2];
 }
 
-void Quad::draw(glm::mat3 view) {
+void Quad::draw() {
   program_->use();
-  setModelviewUniform(program_, view);
+  glUniformMatrix3fv(program_->uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
   glBindVertexArray(array_object_);
   glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }
 
-void Quad::drawOcclude(glm::mat3 view) {
+void Quad::drawOccluder() {
   program_->use();
   glUniform4fv(program_->uniformHandle("color"), 1, glm::value_ptr(occluder_color_));
-  Quad::draw(view);
+  Quad::draw();
 }
 
 TexturedQuad::TexturedQuad()
@@ -89,11 +89,11 @@ void TexturedQuad::setCorners(glm::vec2 min, glm::vec2 max) {
   glBufferData(GL_ARRAY_BUFFER, sizeof(tex_coords_), tex_coords_, GL_STATIC_DRAW);
 }
 
-void TexturedQuad::draw(glm::mat3 view) {
+void TexturedQuad::draw() {
   Program *program = shadowed_ ? shadowed_program_ : textured_program_;
   program->use();
-  setModelviewUniform(program, view);
-  setColorMaskUniform(program, color_mask_);
+  glUniformMatrix3fv(program->uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
+  glUniform4fv(program->uniformHandle("color_mask"), 1, glm::value_ptr(color_mask_));
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture_handle_);
   glBindVertexArray(array_object_);
@@ -110,9 +110,9 @@ void ColoredQuad::init() {
   color_handle_ = program_->uniformHandle("color");
 }
 
-void ColoredQuad::draw(glm::mat3 view) {
+void ColoredQuad::draw() {
   program_->use();
-  setModelviewUniform(program_, view);
+  glUniformMatrix3fv(program_->uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
   glUniform4fv(color_handle_, 1, glm::value_ptr(color_));
   glBindVertexArray(array_object_);
   glDrawArrays(GL_TRIANGLE_FAN, 0, 4);

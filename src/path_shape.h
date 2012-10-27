@@ -33,8 +33,8 @@ class PathShape : public Drawable2D {
     void setOccluderColor(glm::vec4 color);
     float width();
     float height();
-    void draw(glm::mat3 view) { drawHelper(view, false); }
-    void drawOccluder(glm::mat3 view) { drawHelper(view, true); }
+    void draw() { drawHelper(false); }
+    void drawOccluder() { drawHelper(true); }
     void animate(float delta_time);
 
   private:
@@ -46,7 +46,7 @@ class PathShape : public Drawable2D {
     void makeBezierTexCoords(vector<glm::vec2> &bezier_tex_coords);
     void createVAOs();
     void cubicToQuadrics(glm::vec2 start, glm::vec2 control1, glm::vec2 control2, glm::vec2 end, vector<glm::vec2> &solids, vector<glm::vec2> &quadrics);
-    void drawHelper(glm::mat3 view, bool asOccluder);
+    void drawHelper(bool asOccluder);
     // Member data.
     Quad *fill_;
     vector<glm::vec2> solid_vertices_, quadric_vertices_;

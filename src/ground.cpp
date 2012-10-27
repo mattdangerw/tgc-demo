@@ -76,23 +76,21 @@ void Ground::init() {
   background_.init("textures/background.dds");
   background_.setDisplayPriority(-99);
   background_.setCorners(glm::vec2(0.0f, 0.0f), glm::vec2(width(), 1.0f));
-  background_.setOccluder(false);
+  background_.setIsOccluder(false);
   background_.setShadowed(true);
-  Renderer::instance().addDrawable2D(&background_);
   initTrees();
 
   Renderer::instance().setLightPosition(glm::vec2(5.0f, 10.0f));
 }
 
 void Ground::initTrees() {
-  trees_.resize(10);
   Tree *tree = &trees_[0];
   tree->init();
   glm::mat3 transform(1.0f);
   transform = translate2D(transform, glm::vec2(4.0f, 0.09f));
   transform = scale2D(transform, glm::vec2(0.22f));
   transform = rotate2D(transform, 2.0f);
-  tree->setTransform(transform);
+  tree->setRelativeTransform(transform);
   tree->setDisplayPriority(6);
 
   tree = &trees_[1];
@@ -101,7 +99,7 @@ void Ground::initTrees() {
   transform = translate2D(transform, glm::vec2(4.2f, 0.10f));
   transform = scale2D(transform, glm::vec2(0.25f));
   transform = rotate2D(transform, 0.0f);
-  tree->setTransform(transform);
+  tree->setRelativeTransform(transform);
   tree->setDisplayPriority(1);
 
   tree = &trees_[2];
@@ -110,7 +108,7 @@ void Ground::initTrees() {
   transform = translate2D(transform, glm::vec2(4.39f, 0.09f));
   transform = scale2D(transform, glm::vec2(0.22f));
   transform = rotate2D(transform, -4.0f);
-  tree->setTransform(transform);
+  tree->setRelativeTransform(transform);
   tree->setDisplayPriority(6);
 
   tree = &trees_[3];
@@ -119,7 +117,7 @@ void Ground::initTrees() {
   transform = translate2D(transform, glm::vec2(4.62f, 0.11f));
   transform = scale2D(transform, glm::vec2(0.18f));
   transform = rotate2D(transform, 1.0f);
-  tree->setTransform(transform);
+  tree->setRelativeTransform(transform);
   tree->setDisplayPriority(1);
 
   tree = &trees_[4];
@@ -128,7 +126,7 @@ void Ground::initTrees() {
   transform = translate2D(transform, glm::vec2(7.4f, 0.08f));
   transform = scale2D(transform, glm::vec2(0.16f));
   transform = rotate2D(transform, 0.0f);
-  tree->setTransform(transform);
+  tree->setRelativeTransform(transform);
   tree->setDisplayPriority(6);
 
   tree = &trees_[5];
@@ -137,7 +135,7 @@ void Ground::initTrees() {
   transform = translate2D(transform, glm::vec2(7.65f, 0.09f));
   transform = scale2D(transform, glm::vec2(0.2f));
   transform = rotate2D(transform, 3.0f);
-  tree->setTransform(transform);
+  tree->setRelativeTransform(transform);
   tree->setDisplayPriority(1);
 
   tree = &trees_[6];
@@ -146,7 +144,7 @@ void Ground::initTrees() {
   transform = translate2D(transform, glm::vec2(8.95f, 0.15f));
   transform = scale2D(transform, glm::vec2(0.2f));
   transform = rotate2D(transform, 0.0f);
-  tree->setTransform(transform);
+  tree->setRelativeTransform(transform);
   tree->setDisplayPriority(6);
 
   tree = &trees_[7];
@@ -155,7 +153,7 @@ void Ground::initTrees() {
   transform = translate2D(transform, glm::vec2(9.15f, 0.1f));
   transform = scale2D(transform, glm::vec2(0.26f));
   transform = rotate2D(transform, 0.0f);
-  tree->setTransform(transform);
+  tree->setRelativeTransform(transform);
   tree->setDisplayPriority(1);
 
   tree = &trees_[8];
@@ -164,7 +162,7 @@ void Ground::initTrees() {
   transform = translate2D(transform, glm::vec2(9.36f, 0.1f));
   transform = scale2D(transform, glm::vec2(0.24f));
   transform = rotate2D(transform, 0.0f);
-  tree->setTransform(transform);
+  tree->setRelativeTransform(transform);
   tree->setDisplayPriority(6);
 
   tree = &trees_[9];
@@ -173,12 +171,8 @@ void Ground::initTrees() {
   transform = translate2D(transform, glm::vec2(9.5f, 0.12f));
   transform = scale2D(transform, glm::vec2(0.21f));
   transform = rotate2D(transform, 0.0f);
-  tree->setTransform(transform);
+  tree->setRelativeTransform(transform);
   tree->setDisplayPriority(1);
-
-  for (vector<Tree>::iterator it = trees_.begin(); it != trees_.end(); ++it) {
-    Renderer::instance().addDrawable2D(&(*it));
-  }
 }
 
 void Ground::initPathShape() {
@@ -199,7 +193,6 @@ void Ground::initPathShape() {
   quad_.init("textures/ground.dds");
   shape_.init(path, &quad_);
   //shape_.setOccluder(false);
-  Renderer::instance().addDrawable2D(&shape_);
 }
 
 float Ground::width() {

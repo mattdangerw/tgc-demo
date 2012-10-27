@@ -16,32 +16,18 @@ Drawable2D::Drawable2D()
     priority_(0),
     is_occluder_(true),
     is_3D_stencil_(false),
-    parent_(Renderer::instance().root2D()) {}
+    is_visible_(true),
+    parent_(Renderer::instance().root2D()) {
+  if(parent_ != this) parent_->addChild(this);
+}
 
 Drawable2D::~Drawable2D() {
+  vector<Drawable2D *>::iterator it;
+  for (it = children_.begin(); it != children_.end(); ++it) {
+    (*it)->parent_ = NULL;
+  }
   if (parent_ != NULL) {
     parent_->removeChild(this);
-  }
-}
-
-void Drawable2D::drawWithChildren() {
-  draw();
-  for (vector<Drawable2D *>::iterator it = children_.begin(); it != children_.end(); ++it) {
-    (*it)->drawWithChildren();
-  }
-}
-
-void Drawable2D::drawOccluderWithChildren() {
-  drawOccluder();
-  for (vector<Drawable2D *>::iterator it = children_.begin(); it != children_.end(); ++it) {
-    (*it)->drawOccluderWithChildren();
-  }
-}
-
-void Drawable2D::drawStencilWithChildren() {
-  if (is3DStencil()) draw();
-  for (vector<Drawable2D *>::iterator it = children_.begin(); it != children_.end(); ++it) {
-    (*it)->drawStencilWithChildren();
   }
 }
 
@@ -49,6 +35,14 @@ void Drawable2D::setParent(Drawable2D *parent) {
   if (parent_ != NULL) parent_->removeChild(this);
   parent_ = parent;
   if (parent_ != NULL) parent_->addChild(this);
+}
+
+void Drawable2D::getVisibleDescendants(vector<Drawable2D *> &drawables) {
+  if (isVisible()) drawables.push_back(this);
+  vector<Drawable2D *>::iterator it;
+  for (it = children_.begin(); it != children_.end(); ++it) {
+    (*it)->getVisibleDescendants(drawables);
+  }
 }
 
 glm::mat3 Drawable2D::fullTransform() {
@@ -73,7 +67,9 @@ void Drawable2D::removeChild(Drawable2D *child) {
 Renderer::Renderer()
   : left_of_window_(0.0f),
     do_stencil_(true),
-    light_position_(0.0f) {}
+    light_position_(0.0f) {
+  root2D_.setParent(NULL);
+}
 
 void Renderer::init(int width, int height) {
   width_ = width;
@@ -284,9 +280,12 @@ void Renderer::draw() {
   view = translate2D(view, glm::vec2(-1.0f, -1.0f));
   view = scale2D(view, glm::vec2(2.0f/aspect_, 2.0f));
   view = translate2D(view, glm::vec2(-left_of_window_, 0.0f));
+  root2D_.setRelativeTransform(view);
 
   // Sort drawables by priority.
-  std::stable_sort(draw2D_.begin(), draw2D_.end(), PrioritySortFunctor());
+  vector<Drawable2D *> draw2D;
+  root2D_.getVisibleDescendants(draw2D);
+  std::stable_sort(draw2D.begin(), draw2D.end(), PrioritySortFunctor());
 
   // Draw occluders to texture.
   //glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -295,8 +294,8 @@ void Renderer::draw() {
   glDepthMask(GL_TRUE);
   glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glDepthMask(GL_FALSE);
-  for (vector<Drawable2D *>::iterator it = draw2D_.begin(); it != draw2D_.end(); ++it) {
-    if ((*it)->occluder()) (*it)->drawOcclude(view);
+  for (vector<Drawable2D *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
+    if ((*it)->isOccluder()) (*it)->drawOccluder();
   }
   
   //glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -327,8 +326,8 @@ void Renderer::draw() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  for (vector<Drawable2D *>::iterator it = draw2D_.begin(); it != draw2D_.end(); ++it) {
-    (*it)->draw(view);
+  for (vector<Drawable2D *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
+    (*it)->draw();
   }
 
   if (do_stencil_) {
@@ -336,8 +335,8 @@ void Renderer::draw() {
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     glStencilFunc(GL_ALWAYS, 0, 0xFF);
     glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-    for (vector<Drawable2D *>::iterator it = draw_stencil_.begin(); it != draw_stencil_.end(); ++it) {
-      (*it)->draw(view);
+    for (vector<Drawable2D *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
+      if ((*it)->is3DStencil()) (*it)->draw();
     }
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     glStencilFunc(GL_NOTEQUAL, 0, 0xFF);

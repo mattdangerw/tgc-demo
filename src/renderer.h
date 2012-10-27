@@ -13,31 +13,31 @@ using std::string;
 using std::vector;
 using std::map;
 
-// void setTransformUniform(Program *program, glm::mat3 transform) glUniformMatrix3fv(program->uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(transform)); 
-
 class Drawable2D {
   public:
     Drawable2D();
     virtual ~Drawable2D();
     // Make the GL calls to draw this object. Drawables should redefine these.
-    virtual void draw() = 0;
-    virtual void drawOccluder() = 0;
-    // Draws this drawable and all child drawables.
-    void drawWithChildren();
-    void drawOccluderWithChildren();
-    void drawStencilWithChildren();
+    virtual void draw() {}
+    virtual void drawOccluder() {}
     // Sets the drawable parent. Setting parent to NULL removes this drawable and all children from the scene graph.
+    Drawable2D *parent() { return parent_; }
     void setParent(Drawable2D *parent);
+    // Gets all visible descendents of tree for rendering.
+    void getVisibleDescendants(vector<Drawable2D *> &drawables);
     // Get the full transform of drawable element.
-    glm::mat3 fullTransform();// { return parent_->full_transform_; }
+    glm::mat3 fullTransform();
     // Get the transform relative to the parent drawable
     glm::mat3 relativeTransform() { return relative_transform_; }
     void setRelativeTransform(const glm::mat3 &transform) { relative_transform_ = transform; }
     // We care about order cause we render in flatland.
     int displayPriority() const { return priority_; }
     void setDisplayPriority(int priority) { priority_ = priority; }
+    // Controls visibility.
+    bool isVisible() { return is_visible_; }
+    void setIsVisible(bool visible) { is_visible_ = visible; }
     // Controls whether or not to consider this shape an occluder while shading.
-    bool isOccluder() { return is_occluder_; }
+    bool isOccluder() { return is_occluder_ && is_visible_; }
     void setIsOccluder(bool occluder) { is_occluder_ = occluder; }
     // Controls whether or not to draw this shape to the stencil buffer for the stencil test before the 3D is drawn.
     bool is3DStencil() { return is_3D_stencil_; }
@@ -50,7 +50,7 @@ class Drawable2D {
     vector<Drawable2D *> children_;
     glm::mat3 relative_transform_;
     int priority_;
-    bool is_occluder_, is_3D_stencil_;
+    bool is_occluder_, is_3D_stencil_, is_visible_;
 };
 
 class Drawable3D {
@@ -92,7 +92,7 @@ class Renderer {
     // Renders the scene.
     void draw();
     // Get the root of the 2D scene graph.
-    Drawable2D *root2D() { return NULL; }
+    Drawable2D *root2D() { return &root2D_; }
     // Adds the particles which are drawn with different opengl setting. and maybe 3d?
     void addDrawable3D(Drawable3D *object);
     void removeDrawable3D(Drawable3D *object);
@@ -130,7 +130,8 @@ class Renderer {
     bool do_stencil_;
     glm::mat4 projection_, inverse_projection_;
     glm::vec2 light_position_;
-    vector<Drawable3D *> draw3D;
+    Drawable2D root2D_;
+    vector<Drawable3D *> draw3D_;
     map<string, Program> programs_;
     map<string, GLuint> textures_;
     // GL.

@@ -9,9 +9,9 @@ class Tree : public Drawable2D {
     Tree();
     ~Tree();
     void init();
-    void draw(glm::mat3 view);
-    void drawOcclude(glm::mat3 view);
     void setColor(glm::vec4 color);
+    void draw();
+    void drawOccluder();
 
   private:
     TexturedQuad trunk_quad_, leaves_quad_;

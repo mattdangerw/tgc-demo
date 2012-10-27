@@ -46,6 +46,8 @@ void PathShape::init(string filename, Quad *fill) {
   glm::vec2 min, max;
   corners(vertices, &min, &max);
   fill_->setCorners(min, max);
+  fill_->setParent(this);
+  fill_->setIsVisible(false);
   prepVertices(vertices, solid_vertices_, quadric_vertices_);
   createVAOs();
 }
@@ -53,10 +55,12 @@ void PathShape::init(string filename, Quad *fill) {
 void PathShape::init(const vector<PathVertex> &vertices, Quad *fill) {
   quadric_program_ = Renderer::instance().getProgram("quadric");
   minimal_program_ = Renderer::instance().getProgram("minimal");
-  fill_ = fill;
   glm::vec2 min, max;
   corners(vertices, &min, &max);
+  fill_ = fill;
+  fill_->setParent(this);
   fill_->setCorners(min, max);
+  fill_->setIsVisible(false);
   prepVertices(vertices, solid_vertices_, quadric_vertices_);
   createVAOs();
 }
@@ -66,6 +70,8 @@ void PathShape::init(vector<string> keyframe_files, vector<float> keyframe_durat
   quadric_program_ = Renderer::instance().getProgram("quadric");
   minimal_program_ = Renderer::instance().getProgram("minimal");
   fill_ = fill;
+  fill_->setParent(this);
+  fill_->setIsVisible(false);
   
   solid_keys_.resize(keyframe_files.size());
   quadric_keys_.resize(keyframe_files.size());
@@ -291,7 +297,7 @@ void PathShape::animate(float delta_time) {
   glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * solid_vertices_.size(), &solid_vertices_[0], GL_STREAM_DRAW);
 }
 
-void PathShape::drawHelper(glm::mat3 view, bool asOccluder) {
+void PathShape::drawHelper(bool asOccluder) {
   // Ready stencil drawing.
   glEnable(GL_STENCIL_TEST);
   glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -301,7 +307,7 @@ void PathShape::drawHelper(glm::mat3 view, bool asOccluder) {
   // Draw solid and quadric triangles, inverting the stencil each time.
   if (solid_vertices_.size() > 0) {
     minimal_program_->use();
-    setModelviewUniform(minimal_program_, view);
+    glUniformMatrix3fv(minimal_program_->uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
     glBindVertexArray(solid_array_object_);
     glDrawArrays(GL_TRIANGLE_FAN, 0, solid_vertices_.size());
   }
@@ -309,7 +315,7 @@ void PathShape::drawHelper(glm::mat3 view, bool asOccluder) {
   if (quadric_vertices_.size() > 0) {
     glEnable(GL_DEPTH_TEST);
     quadric_program_->use();
-    setModelviewUniform(quadric_program_, view);
+    glUniformMatrix3fv(quadric_program_->uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
     glBindVertexArray(quadric_array_object_);
     glDrawArrays(GL_TRIANGLES, 0, quadric_vertices_.size());
     glDisable(GL_DEPTH_TEST);
@@ -320,9 +326,9 @@ void PathShape::drawHelper(glm::mat3 view, bool asOccluder) {
   glStencilFunc(GL_EQUAL, 1, 1);
   glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO);
   if (asOccluder) {
-    fill_->drawOcclude(modelview(view));
+    fill_->drawOccluder();
   } else {
-    fill_->draw(modelview(view));
+    fill_->draw();
   }
   glDisable(GL_STENCIL_TEST);
 }
