@@ -37,41 +37,24 @@ PathShape::PathShape() : dynamic_(false), time_(randomFloat(0.0f, 1.0f)) {}
 
 PathShape::~PathShape() {}
 
+void PathShape::init(const vector<PathVertex> &vertices, Quad *fill) {
+  glm::vec2 min, max;
+  corners(vertices, &min, &max);
+  prepVertices(vertices, solid_vertices_, quadric_vertices_);
+  initHelper(fill, min, max);
+}
+
 void PathShape::init(string filename, Quad *fill) {
-  quadric_program_ = Renderer::instance().getProgram("quadric");
-  minimal_program_ = Renderer::instance().getProgram("minimal");
-  fill_ = fill;
   vector<PathVertex> vertices;
   readVertices(filename, vertices);
   glm::vec2 min, max;
   corners(vertices, &min, &max);
-  fill_->setCorners(min, max);
-  fill_->setParent(this);
-  fill_->setIsVisible(false);
   prepVertices(vertices, solid_vertices_, quadric_vertices_);
-  createVAOs();
-}
-
-void PathShape::init(const vector<PathVertex> &vertices, Quad *fill) {
-  quadric_program_ = Renderer::instance().getProgram("quadric");
-  minimal_program_ = Renderer::instance().getProgram("minimal");
-  glm::vec2 min, max;
-  corners(vertices, &min, &max);
-  fill_ = fill;
-  fill_->setParent(this);
-  fill_->setCorners(min, max);
-  fill_->setIsVisible(false);
-  prepVertices(vertices, solid_vertices_, quadric_vertices_);
-  createVAOs();
+  initHelper(fill, min, max);
 }
 
 void PathShape::init(vector<string> keyframe_files, vector<float> keyframe_durations, Quad *fill) {
   dynamic_ = true;
-  quadric_program_ = Renderer::instance().getProgram("quadric");
-  minimal_program_ = Renderer::instance().getProgram("minimal");
-  fill_ = fill;
-  fill_->setParent(this);
-  fill_->setIsVisible(false);
   
   solid_keys_.resize(keyframe_files.size());
   quadric_keys_.resize(keyframe_files.size());
@@ -87,7 +70,6 @@ void PathShape::init(vector<string> keyframe_files, vector<float> keyframe_durat
   }
   solid_vertices_.resize(solid_keys_[0].size());
   quadric_vertices_.resize(quadric_keys_[0].size());
-  fill_->setCorners(min, max);
 
   assert(keyframe_files.size() == keyframe_durations.size());
   keyframe_times_.push_back(0.0f);
@@ -101,6 +83,14 @@ void PathShape::init(vector<string> keyframe_files, vector<float> keyframe_durat
   next_keyframe_ = 1;
   time_ = randomFloat(0.0f, animation_duration_);
 
+  initHelper(fill, min, max);
+}
+
+void PathShape::initHelper(Quad *fill, glm::vec2 min, glm::vec2 max) {
+  fill_ = fill;
+  fill_->setParent(this);
+  fill_->setCorners(min, max);
+  fill_->setIsVisible(false);
   createVAOs();
 }
 
@@ -215,7 +205,7 @@ void PathShape::createVAOs() {
     } else {
       glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * solid_vertices_.size(), &solid_vertices_[0], GL_STATIC_DRAW);
     }
-    GLint handle = minimal_program_->attributeHandle("position");
+    GLint handle = Renderer::instance().attributeHandle("position");
     glEnableVertexAttribArray(handle);
     glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
   }
@@ -230,7 +220,7 @@ void PathShape::createVAOs() {
     } else {
       glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * quadric_vertices_.size(), &quadric_vertices_[0], GL_STATIC_DRAW);
     }
-    GLint handle = quadric_program_->attributeHandle("position");
+    GLint handle = Renderer::instance().attributeHandle("position");
     glEnableVertexAttribArray(handle);
     glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
@@ -239,7 +229,7 @@ void PathShape::createVAOs() {
     makeBezierTexCoords(bezier_tex_coords);
     glBindBuffer(GL_ARRAY_BUFFER, quadric_buffers_[1]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * bezier_tex_coords.size(), &bezier_tex_coords[0], GL_STATIC_DRAW);
-    handle = quadric_program_->attributeHandle("bezier_coord");
+    handle = Renderer::instance().attributeHandle("bezier_coord");
     glEnableVertexAttribArray(handle);
     glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
   }
@@ -306,16 +296,16 @@ void PathShape::drawHelper(bool asOccluder) {
 
   // Draw solid and quadric triangles, inverting the stencil each time.
   if (solid_vertices_.size() > 0) {
-    minimal_program_->use();
-    glUniformMatrix3fv(minimal_program_->uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
+    Renderer::instance().useProgram("minimal");
+    glUniformMatrix3fv(Renderer::instance().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
     glBindVertexArray(solid_array_object_);
     glDrawArrays(GL_TRIANGLE_FAN, 0, solid_vertices_.size());
   }
 
   if (quadric_vertices_.size() > 0) {
     glEnable(GL_DEPTH_TEST);
-    quadric_program_->use();
-    glUniformMatrix3fv(quadric_program_->uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
+    Renderer::instance().useProgram("quadric");
+    glUniformMatrix3fv(Renderer::instance().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
     glBindVertexArray(quadric_array_object_);
     glDrawArrays(GL_TRIANGLES, 0, quadric_vertices_.size());
     glDisable(GL_DEPTH_TEST);

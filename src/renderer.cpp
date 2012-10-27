@@ -1,7 +1,6 @@
 #include "renderer.h"
 
 #include <GL/glew.h>
-#include <glm/gtc/matrix_transform.hpp>
 #include <gli/gli.hpp>
 #include <gli/gtx/gl_texture2d.hpp>
 #include <algorithm>
@@ -11,18 +10,23 @@
 // Forward declare out exit point.
 void cleanupAndExit(int exit_code);
 
-Drawable2D::Drawable2D()
+SceneNode::SceneNode()
   : relative_transform_(1.0f),
     priority_(0),
     is_occluder_(true),
     is_3D_stencil_(false),
     is_visible_(true),
-    parent_(Renderer::instance().root2D()) {
-  if(parent_ != this) parent_->addChild(this);
+    parent_(Renderer::instance().rootNode()) {
+  // Root node.
+  if (parent_ == this) {
+    parent_ = NULL;
+  } else {
+    parent_->addChild(this);
+  }
 }
 
-Drawable2D::~Drawable2D() {
-  vector<Drawable2D *>::iterator it;
+SceneNode::~SceneNode() {
+  vector<SceneNode *>::iterator it;
   for (it = children_.begin(); it != children_.end(); ++it) {
     (*it)->parent_ = NULL;
   }
@@ -31,31 +35,31 @@ Drawable2D::~Drawable2D() {
   }
 }
 
-void Drawable2D::setParent(Drawable2D *parent) {
+void SceneNode::setParent(SceneNode *parent) {
   if (parent_ != NULL) parent_->removeChild(this);
   parent_ = parent;
   if (parent_ != NULL) parent_->addChild(this);
 }
 
-void Drawable2D::getVisibleDescendants(vector<Drawable2D *> &drawables) {
+void SceneNode::getVisibleDescendants(vector<SceneNode *> &drawables) {
   if (isVisible()) drawables.push_back(this);
-  vector<Drawable2D *>::iterator it;
+  vector<SceneNode *>::iterator it;
   for (it = children_.begin(); it != children_.end(); ++it) {
     (*it)->getVisibleDescendants(drawables);
   }
 }
 
-glm::mat3 Drawable2D::fullTransform() {
+glm::mat3 SceneNode::fullTransform() {
   if (parent_ == NULL) return relative_transform_;
   return parent_->fullTransform() * relative_transform_;
 }
 
-void Drawable2D::addChild(Drawable2D *child) {
+void SceneNode::addChild(SceneNode *child) {
   children_.push_back(child);
 }
 
-void Drawable2D::removeChild(Drawable2D *child) {
-  vector<Drawable2D *>::iterator it;
+void SceneNode::removeChild(SceneNode *child) {
+  vector<SceneNode *>::iterator it;
   for (it = children_.begin(); it != children_.end(); ++it) {
     if (*it == child) {
       children_.erase(it);
@@ -67,16 +71,13 @@ void Drawable2D::removeChild(Drawable2D *child) {
 Renderer::Renderer()
   : left_of_window_(0.0f),
     do_stencil_(true),
-    light_position_(0.0f) {
-  root2D_.setParent(NULL);
-}
+    light_position_(0.0f),
+    current_program_(NULL) {}
 
 void Renderer::init(int width, int height) {
   width_ = width;
   height_ = height;
   aspect_ = static_cast<float>(width)/height;
-  projection_ = glm::perspective(35.0f, 1.0f, 0.1f, 100.0f);
-  inverse_projection_ = glm::inverse(projection_);
 
   // OpenGL settings.
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -88,13 +89,13 @@ void Renderer::init(int width, int height) {
   setupScreenQuad();
   setupFBOs();
 
-  Program *shadows_program = getProgram("shadows");
-  shadows_program->use();
-  light_position_handle_ = shadows_program->uniformHandle("light_position");
-  glUniform1f(shadows_program->uniformHandle("density"), 2.0f);
-  glUniform1f(shadows_program->uniformHandle("decay_rate"), 0.98f);
-  glUniform1f(shadows_program->uniformHandle("constant_factor"), 0.85f);
-  glUniform1f(shadows_program->uniformHandle("scale_factor"), 1.0f/160.0f);
+  useProgram("shadows");
+  glUniform1f(uniformHandle("density"), 2.0f);
+  glUniform1f(uniformHandle("decay_rate"), 0.98f);
+  glUniform1f(uniformHandle("constant_factor"), 0.85f);
+  glUniform1f(uniformHandle("scale_factor"), 1.0f/160.0f);
+
+  useProgram("minimal");
 }
 
 void Renderer::setupScreenQuad() {
@@ -169,7 +170,13 @@ void Renderer::setupFBOs() {
 }
 
 void Renderer::loadShaders() {
-  Shader general_vert, textured_frag, textured_with_shadows_frag, colored_frag, minimal_frag,
+  attribute_handles_["position"] = 0;
+  attribute_handles_["color"] = 1;
+  attribute_handles_["tex_coord"] = 2;
+  attribute_handles_["bezier_coord"] = 3;
+  attribute_handles_["translate"] = 4;
+
+  Shader general_vert, textured_frag, textured_with_shadows_frag, minimal_frag,
     quadric_frag, circles_frag, particles_vert, particles_frag, shadows_vert, shadows_frag,
     circles_textured_frag, circles_screen_textured_frag;
 
@@ -186,12 +193,6 @@ void Renderer::loadShaders() {
   textured_with_shadows.addShader(&textured_with_shadows_frag);
   setAttributesAndLink(textured_with_shadows);
 
-  colored_frag.load("src/shaders/colored.frag", GL_FRAGMENT_SHADER);
-  Program &colored = programs_["colored"];
-  colored.addShader(&general_vert);
-  colored.addShader(&colored_frag);
-  setAttributesAndLink(colored);
-  
   minimal_frag.load("src/shaders/minimal.frag", GL_FRAGMENT_SHADER);
   Program &minimal = programs_["minimal"];
   minimal.addShader(&general_vert);
@@ -237,39 +238,32 @@ void Renderer::setAttributesAndLink(Program &program) {
   program.create();
   // Keep our vertex attributes in a consistent location accross programs.
   // This way we can VAOs with different programs without worrying.
-  program.setAttributeHandle("position", 0);
-  program.setAttributeHandle("color", 1);
-  program.setAttributeHandle("tex_coord", 2);
-  program.setAttributeHandle("bezier_coord", 3);
-  program.setAttributeHandle("translate", 4);
+  for (map<string, GLuint>::iterator it = attribute_handles_.begin(); it != attribute_handles_.end(); ++it) {
+    program.setAttributeHandle(it->first, it->second);
+  }
   program.link();
 }
 
 void Renderer::setTextureUnits() {
-  Program &textured = programs_["textured"];
-  textured.use();
-  glUniform1i(textured.uniformHandle("color_texture"), 0);
+  useProgram("textured");
+  glUniform1i(uniformHandle("color_texture"), 0);
 
-  Program &circles_screen_textured = programs_["circles_screen_textured"];
-  circles_screen_textured.use();
-  glUniform1i(circles_screen_textured.uniformHandle("color_texture"), 0);
+  useProgram("circles_screen_textured");
+  glUniform1i(uniformHandle("color_texture"), 0);
 
-  Program &textured_with_shadows = programs_["textured_with_shadows"];
-  textured_with_shadows.use();
-  glUniform1i(textured_with_shadows.uniformHandle("color_texture"), 0);
-  glUniform1i(textured_with_shadows.uniformHandle("shadow_texture"), 1);
+  useProgram("textured_with_shadows");
+  glUniform1i(uniformHandle("color_texture"), 0);
+  glUniform1i(uniformHandle("shadow_texture"), 1);
 
-  Program &shadows = programs_["shadows"];
-  shadows.use();
-  glUniform1i(shadows.uniformHandle("occluder_texture"), 0);
+  useProgram("shadows");
+  glUniform1i(uniformHandle("occluder_texture"), 0);
 
-  Program &particles = programs_["particles"];
-  particles.use();
-  glUniform1i(particles.uniformHandle("color_texture"), 0);
+  useProgram("particles");
+  glUniform1i(uniformHandle("color_texture"), 0);
 }
 
 struct PrioritySortFunctor {
-  bool operator() (const Drawable2D *left, const Drawable2D *right) {
+  bool operator() (const SceneNode *left, const SceneNode *right) {
     return left->displayPriority() < right->displayPriority();
   }
 };
@@ -280,11 +274,11 @@ void Renderer::draw() {
   view = translate2D(view, glm::vec2(-1.0f, -1.0f));
   view = scale2D(view, glm::vec2(2.0f/aspect_, 2.0f));
   view = translate2D(view, glm::vec2(-left_of_window_, 0.0f));
-  root2D_.setRelativeTransform(view);
+  root_node_.setRelativeTransform(view);
 
   // Sort drawables by priority.
-  vector<Drawable2D *> draw2D;
-  root2D_.getVisibleDescendants(draw2D);
+  vector<SceneNode *> draw2D;
+  root_node_.getVisibleDescendants(draw2D);
   std::stable_sort(draw2D.begin(), draw2D.end(), PrioritySortFunctor());
 
   // Draw occluders to texture.
@@ -294,7 +288,7 @@ void Renderer::draw() {
   glDepthMask(GL_TRUE);
   glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glDepthMask(GL_FALSE);
-  for (vector<Drawable2D *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
+  for (vector<SceneNode *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
     if ((*it)->isOccluder()) (*it)->drawOccluder();
   }
   
@@ -303,9 +297,9 @@ void Renderer::draw() {
   glDepthMask(GL_TRUE);
   glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glDepthMask(GL_FALSE);
-  programs_["shadows"].use();
+  useProgram("shadows");
   glm::vec3 transformed_light_position = view * glm::vec3(light_position_, 1.0f);
-  glUniform2fv(light_position_handle_, 1, glm::value_ptr(transformed_light_position));
+  glUniform2fv(uniformHandle("light_position"), 1, glm::value_ptr(transformed_light_position));
   glBindTexture(GL_TEXTURE_2D, shadow_texture_);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -326,7 +320,7 @@ void Renderer::draw() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  for (vector<Drawable2D *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
+  for (vector<SceneNode *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
     (*it)->draw();
   }
 
@@ -335,7 +329,7 @@ void Renderer::draw() {
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     glStencilFunc(GL_ALWAYS, 0, 0xFF);
     glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-    for (vector<Drawable2D *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
+    for (vector<SceneNode *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
       if ((*it)->is3DStencil()) (*it)->draw();
     }
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -344,8 +338,8 @@ void Renderer::draw() {
   }
   glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
   glEnable(GL_BLEND);
-  for (vector<Drawable3D *>::iterator it = draw3D_.begin(); it != draw3D_.end(); ++it) {
-    (*it)->draw(projection_, view);
+  for (vector<Drawable *>::iterator it = draw3D_.begin(); it != draw3D_.end(); ++it) {
+    (*it)->draw();
   }
   glDisable(GL_BLEND);
   if (do_stencil_) {
@@ -353,12 +347,12 @@ void Renderer::draw() {
   }
 }
 
-void Renderer::addDrawable3D(Drawable3D *object) {
+void Renderer::addDrawable3D(Drawable *object) {
   draw3D_.push_back(object);
 }
 
-void Renderer::removeDrawable3D(Drawable3D *object) {
-  vector<Drawable3D *>::iterator it;
+void Renderer::removeDrawable3D(Drawable *object) {
+  vector<Drawable *>::iterator it;
   for (it = draw3D_.begin(); it != draw3D_.end(); ++it) {
     if (*it == object) {
       draw3D_.erase(it);
@@ -367,11 +361,21 @@ void Renderer::removeDrawable3D(Drawable3D *object) {
   }
 }
 
-Program *Renderer::getProgram(string name) {
-  if (programs_.count(name) == 0) {
-    return NULL;
+void Renderer::useProgram(string program) {
+  if (programs_.count(program) == 0) {
+    fprintf(stderr, "No such program. Set it up in renderer.\n");
+    cleanupAndExit(1);    
   }
-  return &programs_[name];
+  current_program_ = &programs_[program];
+  current_program_->use();
+}
+
+GLuint Renderer::uniformHandle(string uniform) {
+  return current_program_->uniformHandle(uniform);
+}
+
+GLuint Renderer::attributeHandle(string attribute) {
+  return attribute_handles_[attribute];
 }
 
 GLuint Renderer::getTexture(string filename) {

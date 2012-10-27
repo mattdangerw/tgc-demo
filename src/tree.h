@@ -4,7 +4,7 @@
 #include "path_shape.h"
 #include "quad.h"
 
-class Tree : public Drawable2D {
+class Tree : public SceneNode {
   public:
     Tree();
     ~Tree();

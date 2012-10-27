@@ -15,14 +15,9 @@ static const int kMaxParticles = 10000;
 static const float kNearZBoundary = -2.2f;
 static const float kFarZBoundary = -4.0f;
 
-static inline glm::vec3 projectPoint(glm::vec3 point) {
-  glm::vec4 projected = Renderer::instance().projection() * glm::vec4(point, 1.0);
-  return glm::vec3(projected.x, projected.y, projected.z) / projected.w;
-}
-
-static inline glm::vec3 unProjectPoint(glm::vec3 point) {
-  glm::vec4 unprojected = Renderer::instance().inverseProjection() * glm::vec4(point, 1.0);
-  return glm::vec3(unprojected.x, unprojected.y, unprojected.z) / unprojected.w;
+static inline glm::vec3 transformAndHomogenize(glm::mat4 transform, glm::vec3 point) {
+  glm::vec4 transformed = transform * glm::vec4(point, 1.0);
+  return glm::vec3(transformed.x, transformed.y, transformed.z) / transformed.w;
 }
 
 void EmitterTrack::addDestination(glm::vec3 control, glm::vec3 destination, float time) {
@@ -100,11 +95,11 @@ void ParticleSystem::updateEmitters(float delta_time) {
     } else {
       emitter.position += emitter.velocity * delta_time;
       emitter.heat = glm::max(1.0f, emitter.heat - 4.0f * delta_time);
-      glm::vec3 projected_position = projectPoint(emitter.position);
+      glm::vec3 projected_position = transformAndHomogenize(drawer_.projection(), emitter.position);
       glm::vec2 position2D(projected_position.x, projected_position.y);
       glm::vec2 velocity2D(emitter.velocity.x, emitter.velocity.y);
       if (thought_bubble_->collideEmitter(&position2D, &velocity2D)) {
-        emitter.position = unProjectPoint(glm::vec3(position2D.x, position2D.y, projected_position.z));
+        emitter.position = transformAndHomogenize(drawer_.inverseProjection(), glm::vec3(position2D.x, position2D.y, projected_position.z));
         emitter.velocity = glm::vec3(velocity2D.x, velocity2D.y, emitter.velocity.z);
       }
       if (emitter.position.z > kNearZBoundary) {
@@ -192,7 +187,7 @@ void ParticleSystem::setTargets(vector<Target> &targets) {
       Target target = targets[i];
       // Particle system coordinate system is centered on the thought bubble.
       // Transform target to that space.
-      destination = unProjectPoint(glm::vec3(target.position - thought_bubble_->center(), 0.81f));
+      destination = transformAndHomogenize(drawer_.inverseProjection(), glm::vec3(target.position - thought_bubble_->center(), 0.81f));
       target_to_emitter_[target.id] = i;
       emitter.time_till_escape = time_till_escape;
       time_till_escape+=delta_escape;
@@ -202,7 +197,7 @@ void ParticleSystem::setTargets(vector<Target> &targets) {
       glm::vec2 randomScreenSpace(renderer.getLeftOfWindow() + randomFloat(0.0f, 1.0f) * renderer.windowWidth(),
         randomFloat(0.0f, 1.0f));
       // Transform to particle sys coordinate system.
-      destination = unProjectPoint(glm::vec3(randomScreenSpace - thought_bubble_->center(), 0.81f));
+      destination = transformAndHomogenize(drawer_.inverseProjection(), glm::vec3(randomScreenSpace - thought_bubble_->center(), 0.81f));
       // Release at random time over the interval of real targets.
       emitter.time_till_escape = randomFloat(0.0f, time_till_escape - delta_escape);
     }

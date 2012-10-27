@@ -15,7 +15,7 @@ struct Circle {
   float radius;
 };
 
-class CircleDrawer : public Drawable2D {
+class CircleDrawer : public SceneNode {
   public:
     CircleDrawer();
     ~CircleDrawer();
@@ -33,7 +33,7 @@ class CircleDrawer : public Drawable2D {
     void drawColored();
     void drawWithScreenTexture();
     void drawWithQuad();
-    void makeDrawCalls(Program *program, bool sendColors);
+    void makeDrawCalls(bool sendColors);
     // Member data.
     glm::vec4 occluder_color_;
     vector<Circle> *circles_;
@@ -41,7 +41,6 @@ class CircleDrawer : public Drawable2D {
     bool use_texture_, use_quad_;
     Quad *fill_;
     // GL stuff
-    Program *colored_program_, *textured_program_;
     GLuint array_object_, buffer_object_;
     GLuint texture_handle_;
 };

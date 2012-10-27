@@ -26,6 +26,8 @@ void SubBubble::init(vector<Circle> *circles, float texture_scale, float darknes
   //inner_fill_.setCorners(glm::vec2(-0.3f, -0.2f), glm::vec2(0.3f, 0.2f));
   //inner_drawer_.init(circles);
   //inner_drawer_.useQuad(&inner_fill_);
+  //inner_drawer_.setParent(this);
+  //inner_drawer_.setIsVisible(false);
 }
 
 ThoughtBubble::ThoughtBubble()
@@ -118,6 +120,7 @@ void ThoughtBubble::init(Character *character) {
   circle_inside_drawer_.setDisplayPriority(101);
   circle_inside_drawer_.setIsOccluder(false);
   circle_inside_drawer_.setIs3DStencil(true);
+  circle_inside_drawer_.setParent(&circle_drawer_);
   // same for sub bubble
   sub_bubble_.init(&sub_bubble_circles_, 1.0f, 0.85f);
   sub_bubble_.setDisplayPriority(99);
@@ -186,7 +189,6 @@ void ThoughtBubble::update(float delta_time, GameState *state) {
   }
   // Update drawable.
   circle_drawer_.setRelativeTransform(translate2D(glm::mat3(1.0f), position_));
-  circle_inside_drawer_.setRelativeTransform(translate2D(glm::mat3(1.0f), position_));
   glm::mat3 sub_transform(1.0f);
   glm::vec2 character_position = character_->position();//groundPosition();
   glm::vec2 bubble_edge = position_ + glm::normalize(character_position - position_) * .05f;
@@ -258,7 +260,7 @@ glm::vec2 ThoughtBubble::anchorPoint() {
 
 void ThoughtBubble::shrink(float scale) {
   for (size_t i = 0; i < bubble_circles_.size(); i++) {
-    float new_rest = rest_radii_[i] * 0.7;
+    float new_rest = rest_radii_[i] * 0.7f;
     float delta_rest = rest_radii_[i] - new_rest;
     stretch_masses_[i].setPosition(stretch_masses_[i].position() + glm::vec2(delta_rest, 0.0f));
     rest_radii_[i] = new_rest;

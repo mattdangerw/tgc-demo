@@ -4,7 +4,7 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-Quad::Quad() : program_ (NULL), occluder_color_(0.0f, 0.0f, 0.0f, 1.0f) {
+Quad::Quad() : occluder_color_(0.0f, 0.0f, 0.0f, 1.0f) {
   vertices_[0] = glm::vec2(0.0f, 0.0f);
   vertices_[1] = glm::vec2(1.0f, 0.0f);
   vertices_[2] = glm::vec2(1.0f, 1.0f);
@@ -12,13 +12,12 @@ Quad::Quad() : program_ (NULL), occluder_color_(0.0f, 0.0f, 0.0f, 1.0f) {
 }
 
 void Quad::init() {
-  program_ = Renderer::instance().getProgram("minimal");
   glGenVertexArrays(1, &array_object_);
   glGenBuffers(1, &buffer_object_);
   glBindVertexArray(array_object_);
   glBindBuffer(GL_ARRAY_BUFFER, buffer_object_);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_), vertices_, GL_STATIC_DRAW);
-  GLint handle = program_->attributeHandle("position");
+  GLint handle = Renderer::instance().attributeHandle("position");
   glEnableVertexAttribArray(handle);
   glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 }
@@ -39,15 +38,15 @@ void Quad::getCorners(glm::vec2 *min, glm::vec2 *max) {
 }
 
 void Quad::draw() {
-  program_->use();
-  glUniformMatrix3fv(program_->uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
+  Renderer::instance().useProgram("minimal");
+  glUniformMatrix3fv(Renderer::instance().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
   glBindVertexArray(array_object_);
   glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }
 
 void Quad::drawOccluder() {
-  program_->use();
-  glUniform4fv(program_->uniformHandle("color"), 1, glm::value_ptr(occluder_color_));
+  Renderer::instance().useProgram("minimal");
+  glUniform4fv(Renderer::instance().uniformHandle("color"), 1, glm::value_ptr(occluder_color_));
   Quad::draw();
 }
 
@@ -64,8 +63,6 @@ TexturedQuad::TexturedQuad()
 TexturedQuad::~TexturedQuad() {}
 
 void TexturedQuad::init(string texture_file) {
-  textured_program_ = Renderer::instance().getProgram("textured");
-  shadowed_program_ = Renderer::instance().getProgram("textured_with_shadows");
   Quad::init();
 
   texture_handle_ = Renderer::instance().getTexture(texture_file);
@@ -73,7 +70,7 @@ void TexturedQuad::init(string texture_file) {
   glBindVertexArray(array_object_);
   glBindBuffer(GL_ARRAY_BUFFER, texture_buffer_);
   glBufferData(GL_ARRAY_BUFFER, sizeof(tex_coords_), tex_coords_, GL_STATIC_DRAW);
-  GLuint handle = textured_program_->attributeHandle("tex_coord");
+  GLuint handle = Renderer::instance().attributeHandle("tex_coord");
   glEnableVertexAttribArray(handle);
   glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 }
@@ -90,10 +87,10 @@ void TexturedQuad::setCorners(glm::vec2 min, glm::vec2 max) {
 }
 
 void TexturedQuad::draw() {
-  Program *program = shadowed_ ? shadowed_program_ : textured_program_;
-  program->use();
-  glUniformMatrix3fv(program->uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
-  glUniform4fv(program->uniformHandle("color_mask"), 1, glm::value_ptr(color_mask_));
+  string program = shadowed_ ? "textured_with_shadows" : "textured";
+  Renderer::instance().useProgram(program);
+  glUniformMatrix3fv(Renderer::instance().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
+  glUniform4fv(Renderer::instance().uniformHandle("color_mask"), 1, glm::value_ptr(color_mask_));
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture_handle_);
   glBindVertexArray(array_object_);
@@ -105,15 +102,13 @@ ColoredQuad::ColoredQuad() : color_(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)) {}
 ColoredQuad::~ColoredQuad() {}
 
 void ColoredQuad::init() {
-  program_ = Renderer::instance().getProgram("colored");
   Quad::init();
-  color_handle_ = program_->uniformHandle("color");
 }
 
 void ColoredQuad::draw() {
-  program_->use();
-  glUniformMatrix3fv(program_->uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
-  glUniform4fv(color_handle_, 1, glm::value_ptr(color_));
+  Renderer::instance().useProgram("minimal");
+  glUniformMatrix3fv(Renderer::instance().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
+  glUniform4fv(Renderer::instance().uniformHandle("color"), 1, glm::value_ptr(color_));
   glBindVertexArray(array_object_);
   glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }

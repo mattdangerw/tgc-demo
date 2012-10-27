@@ -14,14 +14,14 @@
 
 using std::vector;
 
-class SubBubble: public Drawable2D  {
+class SubBubble: public SceneNode  {
   public:
     SubBubble() {}
     ~SubBubble() {}
     void init(vector<Circle> *circles, float texture_scale, float darkness);
     void draw() {
       outer_drawer_.draw();
-      //inner_drawer_.draw(view);
+      //inner_drawer_.draw();
     }
     void drawOcclude(glm::mat3 view) {}
   private:

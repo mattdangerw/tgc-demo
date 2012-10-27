@@ -23,12 +23,12 @@ struct PathVertex {
   PathVertexType type;
 };
 
-class PathShape : public Drawable2D {
+class PathShape : public SceneNode {
   public:
     PathShape();
     ~PathShape();
-    void init(string filename, Quad *fill);
     void init(const vector<PathVertex> &vertices, Quad *fill);
+    void init(string filename, Quad *fill);
     void init(vector<string> keyframe_files, vector<float> keyfram_times, Quad *fill);
     void setOccluderColor(glm::vec4 color);
     float width();
@@ -39,9 +39,9 @@ class PathShape : public Drawable2D {
 
   private:
     // Helper methods.
+    void initHelper(Quad *fill, glm::vec2 min, glm::vec2 max);
     void readVertices(string filename, vector<PathVertex> &vertices);
     void prepVertices(const vector<PathVertex> &vertices, vector<glm::vec2> &solids, vector<glm::vec2> &quadrics);
-    void finalizeInit(Quad *fill);
     void corners(const vector<PathVertex> &vertices, glm::vec2 *min, glm::vec2 *max);
     void makeBezierTexCoords(vector<glm::vec2> &bezier_tex_coords);
     void createVAOs();
@@ -59,7 +59,6 @@ class PathShape : public Drawable2D {
     vector<vector<glm::vec2> > solid_keys_, quadric_keys_;
 
     // OpenGL stuff
-    Program *minimal_program_, *quadric_program_;
     GLuint solid_array_object_, solid_vertex_buffer_;
     GLuint quadric_array_object_, quadric_buffers_[2];
 };

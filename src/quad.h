@@ -8,7 +8,7 @@
 #include "shader_program.h"
 #include "renderer.h"
 
-class Quad : public Drawable2D {
+class Quad : public SceneNode {
   public:
     Quad();
     virtual void init();
@@ -24,7 +24,6 @@ class Quad : public Drawable2D {
     glm::vec2 vertices_[4];
     glm::vec4 occluder_color_;
     // GL.
-    Program *program_;
     GLuint buffer_object_;
 };
 
@@ -46,7 +45,6 @@ class TexturedQuad : public Quad {
     glm::vec2 tex_scale_;
     glm::vec4 color_mask_;
     // GL stuff.
-    Program *textured_program_, *shadowed_program_;
     GLuint texture_handle_, texture_buffer_;
 };
 
@@ -61,7 +59,6 @@ class ColoredQuad : public Quad {
   private:
     glm::vec4 color_;
     // GL stuff
-    Program *program_;
     GLint color_handle_;
 };
 

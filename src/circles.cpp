@@ -5,9 +5,7 @@
 #include "transform2D.h"
 
 CircleDrawer::CircleDrawer()
-  : colored_program_(NULL),
-    textured_program_(NULL),
-    occluder_color_(0.0f, 0.0f, 0.0f, 1.0f),
+  : occluder_color_(0.0f, 0.0f, 0.0f, 1.0f),
     delta_radius_(0.0f),
     use_texture_(false),
     use_quad_(false) {}
@@ -18,18 +16,17 @@ void CircleDrawer::init(vector<Circle> *circles) {
   circles_ = circles;
   glm::vec2 square[4] = {glm::vec2(-1.0f, -1.0f), glm::vec2(1.0f, -1.0f), glm::vec2(1.0f, 1.0f), glm::vec2(-1.0f, 1.0f)};
 
-  colored_program_ = Renderer::instance().getProgram("circles");
-  textured_program_ = Renderer::instance().getProgram("circles_screen_textured");
   glGenVertexArrays(1, &array_object_);
   glGenBuffers(1, &buffer_object_);
-  
   glBindVertexArray(array_object_);
+  
   glBindBuffer(GL_ARRAY_BUFFER, buffer_object_);
   glBufferData(GL_ARRAY_BUFFER, sizeof(square), square, GL_STATIC_DRAW);
-  GLint handle = colored_program_->attributeHandle("position");
+  GLint handle = Renderer::instance().attributeHandle("position");
   glEnableVertexAttribArray(handle);
   glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-  handle = colored_program_->attributeHandle("bezier_coord");
+
+  handle = Renderer::instance().attributeHandle("bezier_coord");
   glEnableVertexAttribArray(handle);
   glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 }
@@ -57,21 +54,21 @@ void CircleDrawer::draw() {
 }
 
 void CircleDrawer::drawOccluder() {
-  colored_program_->use();
-  glUniform4fv(colored_program_->uniformHandle("color"), 1, glm::value_ptr(glm::vec4(occluder_color_)));
-  makeDrawCalls(colored_program_, false);
+  Renderer::instance().useProgram("circles");
+  glUniform4fv(Renderer::instance().uniformHandle("color"), 1, glm::value_ptr(glm::vec4(occluder_color_)));
+  makeDrawCalls(false);
 }
 
 void CircleDrawer::drawColored() {
-  colored_program_->use();
-  makeDrawCalls(colored_program_, true);
+  Renderer::instance().useProgram("circles");
+  makeDrawCalls(true);
 }
 
 void CircleDrawer::drawWithScreenTexture() {
-  textured_program_->use();
+  Renderer::instance().useProgram("circles_screen_textured");
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture_handle_);
-  makeDrawCalls(textured_program_, false);
+  makeDrawCalls(false);
 }
 
 void CircleDrawer::drawWithQuad() {
@@ -79,8 +76,8 @@ void CircleDrawer::drawWithQuad() {
   glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
   glStencilFunc(GL_ALWAYS, 0, 0xFF);
   glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-  colored_program_->use();
-  makeDrawCalls(colored_program_, false);
+  Renderer::instance().useProgram("circles");
+  makeDrawCalls(false);
   glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
   glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
   glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO);
@@ -88,15 +85,15 @@ void CircleDrawer::drawWithQuad() {
   glDisable(GL_STENCIL_TEST);
 }
 
-void CircleDrawer::makeDrawCalls(Program *program, bool sendColors) {
+void CircleDrawer::makeDrawCalls(bool sendColors) {
   glEnable(GL_DEPTH_TEST);
   for (vector<Circle>::iterator it = circles_->begin(); it != circles_->end(); ++it) {
     glm::mat3 circle_transform(1.0f);
     circle_transform = translate2D(circle_transform, it->center);
     circle_transform = scale2D(circle_transform, glm::vec2(it->radius + delta_radius_));
-    glUniformMatrix3fv(program->uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform() * circle_transform));
+    glUniformMatrix3fv(Renderer::instance().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform() * circle_transform));
     if (sendColors) {
-      glUniform4fv(program->uniformHandle("color"), 1, glm::value_ptr(it->color));
+      glUniform4fv(Renderer::instance().uniformHandle("color"), 1, glm::value_ptr(it->color));
     }
     glBindVertexArray(array_object_);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);

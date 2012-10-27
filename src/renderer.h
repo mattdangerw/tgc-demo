@@ -13,18 +13,23 @@ using std::string;
 using std::vector;
 using std::map;
 
-class Drawable2D {
+class Drawable {
   public:
-    Drawable2D();
-    virtual ~Drawable2D();
+    virtual void draw() = 0;
+};
+
+class SceneNode : public Drawable {
+  public:
+    SceneNode();
+    virtual ~SceneNode();
     // Make the GL calls to draw this object. Drawables should redefine these.
     virtual void draw() {}
     virtual void drawOccluder() {}
     // Sets the drawable parent. Setting parent to NULL removes this drawable and all children from the scene graph.
-    Drawable2D *parent() { return parent_; }
-    void setParent(Drawable2D *parent);
+    SceneNode *parent() { return parent_; }
+    void setParent(SceneNode *parent);
     // Gets all visible descendents of tree for rendering.
-    void getVisibleDescendants(vector<Drawable2D *> &drawables);
+    void getVisibleDescendants(vector<SceneNode *> &drawables);
     // Get the full transform of drawable element.
     glm::mat3 fullTransform();
     // Get the transform relative to the parent drawable
@@ -43,39 +48,14 @@ class Drawable2D {
     bool is3DStencil() { return is_3D_stencil_; }
     void setIs3DStencil(bool stencil) { is_3D_stencil_ = stencil; }
   private:
-    void addChild(Drawable2D *child);
-    void removeChild(Drawable2D *child);
+    void addChild(SceneNode *child);
+    void removeChild(SceneNode *child);
     // Member data.
-    Drawable2D *parent_;
-    vector<Drawable2D *> children_;
+    SceneNode *parent_;
+    vector<SceneNode *> children_;
     glm::mat3 relative_transform_;
     int priority_;
     bool is_occluder_, is_3D_stencil_, is_visible_;
-};
-
-class Drawable3D {
-  public:
-    Drawable3D() : transform2D_(1.0f), transform3D_(1.0f) {}
-    virtual ~Drawable3D() {}
-    // Make the GL calls to draw this object.
-    virtual void draw(glm::mat4 parent_transform3D, glm::mat3 parent_transform2D) = 0;
-    // The local transform of the drawable.
-    glm::mat4 transform3D() { return transform3D_; }
-    void setTransform3D(const glm::mat4 &transform) { transform3D_ = transform; }
-    glm::mat3 transform2D() { return transform2D_; }
-    void setTransform2D(const glm::mat3 &transform) { transform2D_ = transform; }
-    // Helpers for setting common uniforms in our shaders.
-    void setTransform3DUniform(Program *program, glm::mat4 parent_transform) {
-      glUniformMatrix4fv(program->uniformHandle("transform3D"), 1, GL_FALSE, glm::value_ptr(parent_transform * transform3D_)); 
-    }
-    // Helpers for setting common uniforms in our shaders.
-    void setTransform2DUniform(Program *program, glm::mat3 parent_transform) {
-      glUniformMatrix3fv(program->uniformHandle("transform2D"), 1, GL_FALSE, glm::value_ptr(parent_transform * transform2D_)); 
-    }
-
-  private:
-    glm::mat4 transform3D_;
-    glm::mat3 transform2D_;
 };
 
 // Does all the setting up of OpenGL and draws all the shapes in the scene.
@@ -92,10 +72,10 @@ class Renderer {
     // Renders the scene.
     void draw();
     // Get the root of the 2D scene graph.
-    Drawable2D *root2D() { return &root2D_; }
+    SceneNode *rootNode() { return &root_node_; }
     // Adds the particles which are drawn with different opengl setting. and maybe 3d?
-    void addDrawable3D(Drawable3D *object);
-    void removeDrawable3D(Drawable3D *object);
+    void addDrawable3D(Drawable *object);
+    void removeDrawable3D(Drawable *object);
     // Sets location of our light source for the god rays.
     void setLightPosition(glm::vec2 position) { light_position_ = position; }
     // Gets the length in x axis of the area the camera will render.
@@ -103,13 +83,11 @@ class Renderer {
     // Sets where the left side of the camera should be.
     void setLeftOfWindow(float x) { left_of_window_ = x; }
     float getLeftOfWindow() { return left_of_window_; }
-    // Projection matrix.
-    glm::mat4 projection() { return projection_; }
-    glm::mat4 inverseProjection() { return inverse_projection_; }
     // Stop using stencil test for particle drawing
     void stopStenciling() { do_stencil_ = false; }
-    // Get a shader program by string name.
-    Program *getProgram(string name);
+    void useProgram(string program);
+    GLuint uniformHandle(string uniform);
+    GLuint attributeHandle(string attribute);
     // Get a texture handle by filename. Keeps two different objects from loading the same texture to memory.
     GLuint getTexture(string filename);
 
@@ -128,17 +106,17 @@ class Renderer {
     int width_, height_;
     float aspect_, left_of_window_;
     bool do_stencil_;
-    glm::mat4 projection_, inverse_projection_;
     glm::vec2 light_position_;
-    Drawable2D root2D_;
-    vector<Drawable3D *> draw3D_;
+    SceneNode root_node_;
+    vector<Drawable *> draw3D_;
+    Program *current_program_;
     map<string, Program> programs_;
+    map<string, GLuint> attribute_handles_;
     map<string, GLuint> textures_;
     // GL.
     GLuint occluder_frame_buffer_, occluder_texture_, occluder_stencil_;
     GLuint shadow_frame_buffer_, shadow_texture_;
     GLuint quad_array_object_;
-    GLuint light_position_handle_;
 };
 
 #endif  // SRC_RENDERER_H_
