@@ -39,7 +39,7 @@ glm::vec3 EmitterTrack::step(float delta_time) {
   glm::vec3 destination = destinations_[segment_];
   if (current_time_ > segment_time) {
     current_time_ = 0.0f;
-    segment_++;
+    ++segment_;
     start_ = destination;
     return destination;
   }
@@ -65,7 +65,7 @@ void ParticleSystem::init(ThoughtBubble *thought_bubble) {
 }
 
 void ParticleSystem::addEmitters(int num_emitters) {
-  for(int i = 0; i < num_emitters; i++) {
+  for(int i = 0; i < num_emitters; ++i) {
     Emitter to_add;
     to_add.color = glm::vec4(randomColor(), 0.4f);
     to_add.position = glm::vec3(0.0f, 0.0f, kFarZBoundary);
@@ -85,12 +85,12 @@ void ParticleSystem::update(float delta_time, GameState *state) {
 
 void ParticleSystem::updateEmitters(float delta_time) {
   if (targets_) {
-    for (size_t i = 0; i < emitters_.size(); i++) {
+    for (size_t i = 0; i < emitters_.size(); ++i) {
       Emitter &emitter = emitters_[i];
       emitter.time_till_escape-=delta_time;
     }
   }
-  for (size_t i = 0; i < emitters_.size(); i++) {
+  for (size_t i = 0; i < emitters_.size(); ++i) {
     Emitter &emitter = emitters_[i];
     if (targets_ && emitter.time_till_escape < 0.0f) {
       if (!emitter.track.done()) {
@@ -149,7 +149,7 @@ void ParticleSystem::addParticles(int emitter_index, float delta_time) {
   float float_number_to_add = emitter.particles_per_second * emitter.heat * delta_time + emitter.leftover_from_last_frame;
   int number_to_add = static_cast<int>(float_number_to_add);
   emitter.leftover_from_last_frame = float_number_to_add - number_to_add;
-  for (int i = 0; i < number_to_add; i++) {
+  for (int i = 0; i < number_to_add; ++i) {
     // TODO: get that line back in.
     //if (particles_.size() > kMaxParticles) return;
     Particle to_add;
@@ -181,7 +181,7 @@ void ParticleSystem::setTargets(vector<Target> &targets) {
   targets_ = true;
   float time_till_escape = 0.0f;
   float delta_escape = 1.0f;
-  for (size_t i = 0; i < emitters_.size(); i++) {
+  for (size_t i = 0; i < emitters_.size(); ++i) {
     Emitter &emitter = emitters_[i];
     emitter.track.setStart(emitter.position);
     glm::vec3 control = glm::vec3(0.0f, 0.0f, -1.7f);

@@ -11,6 +11,65 @@
 // Forward declare out exit point.
 void cleanupAndExit(int exit_code);
 
+Drawable2D::Drawable2D()
+  : relative_transform_(1.0f),
+    priority_(0),
+    is_occluder_(true),
+    is_3D_stencil_(false),
+    parent_(Renderer::instance().root2D()) {}
+
+Drawable2D::~Drawable2D() {
+  if (parent_ != NULL) {
+    parent_->removeChild(this);
+  }
+}
+
+void Drawable2D::drawWithChildren() {
+  draw();
+  for (vector<Drawable2D *>::iterator it = children_.begin(); it != children_.end(); ++it) {
+    (*it)->drawWithChildren();
+  }
+}
+
+void Drawable2D::drawOccluderWithChildren() {
+  drawOccluder();
+  for (vector<Drawable2D *>::iterator it = children_.begin(); it != children_.end(); ++it) {
+    (*it)->drawOccluderWithChildren();
+  }
+}
+
+void Drawable2D::drawStencilWithChildren() {
+  if (is3DStencil()) draw();
+  for (vector<Drawable2D *>::iterator it = children_.begin(); it != children_.end(); ++it) {
+    (*it)->drawStencilWithChildren();
+  }
+}
+
+void Drawable2D::setParent(Drawable2D *parent) {
+  if (parent_ != NULL) parent_->removeChild(this);
+  parent_ = parent;
+  if (parent_ != NULL) parent_->addChild(this);
+}
+
+glm::mat3 Drawable2D::fullTransform() {
+  if (parent_ == NULL) return relative_transform_;
+  return parent_->fullTransform() * relative_transform_;
+}
+
+void Drawable2D::addChild(Drawable2D *child) {
+  children_.push_back(child);
+}
+
+void Drawable2D::removeChild(Drawable2D *child) {
+  vector<Drawable2D *>::iterator it;
+  for (it = children_.begin(); it != children_.end(); ++it) {
+    if (*it == child) {
+      children_.erase(it);
+      return;
+    }
+  }
+}
+
 Renderer::Renderer()
   : left_of_window_(0.0f),
     do_stencil_(true),
@@ -292,34 +351,6 @@ void Renderer::draw() {
   glDisable(GL_BLEND);
   if (do_stencil_) {
     glDisable(GL_STENCIL_TEST);
-  }
-}
-
-void Renderer::addDrawable2D(Drawable2D *object) {
-  draw2D_.push_back(object);
-}
-
-void Renderer::removeDrawable2D(Drawable2D *object) {
-  vector<Drawable2D *>::iterator it;
-  for (it = draw2D_.begin(); it != draw2D_.end(); ++it) {
-    if (*it == object) {
-      draw2D_.erase(it);
-      return;
-    }
-  }
-}
-
-void Renderer::addStencilShape(Drawable2D *object) {
-  draw_stencil_.push_back(object);
-}
-
-void Renderer::removeStencilShape(Drawable2D *object) {
-  vector<Drawable2D *>::iterator it;
-  for (it = draw_stencil_.begin(); it != draw_stencil_.end(); ++it) {
-    if (*it == object) {
-      draw2D_.erase(it);
-      return;
-    }
   }
 }
 

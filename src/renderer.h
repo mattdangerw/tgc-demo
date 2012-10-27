@@ -13,36 +13,44 @@ using std::string;
 using std::vector;
 using std::map;
 
+// void setTransformUniform(Program *program, glm::mat3 transform) glUniformMatrix3fv(program->uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(transform)); 
+
 class Drawable2D {
   public:
-    Drawable2D() : transform_(1.0f), priority_(0), occluder_(true) {};
-    virtual ~Drawable2D() {}
-    // Make the GL calls to draw this object.
-    virtual void draw(glm::mat3 view) = 0;
-    virtual void drawOcclude(glm::mat3 view) = 0;
-    // The local transform of the drawable.
-    glm::mat3 transform() { return transform_; }
-    void setTransform(const glm::mat3 &transform) { transform_ = transform; }
-    // Multiplies this shapes transform in with the rest of the stack.
-    glm::mat3 modelview(glm::mat3 view) { return view * transform(); }
-    // Helpers for setting common uniforms in our shaders.
-    void setModelviewUniform(Program *program, glm::mat3 view) {
-      glUniformMatrix3fv(program->uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(modelview(view))); 
-    }
-    void setColorMaskUniform(Program *program, glm::vec4 color_mask) {
-      glUniform4fv(program->uniformHandle("color_mask"), 1, glm::value_ptr(color_mask));
-    }
+    Drawable2D();
+    virtual ~Drawable2D();
+    // Make the GL calls to draw this object. Drawables should redefine these.
+    virtual void draw() = 0;
+    virtual void drawOccluder() = 0;
+    // Draws this drawable and all child drawables.
+    void drawWithChildren();
+    void drawOccluderWithChildren();
+    void drawStencilWithChildren();
+    // Sets the drawable parent. Setting parent to NULL removes this drawable and all children from the scene graph.
+    void setParent(Drawable2D *parent);
+    // Get the full transform of drawable element.
+    glm::mat3 fullTransform();// { return parent_->full_transform_; }
+    // Get the transform relative to the parent drawable
+    glm::mat3 relativeTransform() { return relative_transform_; }
+    void setRelativeTransform(const glm::mat3 &transform) { relative_transform_ = transform; }
     // We care about order cause we render in flatland.
     int displayPriority() const { return priority_; }
     void setDisplayPriority(int priority) { priority_ = priority; }
     // Controls whether or not to consider this shape an occluder while shading.
-    bool occluder() { return occluder_; }
-    void setOccluder(bool occluder) { occluder_ = occluder; }
-
+    bool isOccluder() { return is_occluder_; }
+    void setIsOccluder(bool occluder) { is_occluder_ = occluder; }
+    // Controls whether or not to draw this shape to the stencil buffer for the stencil test before the 3D is drawn.
+    bool is3DStencil() { return is_3D_stencil_; }
+    void setIs3DStencil(bool stencil) { is_3D_stencil_ = stencil; }
   private:
-    glm::mat3 transform_;
+    void addChild(Drawable2D *child);
+    void removeChild(Drawable2D *child);
+    // Member data.
+    Drawable2D *parent_;
+    vector<Drawable2D *> children_;
+    glm::mat3 relative_transform_;
     int priority_;
-    bool occluder_;
+    bool is_occluder_, is_3D_stencil_;
 };
 
 class Drawable3D {
@@ -83,14 +91,8 @@ class Renderer {
     void init(int width, int height);
     // Renders the scene.
     void draw();
-    // Adds a 2D drawable object to the renderer.
-    // Not memory managed! Game entities should allocate and free drawable objects.
-    // Remove to stop drawing, when object deleted or to set invisible
-    void addDrawable2D(Drawable2D *object);
-    void removeDrawable2D(Drawable2D *object);
-    // Adds a shape to be drawn into the stencil buffer before drawing the particles.
-    void addStencilShape(Drawable2D *object);
-    void removeStencilShape(Drawable2D *object);
+    // Get the root of the 2D scene graph.
+    Drawable2D *root2D() { return NULL; }
     // Adds the particles which are drawn with different opengl setting. and maybe 3d?
     void addDrawable3D(Drawable3D *object);
     void removeDrawable3D(Drawable3D *object);
@@ -127,9 +129,8 @@ class Renderer {
     float aspect_, left_of_window_;
     bool do_stencil_;
     glm::mat4 projection_, inverse_projection_;
-    vector<Drawable2D *> draw2D_, draw_stencil_;
-    vector<Drawable3D *> draw3D_;
     glm::vec2 light_position_;
+    vector<Drawable3D *> draw3D;
     map<string, Program> programs_;
     map<string, GLuint> textures_;
     // GL.

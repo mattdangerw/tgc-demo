@@ -74,12 +74,12 @@ void TriggerableManager::update(float delta_time, GameState *state) {
       emitted_ = true;
     }
     if (triggerables_[current_triggerable_]->doneAnimating()) {
-      emitters_to_add_++;
+      ++emitters_to_add_;
       if (current_triggerable_ == triggerables_.size() - 1) {
         *state = PRE_EXPLODING;
       } else {
         *state = WALKING;
-        current_triggerable_++;
+        ++current_triggerable_;
       }
     }
   } else if (*state == WALKING && current_triggerable_ < triggerables_.size()) {

@@ -131,7 +131,7 @@ void PathShape::prepVertices(const vector<PathVertex> &vertices, vector<glm::vec
     } else if (type == CUBIC) {
       cubicToQuadrics(vertices[i-1].position, vertices[i].position, vertices[i+1].position, vertices[i+2].position, solids, quadrics);
       // Skip the next vertex its the other cubic control.
-      i++;
+      ++i;
     }
   }
 }

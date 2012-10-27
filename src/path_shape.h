@@ -34,7 +34,7 @@ class PathShape : public Drawable2D {
     float width();
     float height();
     void draw(glm::mat3 view) { drawHelper(view, false); }
-    void drawOcclude(glm::mat3 view) { drawHelper(view, true); }
+    void drawOccluder(glm::mat3 view) { drawHelper(view, true); }
     void animate(float delta_time);
 
   private:

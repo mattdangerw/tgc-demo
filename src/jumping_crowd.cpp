@@ -41,7 +41,7 @@ void JumpingCrowd::init(Character *character, Ground *ground, vector<float> x_po
 void JumpingCrowd::update(float delta_time, GameState *state) {
   if (*state == EXPLODING || *state == PRE_EXPLODING) return;
   float character_x = character_->position().x;
-  for (size_t i = 0; i < crowd_.size(); i++) {
+  for (size_t i = 0; i < crowd_.size(); ++i) {
     if (jumping_[i]) {
       Circle *circle = &crowd_[i];
       circle->center.y += velocity_[i] * delta_time;
@@ -55,7 +55,7 @@ void JumpingCrowd::update(float delta_time, GameState *state) {
     }
   }
   if(character_x > start_ - kActivateDistance && character_x < end_ + kActivateDistance) {
-    for (size_t i = 0; i < crowd_.size(); i++) {
+    for (size_t i = 0; i < crowd_.size(); ++i) {
       if (!jumping_[i]) {
         time_on_ground_[i]+=delta_time;
         if (time_on_ground_[i] > time_till_next_jump_[i]) {

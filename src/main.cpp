@@ -7,7 +7,7 @@
 
 static Game *game = NULL;
 // Set false when debugging!!
-static bool fullscreen = true;
+static bool fullscreen = false;
 
 void cleanupAndExit(int exit_code) {
   glfwTerminate();
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
   while (game->stillRunning()) {
     // Pring the frame rate every once and a while.
     float currTime = static_cast<float>(glfwGetTime());
-    frame++;
+    ++frame;
     if (frame % 500 == 0) {
       printf("FPS: %f\n", 500.0f / (currTime - lastTime));
       lastTime = currTime;
