@@ -28,7 +28,7 @@ class GameEntity {
     virtual ~GameEntity() {}
     // Make the GL calls to draw this object.
     virtual void update(float delta_time, GameState *state) = 0;
-    virtual void getTargets(vector<Target> &targets) {}
+    virtual void getTargets(vector<Target> *targets) {}
     virtual void colorTarget(Target target) {}
 };
 

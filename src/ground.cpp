@@ -211,7 +211,7 @@ float Ground::heightAt(float x) {
   return glm::mix(left.y, right.y, (x - left.x) / (right.x - left.x));
 }
 
-void Ground::getTargets(vector<Target> &targets) {
+void Ground::getTargets(vector<Target> *targets) {
   Target ground_target;
   ground_target.entity = this;
   Renderer &renderer = Renderer::instance();
@@ -219,39 +219,39 @@ void Ground::getTargets(vector<Target> &targets) {
   float win_width = renderer.windowWidth();
   float x_ground_target = left + win_width/2.0f;
   ground_target.position = glm::vec2(x_ground_target, heightAt(x_ground_target)/2.0f);
-  ground_target.id = targets.size();
+  ground_target.id = targets->size();
   ground_target_id_ = ground_target.id;
-  targets.push_back(ground_target);
+  targets->push_back(ground_target);
   Target background_target;
   background_target.entity = this;
   background_target.position = glm::vec2(left + win_width/2.0f, 0.5f);
-  background_target.id = targets.size();
+  background_target.id = targets->size();
   background_target_id_ = background_target.id;
-  targets.push_back(background_target);
+  targets->push_back(background_target);
   Target tree6_target;
   tree6_target.entity = this;
   tree6_target.position = glm::vec2(9.02f, 0.4f);
-  tree6_target.id = targets.size();
+  tree6_target.id = targets->size();
   tree6_target_id_ = tree6_target.id;
-  targets.push_back(tree6_target);
+  targets->push_back(tree6_target);
   Target tree7_target;
   tree7_target.entity = this;
   tree7_target.position = glm::vec2(9.23f, 0.41f);
-  tree7_target.id = targets.size();
+  tree7_target.id = targets->size();
   tree7_target_id_ = tree7_target.id;
-  targets.push_back(tree7_target);
+  targets->push_back(tree7_target);
   Target tree8_target;
   tree8_target.entity = this;
   tree8_target.position = glm::vec2(9.42f, 0.39f);
-  tree8_target.id = targets.size();
+  tree8_target.id = targets->size();
   tree8_target_id_ = tree8_target.id;
-  targets.push_back(tree8_target);
+  targets->push_back(tree8_target);
   Target tree9_target;
   tree9_target.entity = this;
   tree9_target.position = glm::vec2(9.55f, 0.4f);
-  tree9_target.id = targets.size();
+  tree9_target.id = targets->size();
   tree9_target_id_ = tree9_target.id;
-  targets.push_back(tree9_target);
+  targets->push_back(tree9_target);
 }
 
 void Ground::colorTarget(Target target) {

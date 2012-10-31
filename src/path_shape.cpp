@@ -35,20 +35,20 @@ PathShape::~PathShape() {}
 void PathShape::init(const vector<PathVertex> &vertices, Quad *fill) {
   glm::vec2 min, max;
   corners(vertices, &min, &max);
-  prepVertices(vertices, solid_vertices_, quadric_vertices_);
+  prepVertices(vertices, &solid_vertices_, &quadric_vertices_);
   initHelper(fill, min, max);
 }
 
 void PathShape::init(string filename, Quad *fill) {
   vector<PathVertex> vertices;
-  readVertices(filename, vertices);
+  readVertices(filename, &vertices);
   glm::vec2 min, max;
   corners(vertices, &min, &max);
-  prepVertices(vertices, solid_vertices_, quadric_vertices_);
+  prepVertices(vertices, &solid_vertices_, &quadric_vertices_);
   initHelper(fill, min, max);
 }
 
-void PathShape::init(vector<string> keyframe_files, vector<float> keyframe_durations, Quad *fill) {
+void PathShape::init(const vector<string> &keyframe_files, const vector<float> &keyframe_durations, Quad *fill) {
   dynamic_ = true;
   
   solid_keys_.resize(keyframe_files.size());
@@ -56,8 +56,8 @@ void PathShape::init(vector<string> keyframe_files, vector<float> keyframe_durat
   glm::vec2 min(std::numeric_limits<float>::max()), max(std::numeric_limits<float>::min());
   for (size_t i = 0; i < keyframe_files.size(); ++i) {
     vector<PathVertex> vertices;
-    readVertices(keyframe_files[i], vertices);
-    prepVertices(vertices, solid_keys_[i], quadric_keys_[i]);
+    readVertices(keyframe_files[i], &vertices);
+    prepVertices(vertices, &solid_keys_[i], &quadric_keys_[i]);
     glm::vec2 frame_min, frame_max;
     corners(vertices, &frame_min, &frame_max);
     min = glm::min(frame_min, min);
@@ -89,7 +89,7 @@ void PathShape::initHelper(Quad *fill, glm::vec2 min, glm::vec2 max) {
   createVAOs();
 }
 
-void PathShape::readVertices(string filename, vector<PathVertex> &vertices) {
+void PathShape::readVertices(string filename, vector<PathVertex> *vertices) {
   FILE *file_pointer = fopen(filename.c_str(), "r");
   if (file_pointer == NULL) error("Path file %s not found.\n", filename.c_str());
   char line[128];
@@ -102,20 +102,20 @@ void PathShape::readVertices(string filename, vector<PathVertex> &vertices) {
     vertex.type = (PathVertexType)type;
     stream >> vertex.position.x;
     stream >> vertex.position.y;
-    vertices.push_back(vertex);
+    vertices->push_back(vertex);
   }
   fclose(file_pointer);
 }
 
-void PathShape::prepVertices(const vector<PathVertex> &vertices, vector<glm::vec2> &solids, vector<glm::vec2> &quadrics) {
+void PathShape::prepVertices(const vector<PathVertex> &vertices, vector<glm::vec2> *solids, vector<glm::vec2> *quadrics) {
   for (unsigned int i = 0; i < vertices.size(); ++i) {
     PathVertexType type = vertices[i].type;
     if (type == ON_PATH) {
-      solids.push_back(vertices[i].position);
+      solids->push_back(vertices[i].position);
     } else if (type == QUADRIC) {
-      quadrics.push_back(vertices[i-1].position);
-      quadrics.push_back(vertices[i].position);
-      quadrics.push_back(vertices[i+1].position);
+      quadrics->push_back(vertices[i-1].position);
+      quadrics->push_back(vertices[i].position);
+      quadrics->push_back(vertices[i+1].position);
     } else if (type == CUBIC) {
       cubicToQuadrics(vertices[i-1].position, vertices[i].position, vertices[i+1].position, vertices[i+2].position, solids, quadrics);
       // Skip the next vertex its the other cubic control.
@@ -135,7 +135,7 @@ void PathShape::corners(const vector<PathVertex> &vertices, glm::vec2 *min, glm:
 }
 
 void PathShape::cubicToQuadrics(glm::vec2 start, glm::vec2 control1, glm::vec2 control2, glm::vec2 end,
-  vector<glm::vec2> &solids, vector<glm::vec2> &quadrics) {
+  vector<glm::vec2> *solids, vector<glm::vec2> *quadrics) {
   // Approximate the cubic with two quadrics.
   // Find on path point with succesive midpoints.
   glm::vec2 midpoints[3];
@@ -151,31 +151,31 @@ void PathShape::cubicToQuadrics(glm::vec2 start, glm::vec2 control1, glm::vec2 c
   bool degenerate, intersects;
   // First quadric
   intersectRays(start, control1, new_tangents[1], new_tangents[0], &degenerate, &intersects, &new_control_point);
-  quadrics.push_back(start);
+  quadrics->push_back(start);
   if (!degenerate && intersects) {
-    quadrics.push_back(new_control_point);
+    quadrics->push_back(new_control_point);
   } else {
-    quadrics.push_back(midpoint(start, new_on_path));
+    quadrics->push_back(midpoint(start, new_on_path));
   }
-  quadrics.push_back(new_on_path);
+  quadrics->push_back(new_on_path);
   // Second quadric
   intersectRays(end, control2, new_tangents[0], new_tangents[1], &degenerate, &intersects, &new_control_point);
-  quadrics.push_back(new_on_path);
+  quadrics->push_back(new_on_path);
   if (!degenerate && intersects) {
-    quadrics.push_back(new_control_point);
+    quadrics->push_back(new_control_point);
   } else {
-    quadrics.push_back(midpoint(new_on_path, end));
+    quadrics->push_back(midpoint(new_on_path, end));
   }
-  quadrics.push_back(end);
+  quadrics->push_back(end);
   // Add a solid point at the new on path points
-  solids.push_back(new_on_path);
+  solids->push_back(new_on_path);
 }
 
-void PathShape::makeBezierTexCoords(vector<glm::vec2> &bezier_tex_coords) {
+void PathShape::makeBezierTexCoords(vector<glm::vec2> *bezier_tex_coords) {
   for (size_t i = 0; i < quadric_vertices_.size()/3 ; i++) {
-    bezier_tex_coords.push_back(glm::vec2(0.0f, 0.0f));
-    bezier_tex_coords.push_back(glm::vec2(0.5f, 0.0f));
-    bezier_tex_coords.push_back(glm::vec2(1.0f, 1.0f));
+    bezier_tex_coords->push_back(glm::vec2(0.0f, 0.0f));
+    bezier_tex_coords->push_back(glm::vec2(0.5f, 0.0f));
+    bezier_tex_coords->push_back(glm::vec2(1.0f, 1.0f));
   }
 }
 
@@ -218,7 +218,7 @@ void PathShape::createVAOs() {
 
     // Pass in the bezier texture coords.
     vector<glm::vec2> bezier_tex_coords;
-    makeBezierTexCoords(bezier_tex_coords);
+    makeBezierTexCoords(&bezier_tex_coords);
     glBindBuffer(GL_ARRAY_BUFFER, quadric_buffers_[1]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * bezier_tex_coords.size(), &bezier_tex_coords[0], GL_STATIC_DRAW);
     handle = Renderer::instance().attributeHandle("bezier_coord");

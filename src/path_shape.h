@@ -38,7 +38,7 @@ class PathShape : public SceneNode {
     ~PathShape();
     void init(const vector<PathVertex> &vertices, Quad *fill);
     void init(string filename, Quad *fill);
-    void init(vector<string> keyframe_files, vector<float> keyfram_times, Quad *fill);
+    void init(const vector<string> &keyframe_files, const vector<float> &keyfram_times, Quad *fill);
     void setOccluderColor(float color);
     float width();
     float height();
@@ -49,12 +49,12 @@ class PathShape : public SceneNode {
   private:
     // Helper methods.
     void initHelper(Quad *fill, glm::vec2 min, glm::vec2 max);
-    void readVertices(string filename, vector<PathVertex> &vertices);
-    void prepVertices(const vector<PathVertex> &vertices, vector<glm::vec2> &solids, vector<glm::vec2> &quadrics);
+    void readVertices(string filename, vector<PathVertex> *vertices);
+    void prepVertices(const vector<PathVertex> &vertices, vector<glm::vec2> *solids, vector<glm::vec2> *quadrics);
     void corners(const vector<PathVertex> &vertices, glm::vec2 *min, glm::vec2 *max);
-    void makeBezierTexCoords(vector<glm::vec2> &bezier_tex_coords);
+    void makeBezierTexCoords(vector<glm::vec2> *bezier_tex_coords);
     void createVAOs();
-    void cubicToQuadrics(glm::vec2 start, glm::vec2 control1, glm::vec2 control2, glm::vec2 end, vector<glm::vec2> &solids, vector<glm::vec2> &quadrics);
+    void cubicToQuadrics(glm::vec2 start, glm::vec2 control1, glm::vec2 control2, glm::vec2 end, vector<glm::vec2> *solids, vector<glm::vec2> *quadrics);
     void drawHelper(bool asOccluder);
 
     // Member data.

@@ -19,7 +19,7 @@ class Ground : public GameEntity {
     float width();
     float heightAt(float x);
     void update(float delta_time, GameState *state) {}
-    void getTargets(vector<Target> &targets);
+    void getTargets(vector<Target> *targets);
     void colorTarget(Target target);
   private:
     void initTrees();

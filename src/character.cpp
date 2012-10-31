@@ -102,12 +102,12 @@ void Character::updateY(float delta_time) {
   }
 }
 
-void Character::getTargets(vector<Target> &targets) {
+void Character::getTargets(vector<Target> *targets) {
   Target target;
   target.position = circle_->center;
   target.entity = this;
-  target.id = targets.size();
-  targets.push_back(target);
+  target.id = targets->size();
+  targets->push_back(target);
 }
 
 void Character::colorTarget(Target target) {

@@ -29,7 +29,7 @@ class SceneNode : public Drawable {
     SceneNode *parent() { return parent_; }
     void setParent(SceneNode *parent);
     // Gets all visible descendents of tree for rendering.
-    void getVisibleDescendants(vector<SceneNode *> &drawables);
+    void getVisibleDescendants(vector<SceneNode *> *drawables);
     // Get the full transform of drawable element.
     glm::mat3 fullTransform();
     // Get the transform relative to the parent drawable
@@ -104,7 +104,7 @@ class Renderer {
     void setupScreenQuad();
     void setupFBOs();
     void loadShaders();
-    void setAttributesAndLink(Program &program);
+    void setAttributesAndLink(Program *program);
     void setTextureUnits();
     // Memeber data.
     int width_, height_;

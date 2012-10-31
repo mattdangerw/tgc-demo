@@ -25,7 +25,7 @@ class Character : public GameEntity {
     // Get the character position.
     glm::vec2 position() { return position_; }
     glm::vec2 groundPosition();
-    void getTargets(vector<Target> &targets);
+    void getTargets(vector<Target> *targets);
     void colorTarget(Target target);
 
   private:

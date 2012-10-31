@@ -68,7 +68,7 @@ void Game::update() {
 
   if (state_ == EXPLODING && last_state_ != EXPLODING) {
     for (vector<GameEntity *>::iterator it = entities_.begin(); it != entities_.end(); ++it) {
-      (*it)->getTargets(targets_);
+      (*it)->getTargets(&targets_);
     }
     particle_system_.setTargets(targets_);
     //thought_bubble_.stopDrawing();

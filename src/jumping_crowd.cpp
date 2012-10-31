@@ -9,7 +9,7 @@ JumpingCrowd::JumpingCrowd() {}
 
 JumpingCrowd::~JumpingCrowd() {}
 
-void JumpingCrowd::init(Character *character, Ground *ground, vector<float> x_positions, float size, float ground_time_min, float ground_time_max, float jump_velocity) {
+void JumpingCrowd::init(Character *character, Ground *ground, const vector<float> &x_positions, float size, float ground_time_min, float ground_time_max, float jump_velocity) {
   ground_ = ground;
   character_ = character;
   time_min_ = ground_time_min;

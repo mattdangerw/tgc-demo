@@ -49,8 +49,8 @@ class ParticleSystem : public GameEntity {
     void init(ThoughtBubble *thought_bubble);
     void addEmitters(int num_particles);
     void update(float delta_time, GameState *state);
-    void setTargets(vector<Target> &targets);
-    bool targetWasHit(Target target);
+    void setTargets(const vector<Target> &targets);
+    bool targetWasHit(const Target target);
 
   private:
     void updateEmitters(float delta_time);

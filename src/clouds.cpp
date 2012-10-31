@@ -178,7 +178,7 @@ void CloudManager::addRandomCloud(float x_position) {
     clouds_.push_back(cloud);
 }
 
-void CloudManager::getTargets(vector<Target> &targets) {
+void CloudManager::getTargets(vector<Target> *targets) {
   for (list<Cloud *>::iterator it = clouds_.begin(); it != clouds_.end(); ++it) {
     Cloud *cloud = *it;
     float x_begin, x_end;
@@ -188,8 +188,8 @@ void CloudManager::getTargets(vector<Target> &targets) {
       Target target;
       target.position = cloud->center();
       target.entity = this;
-      target.id = targets.size();
-      targets.push_back(target);
+      target.id = targets->size();
+      targets->push_back(target);
       target_to_cloud_[target.id] = cloud;
     }
   }

@@ -3,11 +3,11 @@
 
 #include <glm/glm.hpp>
 
-inline float randomFloat(float min, float max) {
+inline float randomFloat(const float &min, const float &max) {
   return min + rand()/(RAND_MAX/(max - min));
 }
 
-inline int randomInt(int min, int max) {
+inline int randomInt(const int &min, const int &max) {
   return min + rand() % (max-min);
 }
 

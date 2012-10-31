@@ -87,24 +87,27 @@ int main(int argc, char *argv[]) {
   int frame = 0;
   int print_frequency = 500;
   float last_print_time = static_cast<float>(glfwGetTime());
-  float time_updating = 0.0f;
+  float time_updating = 0.0f, time_drawing = 0.0f;
   while (game->stillRunning()) {
-    float curr_time = static_cast<float>(glfwGetTime());
+    float frame_start_time = static_cast<float>(glfwGetTime());
     ++frame;
 
     // Update and draw the game.
     game->update();
-    time_updating += static_cast<float>(glfwGetTime()) - curr_time;
+    float frame_update_time = static_cast<float>(glfwGetTime());
+    time_updating += frame_update_time - frame_start_time;
     game->draw();
+    time_drawing += static_cast<float>(glfwGetTime()) - frame_update_time;
     
     // Print the frame rate every once and a while.
     if (frame % print_frequency == 0) {
-      float time_elapsed = curr_time - last_print_time;
+      float time_elapsed = frame_start_time - last_print_time;
       printf("FPS: %f\n", print_frequency / (time_elapsed));
-      last_print_time = curr_time;
+      last_print_time = frame_start_time;
       printf("Update time per frame: %f.\n", time_updating / print_frequency);
       time_updating = 0.0f;
-      printf("Draw time per frame: %f.\n", (time_elapsed - time_updating) / print_frequency);
+      printf("Draw time per frame: %f.\n", time_drawing / print_frequency);
+      time_drawing = 0.0f;
     }
     glfwSwapBuffers();
   }

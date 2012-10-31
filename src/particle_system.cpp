@@ -172,7 +172,7 @@ void ParticleSystem::sortDepthIndex() {
   std::sort(emitters_by_depth_.begin(), emitters_by_depth_.end(), functor);
 }
 
-void ParticleSystem::setTargets(vector<Target> &targets) {
+void ParticleSystem::setTargets(const vector<Target> &targets) {
   targets_ = true;
   float time_till_escape = 0.0f;
   float delta_escape = 1.0f;

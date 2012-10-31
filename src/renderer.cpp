@@ -40,8 +40,8 @@ void SceneNode::setParent(SceneNode *parent) {
   if (parent_ != NULL) parent_->addChild(this);
 }
 
-void SceneNode::getVisibleDescendants(vector<SceneNode *> &drawables) {
-  if (isVisible()) drawables.push_back(this);
+void SceneNode::getVisibleDescendants(vector<SceneNode *> *drawables) {
+  if (isVisible()) drawables->push_back(this);
   vector<SceneNode *>::iterator it;
   for (it = children_.begin(); it != children_.end(); ++it) {
     (*it)->getVisibleDescendants(drawables);
@@ -180,63 +180,63 @@ void Renderer::loadShaders() {
   Program &textured = programs_["textured"];
   textured.addShader(&general_vert);
   textured.addShader(&textured_frag);
-  setAttributesAndLink(textured);
+  setAttributesAndLink(&textured);
 
   textured_with_shadows_frag.load("src/shaders/textured_with_shadows.frag", GL_FRAGMENT_SHADER);
   Program &textured_with_shadows = programs_["textured_with_shadows"];
   textured_with_shadows.addShader(&general_vert);
   textured_with_shadows.addShader(&textured_with_shadows_frag);
-  setAttributesAndLink(textured_with_shadows);
+  setAttributesAndLink(&textured_with_shadows);
 
   minimal_frag.load("src/shaders/minimal.frag", GL_FRAGMENT_SHADER);
   Program &minimal = programs_["minimal"];
   minimal.addShader(&general_vert);
   minimal.addShader(&minimal_frag);
-  setAttributesAndLink(minimal);
+  setAttributesAndLink(&minimal);
   
   quadric_frag.load("src/shaders/quadric_anti_aliased.frag", GL_FRAGMENT_SHADER);
   Program &quadric = programs_["quadric"];
   quadric.addShader(&general_vert);
   quadric.addShader(&quadric_frag);
-  setAttributesAndLink(quadric);
+  setAttributesAndLink(&quadric);
   
   circles_frag.load("src/shaders/circles_anti_aliased.frag", GL_FRAGMENT_SHADER);
   Program &circles = programs_["circles"];
   circles.addShader(&general_vert);
   circles.addShader(&circles_frag);
-  setAttributesAndLink(circles);
+  setAttributesAndLink(&circles);
   
   circles_screen_textured_frag.load("src/shaders/circles_screen_textured.frag", GL_FRAGMENT_SHADER);
   Program &circles_screen_textured = programs_["circles_screen_textured"];
   circles_screen_textured.addShader(&general_vert);
   circles_screen_textured.addShader(&circles_screen_textured_frag);
-  setAttributesAndLink(circles_screen_textured);
+  setAttributesAndLink(&circles_screen_textured);
 
   particles_vert.load("src/shaders/particles.vert", GL_VERTEX_SHADER);
   particles_frag.load("src/shaders/particles.frag", GL_FRAGMENT_SHADER);
   Program &particles = programs_["particles"];
   particles.addShader(&particles_vert);
   particles.addShader(&particles_frag);
-  setAttributesAndLink(particles);
+  setAttributesAndLink(&particles);
 
   shadows_vert.load("src/shaders/shadows.vert", GL_VERTEX_SHADER);
   shadows_frag.load("src/shaders/shadows.frag", GL_FRAGMENT_SHADER);
   Program &shadows = programs_["shadows"];
   shadows.addShader(&shadows_vert);
   shadows.addShader(&shadows_frag);
-  setAttributesAndLink(shadows);
+  setAttributesAndLink(&shadows);
 
   setTextureUnits();
 }
 
-void Renderer::setAttributesAndLink(Program &program) {
-  program.create();
+void Renderer::setAttributesAndLink(Program *program) {
+  program->create();
   // Keep our vertex attributes in a consistent location accross programs.
   // This way we can VAOs with different programs without worrying.
   for (map<string, GLuint>::iterator it = attribute_handles_.begin(); it != attribute_handles_.end(); ++it) {
-    program.setAttributeHandle(it->first, it->second);
+    program->setAttributeHandle(it->first, it->second);
   }
-  program.link();
+  program->link();
 }
 
 void Renderer::setTextureUnits() {
@@ -273,7 +273,7 @@ void Renderer::draw() {
 
   // Sort drawables by priority.
   vector<SceneNode *> draw2D;
-  root_node_.getVisibleDescendants(draw2D);
+  root_node_.getVisibleDescendants(&draw2D);
   std::stable_sort(draw2D.begin(), draw2D.end(), PrioritySortFunctor());
 
   // Draw occluders to texture.

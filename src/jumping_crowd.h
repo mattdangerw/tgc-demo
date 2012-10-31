@@ -15,7 +15,7 @@ class JumpingCrowd : public GameEntity {
   public:
     JumpingCrowd();
     ~JumpingCrowd();
-    void init(Character *character, Ground *Ground, vector<float> positions, float size, float jump_time_min, float jump_time_max, float jump_velocity);
+    void init(Character *character, Ground *Ground, const vector<float> &x_positions, float size, float jump_time_min, float jump_time_max, float jump_velocity);
     void update(float delta_time, GameState *state);
   private:
     float jumpTime();

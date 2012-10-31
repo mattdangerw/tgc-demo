@@ -57,7 +57,7 @@ class CloudManager : public GameEntity {
     void init(Ground * ground);
     // Keeps clouds wrapping around viewable area.
     void update(float delta_time, GameState *state);
-    void getTargets(vector<Target> &targets);
+    void getTargets(vector<Target> *targets);
     void colorTarget(Target target);
 
   private:
