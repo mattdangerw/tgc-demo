@@ -44,6 +44,8 @@ class SceneNode : public Drawable {
     // Controls whether or not to consider this shape an occluder while shading.
     bool isOccluder() { return is_occluder_ && is_visible_; }
     void setIsOccluder(bool occluder) { is_occluder_ = occluder; }
+    float occluderColor() { return occluder_color_; }
+    void setOccluderColor(float color) { occluder_color_ = color; }
     // Controls whether or not to draw this shape to the stencil buffer for the stencil test before the 3D is drawn.
     bool is3DStencil() { return is_3D_stencil_; }
     void setIs3DStencil(bool stencil) { is_3D_stencil_ = stencil; }
@@ -56,6 +58,7 @@ class SceneNode : public Drawable {
     glm::mat3 relative_transform_;
     int priority_;
     bool is_occluder_, is_3D_stencil_, is_visible_;
+    float occluder_color_;
 };
 
 // Does all the setting up of OpenGL and draws all the shapes in the scene.
@@ -69,11 +72,10 @@ class Renderer {
     }
     // Does GL calls to prep for rendering.
     void init(int width, int height);
-    // Renders the scene.
     void draw();
     // Get the root of the 2D scene graph.
     SceneNode *rootNode() { return &root_node_; }
-    // Adds the particles which are drawn with different opengl setting. and maybe 3d?
+    // Add/remove a 3D drawable to scene. No currently part of scene graph.
     void addDrawable3D(Drawable *object);
     void removeDrawable3D(Drawable *object);
     // Sets location of our light source for the god rays.
@@ -86,7 +88,9 @@ class Renderer {
     // Stop using stencil test for particle drawing
     void stopStenciling() { do_stencil_ = false; }
     void useProgram(string program);
+    // Get handle for uniform shader variable for currently in use program.
     GLuint uniformHandle(string uniform);
+    // Get handle for varying attribute these do not change across programs.
     GLuint attributeHandle(string attribute);
     // Get a texture handle by filename. Keeps two different objects from loading the same texture to memory.
     GLuint getTexture(string filename);

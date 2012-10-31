@@ -14,6 +14,7 @@ SceneNode::SceneNode()
   : relative_transform_(1.0f),
     priority_(0),
     is_occluder_(true),
+    occluder_color_(0.0f),
     is_3D_stencil_(false),
     is_visible_(true),
     parent_(Renderer::instance().rootNode()) {
@@ -283,6 +284,7 @@ void Renderer::draw() {
 
   // Draw occluders to texture.
   //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  //glViewport(0,0,width_, height_);
   glBindFramebuffer(GL_FRAMEBUFFER, occluder_frame_buffer_);
   glViewport(0,0,width_/2, height_/2);
   glDepthMask(GL_TRUE);
@@ -291,8 +293,10 @@ void Renderer::draw() {
   for (vector<SceneNode *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
     if ((*it)->isOccluder()) (*it)->drawOccluder();
   }
+  //return;
   
   //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  //glViewport(0,0,width_, height_);
   glBindFramebuffer(GL_FRAMEBUFFER, shadow_frame_buffer_);
   glDepthMask(GL_TRUE);
   glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -307,6 +311,7 @@ void Renderer::draw() {
   glBindTexture(GL_TEXTURE_2D, occluder_texture_);
   glBindVertexArray(quad_array_object_);
   glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+  //return;
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glViewport(0,0,width_, height_);

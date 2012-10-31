@@ -26,7 +26,7 @@ class SubBubble: public SceneNode  {
     void drawOcclude(glm::mat3 view) {}
   private:
     CircleDrawer outer_drawer_;//, inner_drawer_;
-    TexturedQuad outer_fill_;//, inner_fill_;
+    Quad outer_fill_;//, inner_fill_;
 };
 
 class ThoughtBubble : public GameEntity {
@@ -54,7 +54,7 @@ class ThoughtBubble : public GameEntity {
     vector<float> rest_radii_;
     vector<PointMass> stretch_masses_;
     CircleDrawer circle_drawer_, circle_inside_drawer_;
-    TexturedQuad fill_;
+    Quad fill_;
     SubBubble sub_bubble_, sub_bubble2_, sub_bubble3_;
 
     // For pre explosion animation

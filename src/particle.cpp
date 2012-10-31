@@ -46,9 +46,7 @@ void ParticleDrawer::init() {
 
   Renderer::instance().useProgram("particles");
   glUniform1fv(Renderer::instance().uniformHandle("size"), 1, &kParticleRadius);
-  // TODO: take these out in all files!
   texture_handle_ = Renderer::instance().getTexture("textures/particle.dds");
-  glUniform1i(Renderer::instance().uniformHandle("color_texture"), 0);
 }
 
 void ParticleDrawer::sendParticles(ParticleDrawInfo *particles, int num_particles) {

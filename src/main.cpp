@@ -25,25 +25,22 @@ int GLFWCALL windowCloseCallback() {
   return GL_TRUE;
 }
 
-// Handle input and inititialize OpenGL.
-static void init(int argc, char *argv[], int width, int height) {
-  // Parse args someday?
-  game->init(width, height);
-}
-
 int main(int argc, char *argv[]) {
   if (!glfwInit()) {
     fprintf(stderr, "Failed to initialize GLFW\n");
     exit(1);
   }
-
   printf("Welcome to the demo. Controls are quite simple--left/right arrows and space to play, escape to quit. Enjoy!\n");
   printf("Press enter to continue...");
   std::getchar();
 
+  // Demand a core profile. This appears to work on AMD but not nvidia cards.
+  // Possibly because glew does not play nice with core profiles.
   //glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
   //glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 3);
   //glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+  // This is really for multisampling not FSAA but whatevs, we still need it.
   glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 8);
   int screen_mode = fullscreen ? GLFW_FULLSCREEN : GLFW_WINDOW;
   int width, height;
@@ -75,8 +72,6 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "OpenGL 3.3 is not supported.\n");
     cleanupAndExit(1);
   }
-  // Make the main game object.
-  game = new Game();
 
   // GLFW options.
   glfwEnable(GLFW_KEY_REPEAT);
@@ -85,30 +80,32 @@ int main(int argc, char *argv[]) {
   glfwSetKeyCallback(keyboardCallback);
   glfwSetWindowCloseCallback(windowCloseCallback);
 
-  // Parse command-line options. And init game.
-  init(argc, argv, width, height);
+  // Make the main game object.
+  game = new Game();
+  game->init(width, height);  
   // Main loop.
   int frame = 0;
-  float lastTime = static_cast<float>(glfwGetTime());
-  float updateTime = 0.0f;
+  int print_frequency = 500;
+  float last_print_time = static_cast<float>(glfwGetTime());
+  float time_updating = 0.0f;
   while (game->stillRunning()) {
-    // Pring the frame rate every once and a while.
-    float currTime = static_cast<float>(glfwGetTime());
+    float curr_time = static_cast<float>(glfwGetTime());
     ++frame;
-    if (frame % 500 == 0) {
-      printf("FPS: %f\n", 500.0f / (currTime - lastTime));
-      lastTime = currTime;
-    }
+
     // Update and draw the game.
     game->update();
-
-    updateTime += static_cast<float>(glfwGetTime()) - currTime;
-    if (frame % 500 == 0) {
-      printf("Update time per frame: %f. Try to keep less than 0.01\n", updateTime / 500.0f);
-      updateTime = 0.0f;
-    }
-
+    time_updating += static_cast<float>(glfwGetTime()) - curr_time;
     game->draw();
+    
+    // Print the frame rate every once and a while.
+    if (frame % print_frequency == 0) {
+      float time_elapsed = curr_time - last_print_time;
+      printf("FPS: %f\n", print_frequency / (time_elapsed));
+      last_print_time = curr_time;
+      printf("Update time per frame: %f.\n", time_updating / print_frequency);
+      time_updating = 0.0f;
+      printf("Draw time per frame: %f.\n", (time_elapsed - time_updating) / print_frequency);
+    }
     glfwSwapBuffers();
   }
   cleanupAndExit(0);

@@ -26,7 +26,6 @@ class CircleDrawer : public SceneNode {
     void changeRadii(float delta_radius) { delta_radius_ = delta_radius; }
     void draw();
     void drawOccluder();
-    void setOccluderColor(glm::vec4 color) { occluder_color_ = color; }
 
   private:
     // Helpers.
@@ -35,7 +34,6 @@ class CircleDrawer : public SceneNode {
     void drawWithQuad();
     void makeDrawCalls(bool sendColors);
     // Member data.
-    glm::vec4 occluder_color_;
     vector<Circle> *circles_;
     float delta_radius_;
     bool use_texture_, use_quad_;

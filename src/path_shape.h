@@ -23,6 +23,15 @@ struct PathVertex {
   PathVertexType type;
 };
 
+//class KeyframData { 
+//  public:
+//    void init(const vector<PathVertex> &vertices);
+//    void init(string filename);
+//    vector<glm::vec2> solidVertices();
+//    vector<glm::vec2> quadricVertices();
+//  private:
+//}
+
 class PathShape : public SceneNode {
   public:
     PathShape();
@@ -30,7 +39,7 @@ class PathShape : public SceneNode {
     void init(const vector<PathVertex> &vertices, Quad *fill);
     void init(string filename, Quad *fill);
     void init(vector<string> keyframe_files, vector<float> keyfram_times, Quad *fill);
-    void setOccluderColor(glm::vec4 color);
+    void setOccluderColor(float color);
     float width();
     float height();
     void draw() { drawHelper(false); }
@@ -47,10 +56,10 @@ class PathShape : public SceneNode {
     void createVAOs();
     void cubicToQuadrics(glm::vec2 start, glm::vec2 control1, glm::vec2 control2, glm::vec2 end, vector<glm::vec2> &solids, vector<glm::vec2> &quadrics);
     void drawHelper(bool asOccluder);
+
     // Member data.
     Quad *fill_;
     vector<glm::vec2> solid_vertices_, quadric_vertices_;
-
     bool dynamic_;
     float time_;
     vector<float> keyframe_times_;

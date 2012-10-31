@@ -11,55 +11,26 @@
 class Quad : public SceneNode {
   public:
     Quad();
-    virtual void init();
-    virtual void setCorners(glm::vec2 min, glm::vec2 max);
-    virtual void draw();
-    void setOccluderColor(glm::vec4 color) { occluder_color_ = color; }
-    void drawOccluder();
-    void getCorners(glm::vec2 *min, glm::vec2 *max);
-    void xExtent(float *x_begin, float *x_end);
-  protected:
-    GLuint array_object_;
-  private:
-    glm::vec2 vertices_[4];
-    glm::vec4 occluder_color_;
-    // GL.
-    GLuint buffer_object_;
-};
-
-// For our paper textures.
-class TexturedQuad : public Quad {
-  public:
-    TexturedQuad();
-    ~TexturedQuad();
-    void init(string texture_file);
-    void setShadowed(bool shadowed) { shadowed_ = shadowed; }
-    void setTextureScale(glm::vec2 scale) { tex_scale_ = scale; }
-    void setColorMask(glm::vec4 color_mask) { color_mask_ = color_mask; }
-    void setCorners(glm::vec2 min, glm::vec2 max);
-    void draw();
-
-  private:
-    bool shadowed_;
-    glm::vec2 tex_coords_[4];
-    glm::vec2 tex_scale_;
-    glm::vec4 color_mask_;
-    // GL stuff.
-    GLuint texture_handle_, texture_buffer_;
-};
-
-class ColoredQuad : public Quad {
-  public:
-    ColoredQuad();
-    ~ColoredQuad();
+    ~Quad();
     void init();
-    void setColor(glm::vec4 color) { color_ = color; }
+    void getCorners(glm::vec2 *min, glm::vec2 *max);
+    void setCorners(glm::vec2 min, glm::vec2 max);
+    void useTexture(string texture_file);
+    void useColor(glm::vec4 color);
+    void setTextureScale(glm::vec2 scale) { tex_scale_ = scale; }
+    void setShadowed(bool shadowed) { shadowed_ = shadowed; }
+    void setColorMask(glm::vec4 color_mask) { color_mask_ = color_mask; }
     void draw();
-
+    void drawOccluder();
   private:
-    glm::vec4 color_;
-    // GL stuff
-    GLint color_handle_;
+    bool shadowed_, textured_;
+    glm::vec2 vertices_[4], tex_coords_[4];
+    glm::vec2 tex_scale_;
+    glm::vec4 color_mask_, color_;
+    // GL.
+    GLuint array_object_;
+    GLuint texture_handle_;
+    GLuint position_buffer_object_, tex_coord_buffer_object_;
 };
 
 #endif  // SRC_QUAD_H_

@@ -12,7 +12,8 @@ static const float kHorizantalLeeway = 0.18f;
 static const float kBubbleSpringConstant = 120.0f;
 
 void SubBubble::init(vector<Circle> *circles, float texture_scale, float darkness) {
-  outer_fill_.init("textures/thought_bubble.dds");
+  outer_fill_.init();
+  outer_fill_.useTexture("textures/thought_bubble.dds");
   outer_fill_.setTextureScale(glm::vec2(texture_scale));
   outer_fill_.setCorners(glm::vec2(-0.3f, -0.2f), glm::vec2(0.3f, 0.2f));
   outer_fill_.setColorMask(glm::vec4(darkness, darkness, darkness, 1.0f));
@@ -106,7 +107,8 @@ void ThoughtBubble::init(Character *character) {
   }
 
   // Ready the circle drawer.
-  fill_.init("textures/thought_bubble.dds");
+  fill_.init();
+  fill_.useTexture("textures/thought_bubble.dds");
   fill_.setTextureScale(glm::vec2(2.0f));
   fill_.setCorners(glm::vec2(-0.3f, -0.2f), glm::vec2(0.3f, 0.2f));
   circle_drawer_.init(&bubble_circles_);

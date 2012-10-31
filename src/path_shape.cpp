@@ -235,7 +235,7 @@ void PathShape::createVAOs() {
   }
 }
 
-void PathShape::setOccluderColor(glm::vec4 color) {
+void PathShape::setOccluderColor(float color) {
   fill_->setOccluderColor(color);
 }
 

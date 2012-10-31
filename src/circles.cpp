@@ -5,8 +5,7 @@
 #include "transform2D.h"
 
 CircleDrawer::CircleDrawer()
-  : occluder_color_(0.0f, 0.0f, 0.0f, 1.0f),
-    delta_radius_(0.0f),
+  : delta_radius_(0.0f),
     use_texture_(false),
     use_quad_(false) {}
 
@@ -55,7 +54,9 @@ void CircleDrawer::draw() {
 
 void CircleDrawer::drawOccluder() {
   Renderer::instance().useProgram("circles");
-  glUniform4fv(Renderer::instance().uniformHandle("color"), 1, glm::value_ptr(glm::vec4(occluder_color_)));
+  glm::vec4 occluder_vec(1.0f);
+  occluder_vec.r = occluderColor();
+  glUniform4fv(Renderer::instance().uniformHandle("color"), 1, glm::value_ptr(glm::vec4(occluder_vec)));
   makeDrawCalls(false);
 }
 

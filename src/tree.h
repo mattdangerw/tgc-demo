@@ -14,7 +14,7 @@ class Tree : public SceneNode {
     void drawOccluder();
 
   private:
-    TexturedQuad trunk_quad_, leaves_quad_;
+    Quad trunk_quad_, leaves_quad_;
     PathShape trunk_shape_, leaves_shape_;
 };
 
