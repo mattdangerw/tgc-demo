@@ -5,14 +5,9 @@
 #include <sstream>
 #include <stdlib.h>
 
+#include "error.h"
+#include "random.h"
 #include "transform2D.h"
-
-// Forward declare out exit point.
-void cleanupAndExit(int exit_code);
-
-static inline float randomFloat(float min, float max) {
-  return min + rand()/(RAND_MAX/(max - min));
-}
 
 static inline glm::vec2 midpoint(glm::vec2 a, glm::vec2 b) {
   return glm::mix(a, b, 0.5f);
@@ -96,10 +91,7 @@ void PathShape::initHelper(Quad *fill, glm::vec2 min, glm::vec2 max) {
 
 void PathShape::readVertices(string filename, vector<PathVertex> &vertices) {
   FILE *file_pointer = fopen(filename.c_str(), "r");
-  if (file_pointer == NULL) {
-    fprintf(stderr, "Path file %s not found.\n", filename.c_str());
-    cleanupAndExit(1);
-  }
+  if (file_pointer == NULL) error("Path file %s not found.\n", filename.c_str());
   char line[128];
   while (fgets(line, 128, file_pointer) != NULL) {
     PathVertex vertex;

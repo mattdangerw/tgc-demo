@@ -10,7 +10,7 @@ void Tree::init() {
   trunk_quad_.init();
   trunk_quad_.useTexture("textures/bark.dds");
   trunk_quad_.setTextureScale(glm::vec2(0.2f));
-  trunk_shape_.init("paths/trunk.path", &trunk_quad_);
+  trunk_shape_.init("paths/trunkle.path", &trunk_quad_);
   trunk_shape_.setParent(this);
   trunk_shape_.setIsVisible(false);
   leaves_quad_.init();

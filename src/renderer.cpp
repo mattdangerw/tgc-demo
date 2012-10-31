@@ -5,10 +5,8 @@
 #include <gli/gtx/gl_texture2d.hpp>
 #include <algorithm>
 
+#include "error.h"
 #include "transform2D.h"
-
-// Forward declare out exit point.
-void cleanupAndExit(int exit_code);
 
 SceneNode::SceneNode()
   : relative_transform_(1.0f),
@@ -95,8 +93,6 @@ void Renderer::init(int width, int height) {
   glUniform1f(uniformHandle("decay_rate"), 0.98f);
   glUniform1f(uniformHandle("constant_factor"), 0.85f);
   glUniform1f(uniformHandle("scale_factor"), 1.0f/160.0f);
-
-  useProgram("minimal");
 }
 
 void Renderer::setupScreenQuad() {
@@ -151,8 +147,7 @@ void Renderer::setupFBOs() {
 
   GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
   if (status != GL_FRAMEBUFFER_COMPLETE) {
-    fprintf(stderr, "Occlusion framebuffer object not complete. Something went wrong :(\n");
-    cleanupAndExit(1);
+    error("Occlusion framebuffer object not complete. Something went wrong :(\n");
   }
 
   glGenFramebuffers(1, &shadow_frame_buffer_);
@@ -165,8 +160,7 @@ void Renderer::setupFBOs() {
   
   status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
   if (status != GL_FRAMEBUFFER_COMPLETE) {
-    fprintf(stderr, "Exposure framebuffer object not complete. Something went wrong :(\n");
-    cleanupAndExit(1);
+    error("Exposure framebuffer object not complete. Something went wrong :(\n");
   }
 }
 
@@ -367,10 +361,7 @@ void Renderer::removeDrawable3D(Drawable *object) {
 }
 
 void Renderer::useProgram(string program) {
-  if (programs_.count(program) == 0) {
-    fprintf(stderr, "No such program. Set it up in renderer.\n");
-    cleanupAndExit(1);    
-  }
+  if (programs_.count(program) == 0) error("No such program. Set it up in renderer.\n");
   current_program_ = &programs_[program];
   current_program_->use();
 }

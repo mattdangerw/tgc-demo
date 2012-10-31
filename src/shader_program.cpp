@@ -2,8 +2,7 @@
 
 #include <cstdio>
 
-// Forward declare out exit point.
-void cleanupAndExit(int exit_code);
+#include "error.h"
 
 Shader::Shader() : handle_(0) {}
 
@@ -15,8 +14,7 @@ void Shader::load(string filename, GLenum type) {
   // Read the file into a buffer.
   FILE *file_pointer = fopen(filename.c_str(), "r");
   if (file_pointer == NULL) {
-    fprintf(stderr, "Shader file %s not found.\n", filename.c_str());
-    cleanupAndExit(1);
+    error("Shader file %s not found.\n", filename.c_str());
   }
   fseek(file_pointer, 0, SEEK_END);
   long size = ftell(file_pointer);
@@ -37,9 +35,7 @@ void Shader::load(string filename, GLenum type) {
     glGetShaderiv(handle_, GL_INFO_LOG_LENGTH , &log_length);
     GLchar *log = new GLchar[log_length];
     glGetShaderInfoLog(handle_, log_length, NULL, log);
-    fprintf(stderr, "%s", log);
-    delete log;
-    cleanupAndExit(1);
+    error("%s", log);
   }
   delete source;
 }
@@ -72,11 +68,9 @@ void Program::link() {
     glGetProgramiv(handle_, GL_INFO_LOG_LENGTH , &log_length);
     GLchar *log = new GLchar[log_length];
     glGetProgramInfoLog(handle_, log_length, NULL, log);
-    fprintf(stderr, "%s", log);
-    delete log;
-    cleanupAndExit(1);
+    error("%s", log);
   }
-  linked_ = linked;
+  linked_ = linked == GL_TRUE;
 }
 
 void Program::use() {
@@ -84,27 +78,22 @@ void Program::use() {
 }
 
 void Program::setAttributeHandle(string attribute, GLuint handle) {
-  if (linked_) {
-    fprintf(stderr, "Shader aleardy linked.\n");
-    cleanupAndExit(1);
-  }
+  if (linked_) error("Shader aleardy linked.\n");
   glBindAttribLocation(handle_, handle, attribute.c_str());
 }
 
 GLuint Program::attributeHandle(string attribute) {
   GLint handle = glGetAttribLocation(handle_, attribute.c_str());
   if (handle == -1) {
-    fprintf(stderr, "Shader attribute %s not found.\n", attribute.c_str());
-    cleanupAndExit(1);
+    error("Shader attribute %s not found.\n", attribute.c_str());
   }
-  return handle;
+  return static_cast<GLuint>(handle);
 }
 
 GLuint Program::uniformHandle(string uniform) {
   GLint handle = glGetUniformLocation(handle_, uniform.c_str());
   if (handle == -1) {
-    fprintf(stderr, "Shader uniform %s not found.\n", uniform.c_str());
-    cleanupAndExit(1);
+    error("Shader uniform %s not found.\n", uniform.c_str());
   }
-  return handle;
+  return static_cast<GLuint>(handle);
 }

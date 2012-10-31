@@ -23,12 +23,12 @@ struct PathVertex {
   PathVertexType type;
 };
 
-//class KeyframData { 
+//class ShapeData { 
 //  public:
 //    void init(const vector<PathVertex> &vertices);
 //    void init(string filename);
-//    vector<glm::vec2> solidVertices();
-//    vector<glm::vec2> quadricVertices();
+//    GLuint solidVerticesBuffer();
+//    GLuint quadricVerticesBuffer();
 //  private:
 //}
 

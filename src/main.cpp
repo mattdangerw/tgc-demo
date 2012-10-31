@@ -11,7 +11,7 @@ static bool fullscreen = false;
 
 void cleanupAndExit(int exit_code) {
   glfwTerminate();
-  if(game!=NULL) delete game;
+  if (game != NULL) delete game;
   exit(exit_code);
 }
 
@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
   
   // Init glew.
   GLenum err = glewInit();
-  if (GLEW_OK != err)  {
+  if (GLEW_OK != err) {
     fprintf(stderr, "GLEW error: %s\n", glewGetErrorString(err));
     cleanupAndExit(1);
   }

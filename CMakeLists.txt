@@ -19,6 +19,8 @@ add_executable(tgc-demo
   src/circles.h
   src/clouds.cpp
   src/clouds.h
+  src/error.h
+  src/error.cpp
   src/game.cpp
   src/game.h
   src/game_entity.h
