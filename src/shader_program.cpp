@@ -70,7 +70,7 @@ void Program::link() {
     glGetProgramInfoLog(handle_, log_length, NULL, log);
     error("%s", log);
   }
-  linked_ = linked == GL_TRUE;
+  linked_ = (linked == GL_TRUE);
 }
 
 void Program::use() {

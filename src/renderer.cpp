@@ -165,17 +165,23 @@ void Renderer::setupFBOs() {
 }
 
 void Renderer::loadShaders() {
+  // Up to 16 this way. Then we'll have to think about what shaders need what attributes.
   attribute_handles_["position"] = 0;
   attribute_handles_["color"] = 1;
   attribute_handles_["tex_coord"] = 2;
   attribute_handles_["bezier_coord"] = 3;
   attribute_handles_["translate"] = 4;
+  attribute_handles_["key1"] = 5;
+  attribute_handles_["key2"] = 6;
+  attribute_handles_["key3"] = 7;
 
-  Shader general_vert, textured_frag, textured_with_shadows_frag, minimal_frag,
+  Shader general_vert, animated_vert, textured_frag, textured_with_shadows_frag, minimal_frag,
     quadric_frag, circles_frag, particles_vert, particles_frag, shadows_vert, shadows_frag,
     circles_textured_frag, circles_screen_textured_frag;
 
   general_vert.load("src/shaders/general.vert", GL_VERTEX_SHADER);
+  animated_vert.load("src/shaders/animated.vert", GL_VERTEX_SHADER);
+  
   textured_frag.load("src/shaders/textured.frag", GL_FRAGMENT_SHADER);
   Program &textured = programs_["textured"];
   textured.addShader(&general_vert);
@@ -194,12 +200,22 @@ void Renderer::loadShaders() {
   minimal.addShader(&minimal_frag);
   setAttributesAndLink(&minimal);
   
+  Program &minimal_animated = programs_["minimal_animated"];
+  minimal_animated.addShader(&animated_vert);
+  minimal_animated.addShader(&minimal_frag);
+  setAttributesAndLink(&minimal_animated);
+
   quadric_frag.load("src/shaders/quadric_anti_aliased.frag", GL_FRAGMENT_SHADER);
   Program &quadric = programs_["quadric"];
   quadric.addShader(&general_vert);
   quadric.addShader(&quadric_frag);
   setAttributesAndLink(&quadric);
   
+  Program &quadric_animated = programs_["quadric_animated"];
+  quadric_animated.addShader(&animated_vert);
+  quadric_animated.addShader(&quadric_frag);
+  setAttributesAndLink(&quadric_animated);
+
   circles_frag.load("src/shaders/circles_anti_aliased.frag", GL_FRAGMENT_SHADER);
   Program &circles = programs_["circles"];
   circles.addShader(&general_vert);
@@ -361,7 +377,7 @@ void Renderer::removeDrawable3D(Drawable *object) {
 }
 
 void Renderer::useProgram(string program) {
-  if (programs_.count(program) == 0) error("No such program. Set it up in renderer.\n");
+  if (programs_.count(program) == 0) error("No such program %s. Set it up in renderer.\n", program.c_str());
   current_program_ = &programs_[program];
   current_program_->use();
 }

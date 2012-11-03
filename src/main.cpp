@@ -36,9 +36,9 @@ int main(int argc, char *argv[]) {
 
   // Demand a core profile. This appears to work on AMD but not nvidia cards.
   // Possibly because glew does not play nice with core profiles.
-  //glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
-  //glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 3);
-  //glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
+  glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 3);
+  glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   // This is really for multisampling not FSAA but whatevs, we still need it.
   glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 8);
