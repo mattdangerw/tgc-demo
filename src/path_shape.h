@@ -25,10 +25,10 @@ struct PathVertex {
   PathVertexType type;
 };
 
-class ShapeData { 
+class PathShapeData { 
   public:
-    ShapeData();
-    ~ShapeData();
+    PathShapeData();
+    ~PathShapeData();
     void init(string filename);
     void init(const vector<PathVertex> &vertices);
     void corners(glm::vec2 *min, glm::vec2 *max);
@@ -76,15 +76,15 @@ class PathShape : public SceneNode {
     void drawHelper(bool asOccluder);
     void bindKeyframeBuffers();
     // Member data.
-    bool dynamic_, from_file_;
+    bool animated_, from_file_;
     Quad *fill_;
-    ShapeData *data_;
+    PathShapeData *data_;
     // Animation stuff.
     float time_;
     vector<float> keyframe_times_;
     int last_keyframe_, next_keyframe_;
     float animation_duration_, keyframes_mix_;
-    vector<ShapeData *> keyframes_;
+    vector<PathShapeData *> keyframes_;
     // OpenGL stuff
     GLuint solid_array_object_, quadric_array_object_;
 };

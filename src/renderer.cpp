@@ -167,92 +167,73 @@ void Renderer::setupFBOs() {
 void Renderer::loadShaders() {
   // Up to 16 this way. Then we'll have to think about what shaders need what attributes.
   attribute_handles_["position"] = 0;
-  attribute_handles_["color"] = 1;
-  attribute_handles_["tex_coord"] = 2;
-  attribute_handles_["bezier_coord"] = 3;
-  attribute_handles_["translate"] = 4;
-  attribute_handles_["key1"] = 5;
-  attribute_handles_["key2"] = 6;
-  attribute_handles_["key3"] = 7;
+  attribute_handles_["lerp_position1"] = 1;
+  attribute_handles_["lerp_position2"] = 2;
+  attribute_handles_["color"] = 3;
+  attribute_handles_["tex_coord"] = 4;
+  attribute_handles_["bezier_coord"] = 5;
+  attribute_handles_["translate"] = 6;
 
   Shader general_vert, animated_vert, textured_frag, textured_with_shadows_frag, minimal_frag,
-    quadric_frag, circles_frag, particles_vert, particles_frag, shadows_vert, shadows_frag,
-    circles_textured_frag, circles_screen_textured_frag;
-
+    quadric_frag, circles_frag, circles_screen_textured_frag, particles_vert, particles_frag, 
+    shadows_vert, shadows_frag;
   general_vert.load("src/shaders/general.vert", GL_VERTEX_SHADER);
   animated_vert.load("src/shaders/animated.vert", GL_VERTEX_SHADER);
-  
   textured_frag.load("src/shaders/textured.frag", GL_FRAGMENT_SHADER);
-  Program &textured = programs_["textured"];
-  textured.addShader(&general_vert);
-  textured.addShader(&textured_frag);
-  setAttributesAndLink(&textured);
-
   textured_with_shadows_frag.load("src/shaders/textured_with_shadows.frag", GL_FRAGMENT_SHADER);
-  Program &textured_with_shadows = programs_["textured_with_shadows"];
-  textured_with_shadows.addShader(&general_vert);
-  textured_with_shadows.addShader(&textured_with_shadows_frag);
-  setAttributesAndLink(&textured_with_shadows);
-
   minimal_frag.load("src/shaders/minimal.frag", GL_FRAGMENT_SHADER);
-  Program &minimal = programs_["minimal"];
-  minimal.addShader(&general_vert);
-  minimal.addShader(&minimal_frag);
-  setAttributesAndLink(&minimal);
-  
-  Program &minimal_animated = programs_["minimal_animated"];
-  minimal_animated.addShader(&animated_vert);
-  minimal_animated.addShader(&minimal_frag);
-  setAttributesAndLink(&minimal_animated);
-
   quadric_frag.load("src/shaders/quadric_anti_aliased.frag", GL_FRAGMENT_SHADER);
-  Program &quadric = programs_["quadric"];
-  quadric.addShader(&general_vert);
-  quadric.addShader(&quadric_frag);
-  setAttributesAndLink(&quadric);
-  
-  Program &quadric_animated = programs_["quadric_animated"];
-  quadric_animated.addShader(&animated_vert);
-  quadric_animated.addShader(&quadric_frag);
-  setAttributesAndLink(&quadric_animated);
-
   circles_frag.load("src/shaders/circles_anti_aliased.frag", GL_FRAGMENT_SHADER);
-  Program &circles = programs_["circles"];
-  circles.addShader(&general_vert);
-  circles.addShader(&circles_frag);
-  setAttributesAndLink(&circles);
-  
   circles_screen_textured_frag.load("src/shaders/circles_screen_textured.frag", GL_FRAGMENT_SHADER);
-  Program &circles_screen_textured = programs_["circles_screen_textured"];
-  circles_screen_textured.addShader(&general_vert);
-  circles_screen_textured.addShader(&circles_screen_textured_frag);
-  setAttributesAndLink(&circles_screen_textured);
-
   particles_vert.load("src/shaders/particles.vert", GL_VERTEX_SHADER);
   particles_frag.load("src/shaders/particles.frag", GL_FRAGMENT_SHADER);
-  Program &particles = programs_["particles"];
-  particles.addShader(&particles_vert);
-  particles.addShader(&particles_frag);
-  setAttributesAndLink(&particles);
-
   shadows_vert.load("src/shaders/shadows.vert", GL_VERTEX_SHADER);
   shadows_frag.load("src/shaders/shadows.frag", GL_FRAGMENT_SHADER);
-  Program &shadows = programs_["shadows"];
-  shadows.addShader(&shadows_vert);
-  shadows.addShader(&shadows_frag);
-  setAttributesAndLink(&shadows);
+  
+  programs_["textured"].addShader(&general_vert);
+  programs_["textured"].addShader(&textured_frag);
 
+  programs_["textured_with_shadows"].addShader(&general_vert);
+  programs_["textured_with_shadows"].addShader(&textured_with_shadows_frag);
+
+  programs_["minimal"].addShader(&general_vert);
+  programs_["minimal"].addShader(&minimal_frag);
+  
+  programs_["minimal_animated"].addShader(&animated_vert);
+  programs_["minimal_animated"].addShader(&minimal_frag);
+
+  programs_["quadric"].addShader(&general_vert);
+  programs_["quadric"].addShader(&quadric_frag);
+  
+  programs_["quadric_animated"].addShader(&animated_vert);
+  programs_["quadric_animated"].addShader(&quadric_frag);
+
+  programs_["circles"].addShader(&general_vert);
+  programs_["circles"].addShader(&circles_frag);
+  
+  programs_["circles_screen_textured"].addShader(&general_vert);
+  programs_["circles_screen_textured"].addShader(&circles_screen_textured_frag);
+
+  programs_["particles"].addShader(&particles_vert);
+  programs_["particles"].addShader(&particles_frag);
+
+  programs_["shadows"].addShader(&shadows_vert);
+  programs_["shadows"].addShader(&shadows_frag);
+
+  setAttributesAndLink();
   setTextureUnits();
 }
 
-void Renderer::setAttributesAndLink(Program *program) {
-  program->create();
-  // Keep our vertex attributes in a consistent location accross programs.
-  // This way we can VAOs with different programs without worrying.
-  for (map<string, GLuint>::iterator it = attribute_handles_.begin(); it != attribute_handles_.end(); ++it) {
-    program->setAttributeHandle(it->first, it->second);
+void Renderer::setAttributesAndLink() {
+  for (map<string, Program>::iterator program_it = programs_.begin(); program_it != programs_.end(); ++program_it) {
+    program_it->second.create();
+    // Keep our vertex attributes in a consistent location accross programs.
+    // This way we can VAOs with different programs without worrying.
+    for (map<string, GLuint>::iterator attr_it = attribute_handles_.begin(); attr_it != attribute_handles_.end(); ++attr_it) {
+      program_it->second.setAttributeHandle(attr_it->first, attr_it->second);
+    }
+    program_it->second.link();
   }
-  program->link();
 }
 
 void Renderer::setTextureUnits() {

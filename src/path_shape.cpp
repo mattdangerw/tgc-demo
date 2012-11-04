@@ -28,25 +28,25 @@ static void intersectRays(glm::vec2 a_src, glm::vec2 a_dest, glm::vec2 b_src, gl
   }
 }
 
-static map<string, ShapeData> loaded_shape_data;
-static ShapeData *loadIfNeeded(string filename) {
+static map<string, PathShapeData> loaded_shape_data;
+static PathShapeData *loadIfNeeded(string filename) {
   if (loaded_shape_data.count(filename) == 0) {
     loaded_shape_data[filename].init(filename);
   }
   return &loaded_shape_data[filename];
 }
 
-ShapeData::ShapeData() : has_solids_(false), has_quadrics_(false) {}
+PathShapeData::PathShapeData() : has_solids_(false), has_quadrics_(false) {}
 
-ShapeData::~ShapeData() {}
+PathShapeData::~PathShapeData() {}
 
-void ShapeData::init(string filename) {
+void PathShapeData::init(string filename) {
   vector<PathVertex> vertices;
   readVertices(filename, &vertices);
   init(vertices);
 }
 
-void ShapeData::init(const vector<PathVertex> &vertices) {
+void PathShapeData::init(const vector<PathVertex> &vertices) {
   findCorners(vertices);
   vector<glm::vec2> solids, quadrics, bezier_coords;
   prepVertices(vertices, &solids, &quadrics);
@@ -72,12 +72,12 @@ void ShapeData::init(const vector<PathVertex> &vertices) {
   }
 }
 
-void ShapeData::corners(glm::vec2 *min, glm::vec2 *max) {
+void PathShapeData::corners(glm::vec2 *min, glm::vec2 *max) {
   *min = min_corner_;
   *max = max_corner_;
 }
 
-void ShapeData::readVertices(string filename, vector<PathVertex> *vertices) {
+void PathShapeData::readVertices(string filename, vector<PathVertex> *vertices) {
   FILE *file_pointer = fopen(filename.c_str(), "r");
   if (file_pointer == NULL) error("Path file %s not found.\n", filename.c_str());
   char line[128];
@@ -95,7 +95,7 @@ void ShapeData::readVertices(string filename, vector<PathVertex> *vertices) {
   fclose(file_pointer);
 }
 
-void ShapeData::prepVertices(const vector<PathVertex> &vertices, vector<glm::vec2> *solids, vector<glm::vec2> *quadrics) {
+void PathShapeData::prepVertices(const vector<PathVertex> &vertices, vector<glm::vec2> *solids, vector<glm::vec2> *quadrics) {
   for (unsigned int i = 0; i < vertices.size(); ++i) {
     PathVertexType type = vertices[i].type;
     if (type == ON_PATH) {
@@ -112,7 +112,7 @@ void ShapeData::prepVertices(const vector<PathVertex> &vertices, vector<glm::vec
   }
 }
 
-void ShapeData::findCorners(const vector<PathVertex> &vertices) {
+void PathShapeData::findCorners(const vector<PathVertex> &vertices) {
   min_corner_ = vertices[0].position;
   max_corner_ = vertices[0].position;
   for (vector<PathVertex>::const_iterator it = vertices.begin(); it != vertices.end(); ++it) {
@@ -122,7 +122,7 @@ void ShapeData::findCorners(const vector<PathVertex> &vertices) {
   }
 }
 
-void ShapeData::cubicToQuadrics(glm::vec2 start, glm::vec2 control1, glm::vec2 control2, glm::vec2 end,
+void PathShapeData::cubicToQuadrics(glm::vec2 start, glm::vec2 control1, glm::vec2 control2, glm::vec2 end,
   vector<glm::vec2> *solids, vector<glm::vec2> *quadrics) {
   // Approximate the cubic with two quadrics.
   // Find on path point with succesive midpoints.
@@ -159,7 +159,7 @@ void ShapeData::cubicToQuadrics(glm::vec2 start, glm::vec2 control1, glm::vec2 c
   solids->push_back(new_on_path);
 }
 
-void ShapeData::makeBezierCoords(const vector<glm::vec2> &quadrics, vector<glm::vec2> *bezier_coords) {
+void PathShapeData::makeBezierCoords(const vector<glm::vec2> &quadrics, vector<glm::vec2> *bezier_coords) {
   for (size_t i = 0; i < quadrics.size()/3 ; i++) {
     bezier_coords->push_back(glm::vec2(0.0f, 0.0f));
     bezier_coords->push_back(glm::vec2(0.5f, 0.0f));
@@ -167,13 +167,15 @@ void ShapeData::makeBezierCoords(const vector<glm::vec2> &quadrics, vector<glm::
   }
 }
 
-PathShape::PathShape() : dynamic_(false), time_(randomFloat(0.0f, 1.0f)), from_file_(false) {}
+PathShape::PathShape() : animated_(false), time_(randomFloat(0.0f, 1.0f)), from_file_(false) {}
 
-PathShape::~PathShape() {}
+PathShape::~PathShape() {
+  if (!from_file_) delete data_;
+}
 
 void PathShape::init(const vector<PathVertex> &vertices, Quad *fill) {
   from_file_ = false;
-  data_ = new ShapeData();
+  data_ = new PathShapeData();
   data_->init(vertices);
   glm::vec2 min, max;
   data_->corners(&min, &max);
@@ -190,18 +192,18 @@ void PathShape::init(string filename, Quad *fill) {
 
 void PathShape::init(const vector<string> &keyframe_files, const vector<float> &keyframe_durations, Quad *fill) {
   from_file_ = true;
-  dynamic_ = true;
-  
+  animated_ = true;
+
   glm::vec2 min(std::numeric_limits<float>::max()), max(std::numeric_limits<float>::min());
   for (vector<string>::const_iterator it = keyframe_files.begin(); it != keyframe_files.end(); ++it) {
-    ShapeData *data = loadIfNeeded(*it);
+    PathShapeData *data = loadIfNeeded(*it);
     glm::vec2 frame_min, frame_max;
     data->corners(&frame_min, &frame_max);
     min = glm::min(frame_min, min);
     max = glm::max(frame_max, max);
     keyframes_.push_back(data);
-    data_ = data;
   }
+  data_ = keyframes_[0];
   initHelper(fill, min, max);
 
   assert(keyframe_files.size() == keyframe_durations.size());
@@ -232,9 +234,9 @@ void PathShape::createVAOs() {
   if (data_->hasSolidVertices()) {
     glGenVertexArrays(1, &solid_array_object_);
     glBindVertexArray(solid_array_object_);
-    if (dynamic_) {
-      glEnableVertexAttribArray(Renderer::instance().attributeHandle("key1"));
-      glEnableVertexAttribArray(Renderer::instance().attributeHandle("key2"));
+    if (animated_) {
+      glEnableVertexAttribArray(Renderer::instance().attributeHandle("position"));
+      glEnableVertexAttribArray(Renderer::instance().attributeHandle("lerp_position1"));
     } else {
       glBindBuffer(GL_ARRAY_BUFFER, data_->solidBufferObject());
       GLint handle = Renderer::instance().attributeHandle("position");
@@ -247,9 +249,9 @@ void PathShape::createVAOs() {
   if (data_->hasQuadricVertices()) {
     glGenVertexArrays(1, &quadric_array_object_);
     glBindVertexArray(quadric_array_object_);
-    if (dynamic_) {
-      glEnableVertexAttribArray(Renderer::instance().attributeHandle("key1"));
-      glEnableVertexAttribArray(Renderer::instance().attributeHandle("key2"));      
+    if (animated_) {
+      glEnableVertexAttribArray(Renderer::instance().attributeHandle("position"));
+      glEnableVertexAttribArray(Renderer::instance().attributeHandle("lerp_position1"));
       glEnableVertexAttribArray(Renderer::instance().attributeHandle("bezier_coord"));      
     } else {
       // Set up the quadric vertices vertex buffer
@@ -268,24 +270,24 @@ void PathShape::createVAOs() {
 }
 
 void PathShape::bindKeyframeBuffers() {
-  if (!dynamic_) return;
-  ShapeData *keyframe1 = keyframes_[last_keyframe_];
-  ShapeData *keyframe2 = keyframes_[next_keyframe_];
+  if (!animated_) return;
+  PathShapeData *keyframe1 = keyframes_[last_keyframe_];
+  PathShapeData *keyframe2 = keyframes_[next_keyframe_];
   if (data_->hasSolidVertices()) {
     glBindVertexArray(solid_array_object_);
     glBindBuffer(GL_ARRAY_BUFFER, keyframe1->solidBufferObject());
-    glVertexAttribPointer(Renderer::instance().attributeHandle("key1"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(Renderer::instance().attributeHandle("position"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
     glBindBuffer(GL_ARRAY_BUFFER, keyframe2->solidBufferObject());
-    glVertexAttribPointer(Renderer::instance().attributeHandle("key2"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(Renderer::instance().attributeHandle("lerp_position1"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
   }
   if (data_->hasQuadricVertices()) {
     glBindVertexArray(quadric_array_object_);
     glBindBuffer(GL_ARRAY_BUFFER, keyframe1->quadricBufferObject());
-    glVertexAttribPointer(Renderer::instance().attributeHandle("key1"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(Renderer::instance().attributeHandle("position"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
     glBindBuffer(GL_ARRAY_BUFFER, keyframe2->quadricBufferObject());
-    glVertexAttribPointer(Renderer::instance().attributeHandle("key2"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(Renderer::instance().attributeHandle("lerp_position1"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
     glBindBuffer(GL_ARRAY_BUFFER, keyframe1->bezierCoordsBufferObject());
     glVertexAttribPointer(Renderer::instance().attributeHandle("bezier_coord"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
@@ -310,7 +312,7 @@ float PathShape::height() {
 }
 
 void PathShape::animate(float delta_time) {
-  if (!dynamic_) return;
+  if (!animated_) return;
   time_+=delta_time;
   float last_key_time = keyframe_times_[last_keyframe_];
   float next_key_time = keyframe_times_[next_keyframe_];
@@ -343,9 +345,9 @@ void PathShape::drawHelper(bool asOccluder) {
 
   // Draw solid and quadric triangles, inverting the stencil each time.
   if (data_->hasSolidVertices()) {
-    if (dynamic_) {
+    if (animated_) {
       Renderer::instance().useProgram("minimal_animated");
-      glUniform1f(Renderer::instance().uniformHandle("key_mix1"), keyframes_mix_);
+      glUniform1f(Renderer::instance().uniformHandle("lerp_t1"), keyframes_mix_);
     } else {
       Renderer::instance().useProgram("minimal");
     }
@@ -355,9 +357,9 @@ void PathShape::drawHelper(bool asOccluder) {
   }
 
   if (data_->hasQuadricVertices()) {
-    if (dynamic_) {
+    if (animated_) {
       Renderer::instance().useProgram("quadric_animated");
-      glUniform1f(Renderer::instance().uniformHandle("key_mix1"), keyframes_mix_);
+      glUniform1f(Renderer::instance().uniformHandle("lerp_t1"), keyframes_mix_);
     } else {
       Renderer::instance().useProgram("quadric");
     }

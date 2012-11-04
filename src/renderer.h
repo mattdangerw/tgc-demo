@@ -104,7 +104,7 @@ class Renderer {
     void setupScreenQuad();
     void setupFBOs();
     void loadShaders();
-    void setAttributesAndLink(Program *program);
+    void setAttributesAndLink();
     void setTextureUnits();
     // Memeber data.
     int width_, height_;
