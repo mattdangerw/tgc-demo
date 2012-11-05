@@ -13,6 +13,8 @@ include_directories(libs/glew/include)
 include_directories(libs/glfw/include)
 
 add_executable(tgc-demo
+  src/animator.h
+  src/animator.cpp
   src/character.cpp
   src/character.h
   src/circles.cpp

@@ -1,15 +1,20 @@
 #include "point_mass.h"
 
-PointMass::PointMass() {}
+PointMass::PointMass()
+  : position_(0.0f),
+    velocity_(0.0f),
+    mass_(1.0f),
+    damping_(0.0f),
+    force_(0.0f),
+    impulse_(0.0f) {}
 
-PointMass::PointMass(glm::vec2 position, glm::vec2 velocity, float mass, float damping) {
-  position_ = position;
-  velocity_ = velocity;
-  mass_ = mass;
-  damping_ = damping;
-  force_ = glm::vec2();
-  impulse_ = glm::vec2();
-}
+PointMass::PointMass(glm::vec2 position, glm::vec2 velocity, float mass, float damping)
+  : position_(position),
+    velocity_(velocity),
+    mass_(mass),
+    damping_(damping_),
+    force_(0.0f),
+    impulse_(0.0f) {}
 
 PointMass::~PointMass() {}
 
@@ -21,7 +26,8 @@ void PointMass::applyImpulse(glm::vec2 impulse) {
   impulse_ += impulse;
 }
 
-// Step the point mass forward. Uses verlet for time integration, which should be stable enough.
+// Step the point mass forward. Uses verlet for time integration, which should be stable enough
+// unless the framerate drops dramatically.
 void PointMass::update(float delta_time) {
   if (delta_time == 0.0f) {
     force_ = glm::vec2();
