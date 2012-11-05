@@ -9,7 +9,7 @@
 using std::list;
 
 const float kParticleRadius = .012f;
-const float kParticleMass = .1f;
+const float kParticleMass = .25f;
 
 struct Particle {
   glm::vec3 position, velocity;
