@@ -18,11 +18,11 @@ void Animation::addKeyframe(Keyframe key) {
   assert(key.time > 0);
   // Add the keyframe in and keep things sorted.
   // Obviously inefficient for many many keyframes, but that's not in the usage plan.
-  for (vector<Keyframe>::iterator it = keyframes_.begin(); it != keyframes_.end(); ++it) {
-    if ( key.time < it->time) {
-      keyframes_.insert(it, key);
-    }
+  vector<Keyframe>::iterator it;
+  for (it = keyframes_.begin(); it != keyframes_.end(); ++it) {
+    if ( key.time < it->time) break;
   }
+  keyframes_.insert(it, key);
 }
 
 void Animation::start(int keyframe_index) {
@@ -54,7 +54,7 @@ void Animation::update(float delta_time) {
       finished_ = true;
       return;
     }
-    if (next_keyframe_ > keyframes_.size()) {
+    if (next_keyframe_ == keyframes_.size()) {
       // We just finished. Start over if repeat is true.
       if (repeat_) {
         start(last_keyframe_.index);
@@ -65,7 +65,7 @@ void Animation::update(float delta_time) {
       return;
     }
   }
-  lerp_t_ = (time_ - last_keyframe_.time) / (keyframes_[next_keyframe_].index - last_keyframe_.time);
+  lerp_t_ = (time_ - last_keyframe_.time) / (keyframes_[next_keyframe_].time - last_keyframe_.time);
 }
 
 void Animation::currentKeyState(int keyframes[], float lerp_ts[]) {
