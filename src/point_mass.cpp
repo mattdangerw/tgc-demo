@@ -12,7 +12,7 @@ PointMass::PointMass(glm::vec2 position, glm::vec2 velocity, float mass, float d
   : position_(position),
     velocity_(velocity),
     mass_(mass),
-    damping_(damping_),
+    damping_(damping),
     force_(0.0f),
     impulse_(0.0f) {}
 
