@@ -73,6 +73,7 @@ void Cloud::initAnimator(float delay, bool small) {
   animator_.setStartKeyframe(0);
   animator_.addAnimation("slow_change", slow_change);
   animator_.queueAnimation("slow_change");
+  animator_.update(randomFloat(0.0f, 3 * delay));
 }
 
 void Cloud::initBigCloudShape() {

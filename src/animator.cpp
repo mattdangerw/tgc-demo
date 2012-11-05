@@ -57,8 +57,9 @@ void Animation::update(float delta_time) {
     if (next_keyframe_ == keyframes_.size()) {
       // We just finished. Start over if repeat is true.
       if (repeat_) {
+        float remaining_time = time_ - last_keyframe_.time;
         start(last_keyframe_.index);
-        update(delta_time - last_keyframe_.time);
+        update(remaining_time);
       } else {
         finished_ = true;
       }
