@@ -9,6 +9,7 @@
 
 #include "quad.h"
 #include "shader_program.h"
+#include "animator.h"
 
 using std::string;
 using std::vector;
@@ -61,13 +62,12 @@ class PathShape : public SceneNode {
     ~PathShape();
     void init(const vector<PathVertex> &vertices, Quad *fill);
     void init(string filename, Quad *fill);
-    void init(const vector<string> &keyframe_files, const vector<float> &keyfram_times, Quad *fill);
+    void init(const vector<string> &keyframe_files, Quad *fill, Animator *animator);
     void setOccluderColor(float color);
     float width();
     float height();
     void draw() { drawHelper(false); }
     void drawOccluder() { drawHelper(true); }
-    void animate(float delta_time);
 
   private:
     // Helper methods.
@@ -80,11 +80,9 @@ class PathShape : public SceneNode {
     Quad *fill_;
     PathShapeData *data_;
     // Animation stuff.
-    float time_;
-    vector<float> keyframe_times_;
-    int last_keyframe_, next_keyframe_;
-    float animation_duration_, keyframes_mix_;
     vector<PathShapeData *> keyframes_;
+    Animator *animator_;
+    float lerp_ts_[2];
     // OpenGL stuff
     GLuint solid_array_object_, quadric_array_object_;
 };

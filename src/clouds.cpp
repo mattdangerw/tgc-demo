@@ -57,38 +57,48 @@ void Cloud::init(CloudType type) {
   updateShapeTransform();
 }
 
+void Cloud::initAnimator(float delay, bool small) {
+  Animation slow_change;
+  Keyframe frame1, frame2, frame3;
+  frame1.index = 1;
+  frame2.index = small ? 0 : 2;
+  frame3.index = 0;
+  frame1.time = delay;
+  frame2.time = 2 * delay;
+  frame3.time = 3 * delay;
+  slow_change.addKeyframe(frame1);
+  slow_change.addKeyframe(frame2);
+  if (!small) slow_change.addKeyframe(frame3);
+  slow_change.setRepeats(true);
+  animator_.setStartKeyframe(0);
+  animator_.addAnimation("slow_change", slow_change);
+  animator_.queueAnimation("slow_change");
+}
+
 void Cloud::initBigCloudShape() {
   vector<string> filenames;
-  vector<float> durations;
   filenames.push_back("paths/big_cloud1.path");
-  durations.push_back(25.0f);
   filenames.push_back("paths/big_cloud2.path");
-  durations.push_back(25.0f);
   filenames.push_back("paths/big_cloud3.path");
-  durations.push_back(25.0f);
-  shape_.init(filenames, durations, &quad_);
+  initAnimator(25.0f, false);
+  shape_.init(filenames, &quad_, &animator_);
 }
 
 void Cloud::initMediumCloudShape() {
   vector<string> filenames;
-  vector<float> durations;
   filenames.push_back("paths/medium_cloud1.path");
-  durations.push_back(18.0f);
   filenames.push_back("paths/medium_cloud2.path");
-  durations.push_back(18.0f);
   filenames.push_back("paths/medium_cloud3.path");
-  durations.push_back(18.0f);
-  shape_.init(filenames, durations, &quad_);
+  initAnimator(18.0f, false);
+  shape_.init(filenames, &quad_, &animator_);
 }
 
 void Cloud::initSmallCloudShape() {
   vector<string> filenames;
-  vector<float> durations;
   filenames.push_back("paths/small_cloud1.path");
-  durations.push_back(12.0f);
   filenames.push_back("paths/small_cloud2.path");
-  durations.push_back(12.0f);
-  shape_.init(filenames, durations, &quad_);
+  initAnimator(12.0f, true);
+  shape_.init(filenames, &quad_, &animator_);
 }
 
 glm::vec2 Cloud::center() {
@@ -96,7 +106,7 @@ glm::vec2 Cloud::center() {
 }
 
 void Cloud::update(float delta_time) {
-  shape_.animate(delta_time);
+  animator_.update(delta_time);
   position_.x -= velocity_ * delta_time;
   updateShapeTransform();
 }

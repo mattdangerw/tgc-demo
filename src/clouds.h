@@ -24,9 +24,6 @@ class Cloud {
     Cloud(glm::vec2 position, float velocity, float scale, float shade);
     ~Cloud();
     void init(CloudType type);
-    void initBigCloudShape();
-    void initMediumCloudShape();
-    void initSmallCloudShape();
     // Gets the position of the bottom left corner of the cloud.
     glm::vec2 position() { return position_; }
     glm::vec2 center();
@@ -41,6 +38,10 @@ class Cloud {
     void setColorMask(glm::vec4 color_mask);
 
   private:
+    void initAnimator(float delay, bool small);
+    void initBigCloudShape();
+    void initMediumCloudShape();
+    void initSmallCloudShape();
     void updateShapeTransform();
     // State.
     glm::vec2 position_;
@@ -48,6 +49,7 @@ class Cloud {
     // Drawables.
     PathShape shape_;
     Quad quad_;
+    Animator animator_;
 };
 
 class CloudManager : public GameEntity {
