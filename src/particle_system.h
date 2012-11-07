@@ -37,7 +37,6 @@ struct Emitter {
   glm::vec3 position, velocity;
   glm::vec4 color;
   float particles_per_second, leftover_from_last_frame;
-  float heat;
   float time_till_escape;
   EmitterTrack track;
 };
@@ -53,9 +52,6 @@ class ParticleSystem : public GameEntity {
     bool targetWasHit(const Target target);
 
   private:
-    void updateEmitters(float delta_time);
-    void updateParticles(float delta_time);
-    void addParticles(int emitter_index, float delta_time);
     void sortDepthIndex();
 
     ThoughtBubble *thought_bubble_;

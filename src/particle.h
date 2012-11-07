@@ -14,12 +14,7 @@ const float kParticleMass = .25f;
 struct Particle {
   glm::vec3 position, velocity;
   glm::vec4 color;
-  float age, lifetime, alpha_decay;
-};
-
-struct ParticleDrawInfo {
-  glm::vec3 position;
-  glm::vec4 color;
+  float age, emitter;
 };
 
 class ParticleDrawer : public Drawable {
@@ -28,7 +23,8 @@ class ParticleDrawer : public Drawable {
     ~ParticleDrawer();
     // Set up the VAOs and VBOs and what not.
     void init();
-    void sendParticles(ParticleDrawInfo *particles, int num_particles);
+    void setEmitterPosition(glm::vec3 postion);
+    void setEmitterColor(glm::vec3 postion);
     void draw();
     glm::mat4 transform3D() { return transform3D_; }
     void setTransform3D(const glm::mat4 &transform) { transform3D_ = transform; }

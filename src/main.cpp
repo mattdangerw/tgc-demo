@@ -97,6 +97,8 @@ int main(int argc, char *argv[]) {
     float frame_update_time = static_cast<float>(glfwGetTime());
     time_updating += frame_update_time - frame_start_time;
     game->draw();
+    // glFinish isnt needed but gives better estimate of the draw time.
+    //glFinish();
     time_drawing += static_cast<float>(glfwGetTime()) - frame_update_time;
     
     // Print the frame rate every once and a while.
