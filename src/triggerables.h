@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 
 #include "character.h"
-#include "particle_system.h"
+#include "ideas.h"
 #include "game_entity.h"
 
 using std::string;
@@ -38,14 +38,14 @@ class TriggerableManager : public GameEntity {
   public:
     TriggerableManager();
     ~TriggerableManager();
-    void init(Character *character, ParticleSystem *particle_system);
+    void init(Character *character, IdeaManager *idea_manager);
     void update(float delta_time, GameState *state);
 
   private:
     vector<Triggerable *> triggerables_;
     unsigned int current_triggerable_, emitters_to_add_;
     Character *character_;
-    ParticleSystem *particle_system_;
+    IdeaManager *idea_manager_;
     bool emitted_;
 };
 

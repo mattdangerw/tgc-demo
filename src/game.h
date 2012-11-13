@@ -6,7 +6,7 @@
 #include "ground.h"
 #include "character.h"
 #include "thought_bubble.h"
-#include "particle_system.h"
+#include "ideas.h"
 #include "triggerables.h"
 #include "clouds.h"
 #include "game_entity.h"
@@ -51,7 +51,7 @@ class Game {
     Ground ground_;
     Character character_;
     ThoughtBubble thought_bubble_;
-    ParticleSystem particle_system_;
+    IdeaManager idea_manager_;
     CloudManager cloud_manager_;
     TriggerableManager triggerable_manager_;
     JumpingCrowd crowds_[2];

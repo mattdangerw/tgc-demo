@@ -7,7 +7,6 @@
 
 #include "character.h"
 #include "point_mass.h"
-#include "particle.h"
 #include "game_entity.h"
 #include "circles.h"
 #include "quad.h"
@@ -37,7 +36,8 @@ class ThoughtBubble : public GameEntity {
     glm::vec2 center() { return position_; }
     glm::vec2 velocity() { return bubble_mass_.velocity(); }
     void update(float delta_time, GameState *state);
-    bool collideEmitter(glm::vec2 *position, glm::vec2 *velocity);
+    // Returns true and updates position and velocity if there is a collision.
+    bool collideIdea(glm::vec2 *position, glm::vec2 *velocity);
     void shrink(float scale);
     void stopDrawing();
 

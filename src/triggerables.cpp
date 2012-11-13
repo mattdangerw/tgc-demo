@@ -47,9 +47,9 @@ static bool sortTriggerables(Triggerable *a, Triggerable *b) {
   return a->triggerPoint() < b->triggerPoint();
 }
 
-void TriggerableManager::init(Character *character, ParticleSystem *particle_system) {
+void TriggerableManager::init(Character *character, IdeaManager *idea_manager) {
   character_ = character;
-  particle_system_ = particle_system;
+  idea_manager_ = idea_manager;
   triggerables_.push_back(new Triggerable());
   triggerables_.back()->init(2.1f, 2.0f, TRIGGERING_JUMPING, 1);
   triggerables_.push_back(new Triggerable());
@@ -70,7 +70,7 @@ void TriggerableManager::init(Character *character, ParticleSystem *particle_sys
 void TriggerableManager::update(float delta_time, GameState *state) {
   if (*state == TRIGGERING || *state == TRIGGERING_JUMPING) {
     if (!emitted_ && triggerables_[current_triggerable_]->halfDone()) {
-      particle_system_->addEmitters(triggerables_[current_triggerable_]->emittersToAdd());
+      idea_manager_->addIdeas(triggerables_[current_triggerable_]->emittersToAdd());
       emitted_ = true;
     }
     if (triggerables_[current_triggerable_]->doneAnimating()) {

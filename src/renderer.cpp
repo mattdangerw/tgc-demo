@@ -172,7 +172,11 @@ void Renderer::loadShaders() {
   attribute_handles_["color"] = 3;
   attribute_handles_["tex_coord"] = 4;
   attribute_handles_["bezier_coord"] = 5;
-  attribute_handles_["translate"] = 6;
+  // Particle attributes. These are only used with particle programs so we could give them there own set of numbers.
+  attribute_handles_["velocity"] = 6;
+  attribute_handles_["color"] = 7;
+  attribute_handles_["age"] = 8;
+  attribute_handles_["visible"] = 9;
 
   Shader general_vert, animated_vert, textured_frag, textured_with_shadows_frag, minimal_frag,
     quadric_frag, circles_frag, circles_screen_textured_frag, particles_vert, particles_frag, 
@@ -219,6 +223,8 @@ void Renderer::loadShaders() {
 
   programs_["shadows"].addShader(&shadows_vert);
   programs_["shadows"].addShader(&shadows_frag);
+
+  // TODO glTransformFeedbackVaryings(m_shaderProg, 4, array of char *, GL_INTERLEAVED_ATTRIBS);
 
   setAttributesAndLink();
   setTextureUnits();

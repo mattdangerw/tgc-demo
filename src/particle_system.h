@@ -1,68 +1,62 @@
-#ifndef SRC_PARTICLES_H_
-#define SRC_PARTICLES_H_
+#ifndef SRC_PARTICLE_SYSTEM_H_
+#define SRC_PARTICLE_SYSTEM_H_
 
-#include <string>
-#include <list>
-#include <vector>
-#include <map>
 #include <glm/glm.hpp>
+#include <list>
 
-#include "thought_bubble.h"
-#include "particle.h"
-#include "game_entity.h"
+#include "renderer.h"
 
-using std::string;
 using std::list;
-using std::map;
-using std::vector;
 
-class EmitterTrack {
-  public:
-    EmitterTrack() : segment_(0), current_time_(0.0f), start_(glm::vec3(0.0f)) {}
-    ~EmitterTrack() {}
-    void setStart(glm::vec3 start) { start_ = start; }
-    void addDestination(glm::vec3 control, glm::vec3 destination, float time);
-    glm::vec3 step(float delta_time);
-    bool done() { return segment_ == controls_.size(); }
-  private:
-    int segment_;
-    float current_time_;
-    glm::vec3 start_;
-    vector<glm::vec3> controls_;
-    vector<glm::vec3> destinations_;
-    vector<float> times_;
-};
-
-struct Emitter {
+struct Particle {
   glm::vec3 position, velocity;
   glm::vec4 color;
-  float particles_per_second, leftover_from_last_frame;
-  float time_till_escape;
-  EmitterTrack track;
+  float age, visible;
 };
 
-class ParticleSystem : public GameEntity {
+class Emitter {
+  public:
+    Emitter();
+    ~Emitter();
+    void init(int num_particles);
+    void setVisible(bool visible) { visible_ = visible; }
+    void setPosition(glm::vec3 position) { position_ = position; }
+    void setColor(glm::vec4 color) { color_ = color; }
+    void update(float delta_time);
+    // Binds current VAO and draws it. Uniforms set by particle system before hand.
+    void drawArray();
+  private:
+    bool visible_;
+    glm::vec3 position_;
+    glm::vec4 color_;
+    int num_particles_, current_source_, current_dest_;
+    GLuint array_objects_[2], transform_feedbacks_[2], buffer_objects_[2];
+};
+
+class ParticleSystem : public Drawable {
   public:
     ParticleSystem();
     ~ParticleSystem();
-    void init(ThoughtBubble *thought_bubble);
-    void addEmitters(int num_particles);
-    void update(float delta_time, GameState *state);
-    void setTargets(const vector<Target> &targets);
-    bool targetWasHit(const Target target);
+    // Set up the VAOs and VBOs and what not.
+    void init(int num_emitters);
+    void setEmitterPosition(int index, glm::vec3 position) { emitters_[index].setPosition(position); }
+    void setEmitterColor(int index, glm::vec4 color) { emitters_[index].setColor(color); }
+    void setEmitterVisible(int index, bool visible) { emitters_[index].setVisible(visible); }
+    void update(float delta_time);
+    void draw();
+    glm::mat4 transform3D() { return transform3D_; }
+    void setTransform3D(const glm::mat4 &transform) { transform3D_ = transform; }
+    glm::mat3 transform2D() { return transform2D_; }
+    void setTransform2D(const glm::mat3 &transform) { transform2D_ = transform; }
+    glm::mat4 projection() { return projection_; }
+    glm::mat4 inverseProjection() { return inverse_projection_; }
 
   private:
-    void sortDepthIndex();
-
-    ThoughtBubble *thought_bubble_;
-    ParticleDrawInfo *render_data_;
     vector<Emitter> emitters_;
-    vector<int> emitters_by_depth_;
-    // Need fast deletion so list.
-    map<int, list<Particle>> emitter_particles_;
-    ParticleDrawer drawer_;
-    map<int, int> target_to_emitter_;
-    bool targets_;
+    glm::mat4 projection_, inverse_projection_, transform3D_;
+    glm::mat3 transform2D_;
+    // GL stuff
+    GLuint texture_handle_;
 };
 
-#endif  // SRC_PARTICLES_H_
+#endif  // SRC_PARTICLE_SYSTEM_H_

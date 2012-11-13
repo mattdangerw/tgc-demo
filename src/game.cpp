@@ -35,9 +35,9 @@ void Game::init(int width, int height) {
   entities_.push_back(&character_);
   thought_bubble_.init(&character_);
   entities_.push_back(&thought_bubble_);
-  particle_system_.init(&thought_bubble_);
-  entities_.push_back(&particle_system_);
-  triggerable_manager_.init(&character_, &particle_system_);
+  idea_manager_.init(&thought_bubble_);
+  entities_.push_back(&idea_manager_);
+  triggerable_manager_.init(&character_, &idea_manager_);
   entities_.push_back(&triggerable_manager_);
   vector<float> parents;
   parents.push_back(2.02f);
@@ -70,7 +70,7 @@ void Game::update() {
     for (vector<GameEntity *>::iterator it = entities_.begin(); it != entities_.end(); ++it) {
       (*it)->getTargets(&targets_);
     }
-    particle_system_.setTargets(targets_);
+    idea_manager_.setTargets(targets_);
     //thought_bubble_.stopDrawing();
     Renderer::instance().stopStenciling();
   }
@@ -84,7 +84,7 @@ void Game::update() {
       }
     } else {
       for (vector<Target>::iterator it = targets_.begin(); it != targets_.end();) {
-        if(particle_system_.targetWasHit(*it)) {
+        if(idea_manager_.targetWasHit(*it)) {
           it->entity->colorTarget(*it);
           it = targets_.erase(it);
           thought_bubble_.shrink(0.7f);

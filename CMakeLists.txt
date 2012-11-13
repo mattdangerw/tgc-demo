@@ -31,8 +31,8 @@ add_executable(tgc-demo
   src/jumping_crowd.cpp
   src/jumping_crowd.h
   src/main.cpp
-  src/particle.cpp
-  src/particle.h
+  src/ideas.cpp
+  src/ideas.h
   src/particle_system.cpp
   src/particle_system.h
   src/path_shape.cpp
