@@ -224,9 +224,8 @@ void ThoughtBubble::update(float delta_time, GameState *state) {
 
 }
 
-// Large method, lot of room for optimization. But will usually exit early so seems fine for < 1000 particles.
 bool ThoughtBubble::collideIdea(glm::vec2 *position, glm::vec2 *velocity) {
-  // Check if the particle is inside any of the bubble circles. If it is no collision.
+  // Check if the idea is inside any of the bubble circles. If it is no collision.
   for (size_t i = 0; i < bubble_circles_.size(); ++i) {
     float intersect_radius = bubble_circles_[i].radius - kIdeaRadius;
     glm::vec2 center_to_particle = *position - bubble_circles_[i].center;
@@ -234,6 +233,8 @@ bool ThoughtBubble::collideIdea(glm::vec2 *position, glm::vec2 *velocity) {
       return false;
     }
   }
+  // We've collided with a circle.
+  // Find the distance to the nearest circle.
   Circle *nearest_circle = NULL;
   PointMass *nearest_stretch_mass;
   float min_distance_to_circle = std::numeric_limits<float>::max();
@@ -247,6 +248,7 @@ bool ThoughtBubble::collideIdea(glm::vec2 *position, glm::vec2 *velocity) {
       nearest_stretch_mass = &stretch_masses_[i];
     }
   }
+  // Calculate result of intersection with nearest circle.
   glm::vec2 old_velocity = *velocity;
   glm::vec2 intersection_normal = glm::normalize(*position - nearest_circle->center);
   if (glm::dot(intersection_normal, *velocity) >= 0) {

@@ -9,6 +9,7 @@
 #include "random.h"
 
 static const float kParticleLifetime = 1.5f;
+static const float kParticleAlphaDecay = 0.5f;
 
 Emitter::Emitter()
   : visible_(false),
@@ -67,12 +68,14 @@ void Emitter::update(float delta_time) {
   glEnable(GL_RASTERIZER_DISCARD);
   glBeginTransformFeedback(GL_POINTS);
 
-  glBindVertexArray(array_objects_[current_source_]);
   Renderer::instance().useProgram("particle_feedback");
-  glUniform3fv(Renderer::instance().uniformHandle("position"), 1, glm::value_ptr(position_));
-  glUniform4fv(Renderer::instance().uniformHandle("color"), 1, glm::value_ptr(color_));
-  glUniform1f(Renderer::instance().uniformHandle("visible"), visible_ ? 1.0f : 0.0f);
+  glUniform3fv(Renderer::instance().uniformHandle("emitter_position"), 1, glm::value_ptr(position_));
+  glUniform4fv(Renderer::instance().uniformHandle("emitter_color"), 1, glm::value_ptr(color_));
+  glUniform1f(Renderer::instance().uniformHandle("emitter_visible"), visible_ ? 1.0f : 0.0f);
+  glUniform1f(Renderer::instance().uniformHandle("delta_time"), delta_time);
+  glUniform1f(Renderer::instance().uniformHandle("alpha_decay"), kParticleAlphaDecay);
   glUniform1f(Renderer::instance().uniformHandle("lifetime"), kParticleLifetime);
+  glBindVertexArray(array_objects_[current_source_]);
   glDrawArrays(GL_POINTS, 0, num_particles_);
   
   glDisable(GL_RASTERIZER_DISCARD);
@@ -98,8 +101,11 @@ void ParticleSystem::init(int num_emitters) {
   texture_handle_ = Renderer::instance().getTexture("textures/particle.dds");
   emitters_.resize(num_emitters);
   for (int i = 0; i < num_emitters; ++i) {
-    emitters_[i].init(100);
+    emitters_[i].init(500);
   }
+  Renderer::instance().useProgram("particle_draw");
+  glUniform1f(Renderer::instance().uniformHandle("particle_radius"), 0.012f);
+  glUniform3fv(Renderer::instance().uniformHandle("camera_position"), 1, glm::value_ptr(glm::vec3(0.0f)));
 }
 
 void ParticleSystem::update(float delta_time) {
@@ -113,7 +119,7 @@ void ParticleSystem::draw() {
   glUniformMatrix4fv(Renderer::instance().uniformHandle("transform3D"), 1, GL_FALSE, 
     glm::value_ptr(projection_ * transform3D_));
   glUniformMatrix3fv(Renderer::instance().uniformHandle("transform2D"), 1, GL_FALSE, 
-    glm::value_ptr(Renderer::instance().rootNode()->fullTransform() * transform2D_));    
+    glm::value_ptr(Renderer::instance().rootNode()->fullTransform() * transform2D_));
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture_handle_);
   for (vector<Emitter>::iterator it = emitters_.begin(); it != emitters_.end(); ++it) {

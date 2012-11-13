@@ -179,8 +179,8 @@ void Renderer::loadShaders() {
   attribute_handles_["visible"] = 9;
 
   Shader general_vert, animated_vert, textured_frag, textured_with_shadows_frag, minimal_frag,
-    quadric_frag, circles_frag, circles_screen_textured_frag, particles_vert, particles_frag, 
-    shadows_vert, shadows_frag;
+    quadric_frag, circles_frag, circles_screen_textured_frag, shadows_vert, shadows_frag,
+    particle_feedback_vert, particle_draw_vert, particle_draw_geom, particle_draw_frag;
   general_vert.load("src/shaders/general.vert", GL_VERTEX_SHADER);
   animated_vert.load("src/shaders/animated.vert", GL_VERTEX_SHADER);
   textured_frag.load("src/shaders/textured.frag", GL_FRAGMENT_SHADER);
@@ -189,10 +189,12 @@ void Renderer::loadShaders() {
   quadric_frag.load("src/shaders/quadric_anti_aliased.frag", GL_FRAGMENT_SHADER);
   circles_frag.load("src/shaders/circles_anti_aliased.frag", GL_FRAGMENT_SHADER);
   circles_screen_textured_frag.load("src/shaders/circles_screen_textured.frag", GL_FRAGMENT_SHADER);
-  particles_vert.load("src/shaders/particles.vert", GL_VERTEX_SHADER);
-  particles_frag.load("src/shaders/particles.frag", GL_FRAGMENT_SHADER);
   shadows_vert.load("src/shaders/shadows.vert", GL_VERTEX_SHADER);
   shadows_frag.load("src/shaders/shadows.frag", GL_FRAGMENT_SHADER);
+  particle_feedback_vert.load("src/shaders/particle_feedback.vert", GL_VERTEX_SHADER);
+  particle_draw_vert.load("src/shaders/particle_draw.vert", GL_VERTEX_SHADER);
+  particle_draw_geom.load("src/shaders/particle_draw.geom", GL_GEOMETRY_SHADER);
+  particle_draw_frag.load("src/shaders/particle_draw.frag", GL_FRAGMENT_SHADER);
   
   programs_["textured"].addShader(&general_vert);
   programs_["textured"].addShader(&textured_frag);
@@ -218,13 +220,21 @@ void Renderer::loadShaders() {
   programs_["circles_screen_textured"].addShader(&general_vert);
   programs_["circles_screen_textured"].addShader(&circles_screen_textured_frag);
 
-  programs_["particles"].addShader(&particles_vert);
-  programs_["particles"].addShader(&particles_frag);
-
   programs_["shadows"].addShader(&shadows_vert);
   programs_["shadows"].addShader(&shadows_frag);
 
-  // TODO glTransformFeedbackVaryings(m_shaderProg, 4, array of char *, GL_INTERLEAVED_ATTRIBS);
+  programs_["particle_feedback"].addShader(&particle_feedback_vert);
+  const GLchar* varyings[5];
+  varyings[0] = "feedback_position";
+  varyings[3] = "feedback_velocity";
+  varyings[1] = "feedback_color";
+  varyings[2] = "feedback_age";
+  varyings[4] = "feedback_visible";
+  glTransformFeedbackVaryings(programs_["particle_feedback"].handle(), 5, varyings, GL_INTERLEAVED_ATTRIBS);
+
+  programs_["particle_draw"].addShader(&particle_draw_vert);
+  programs_["particle_draw"].addShader(&particle_draw_geom);
+  programs_["particle_draw"].addShader(&particle_draw_frag);
 
   setAttributesAndLink();
   setTextureUnits();
@@ -256,7 +266,7 @@ void Renderer::setTextureUnits() {
   useProgram("shadows");
   glUniform1i(uniformHandle("occluder_texture"), 0);
 
-  useProgram("particles");
+  useProgram("particle_draw");
   glUniform1i(uniformHandle("color_texture"), 0);
 }
 
