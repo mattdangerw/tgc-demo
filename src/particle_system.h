@@ -30,7 +30,8 @@ class Emitter {
     glm::vec3 position_;
     glm::vec4 color_;
     int num_particles_, current_source_, current_dest_;
-    GLuint array_objects_[2], transform_feedbacks_[2], buffer_objects_[2];
+    GLuint array_objects_[2], buffer_objects_[2];
+    //GLuint transform_feedbacks_[2];
 };
 
 class ParticleSystem : public Drawable {

@@ -21,8 +21,8 @@ Emitter::~Emitter() {}
 void Emitter::init(int num_particles) {
   num_particles_ = num_particles;
   glGenVertexArrays(2, array_objects_);
-  glGenTransformFeedbacks(2, transform_feedbacks_);
   glGenBuffers(2, buffer_objects_);
+  //glGenTransformFeedbacks(2, transform_feedbacks_);
 
   Particle *particles = new Particle[num_particles];
   float age = 0.0f;
@@ -56,44 +56,35 @@ void Emitter::init(int num_particles) {
     glEnableVertexAttribArray(handle);
     glVertexAttribPointer(handle, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (void *)offsetof(Particle, visible));
     // Transform feedback init.
-    glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, transform_feedbacks_[i]);
-    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buffer_objects_[i]);
+    //glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, transform_feedbacks_[i]);
+    //glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buffer_objects_[i]);
   }
   delete particles;
+  
+  Renderer::instance().useProgram("particle_feedback");
+  glUniform1f(Renderer::instance().uniformHandle("alpha_decay"), kParticleAlphaDecay);
+  glUniform1f(Renderer::instance().uniformHandle("lifetime"), kParticleLifetime);
 }
 
-//static int counter = 0;
 void Emitter::update(float delta_time) {
   Renderer::instance().useProgram("particle_feedback");
-
-  glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, transform_feedbacks_[current_dest_]);
-  glEnable(GL_RASTERIZER_DISCARD);
-  glBeginTransformFeedback(GL_POINTS);
-
   glUniform3fv(Renderer::instance().uniformHandle("emitter_position"), 1, glm::value_ptr(position_));
   glUniform4fv(Renderer::instance().uniformHandle("emitter_color"), 1, glm::value_ptr(color_));
   glUniform1f(Renderer::instance().uniformHandle("emitter_visible"), visible_ ? 1.0f : 0.0f);
   glUniform1f(Renderer::instance().uniformHandle("delta_time"), delta_time);
-  glUniform1f(Renderer::instance().uniformHandle("alpha_decay"), kParticleAlphaDecay);
-  glUniform1f(Renderer::instance().uniformHandle("lifetime"), kParticleLifetime);
+
+  //glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, transform_feedbacks_[current_dest_]);
+  glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buffer_objects_[current_dest_]);
   glBindVertexArray(array_objects_[current_source_]);
+
+  glEnable(GL_RASTERIZER_DISCARD);
+  glBeginTransformFeedback(GL_POINTS);
   glDrawArrays(GL_POINTS, 0, num_particles_);
-  
-  glDisable(GL_RASTERIZER_DISCARD);
   glEndTransformFeedback();
+  glDisable(GL_RASTERIZER_DISCARD);
 
   current_source_ = (current_source_ + 1) % 2;
   current_dest_ = (current_dest_ + 1) % 2;
-  //if (visible_) {
-  //  if (counter == 120) {
-  //    glFinish();
-  //    Particle particles[10];
-  //    glBindBuffer(GL_ARRAY_BUFFER, buffer_objects_[1]);
-  //    glGetBufferSubData(GL_ARRAY_BUFFER, NULL, sizeof(particles), particles);
-  //    int test = 0;
-  //  }
-  //  counter++;
-  //}
 }
 
 void Emitter::drawArray() {
@@ -112,7 +103,7 @@ void ParticleSystem::init(int num_emitters) {
   texture_handle_ = Renderer::instance().getTexture("textures/particle.dds");
   emitters_.resize(num_emitters);
   for (int i = 0; i < num_emitters; ++i) {
-    emitters_[i].init(500);
+    emitters_[i].init(100);
   }
   Renderer::instance().useProgram("particle_draw");
   glUniform1f(Renderer::instance().uniformHandle("particle_radius"), 0.012f);

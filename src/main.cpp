@@ -36,9 +36,9 @@ int main(int argc, char *argv[]) {
 
   // Demand a core profile. This appears to work on AMD but not nvidia cards.
   // Possibly because glew does not play nice with core profiles.
-  //glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
-  //glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 3);
-  //glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
+  glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 3);
+  glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   // This is really for multisampling not FSAA but whatevs, we still need it.
   glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 8);
@@ -62,8 +62,11 @@ int main(int argc, char *argv[]) {
   glfwGetGLVersion(&major, &minor, &rev);
   fprintf(stderr, "OpenGL version: %d.%d.%d\n", major, minor, rev);
   
-  // Init glew.
+  // Init glew. We need experimental for a core profile till glew fixes a bug...
+  glewExperimental = GL_TRUE;
   GLenum err = glewInit();
+  // Glew init spawns an error sometimes. This clears the GL error state for our own use.
+  glGetError();
   if (GLEW_OK != err) {
     fprintf(stderr, "GLEW error: %s\n", glewGetErrorString(err));
     cleanupAndExit(1);
@@ -93,13 +96,13 @@ int main(int argc, char *argv[]) {
     ++frame;
 
     // Update and draw the game.
-    game->update();
-    float frame_update_time = static_cast<float>(glfwGetTime());
-    time_updating += frame_update_time - frame_start_time;
     game->draw();
-    // glFinish isnt needed but gives better estimate of the draw time.
+    // glFinish will hurt framerate but gives better estimate of the draw time.
     //glFinish();
-    time_drawing += static_cast<float>(glfwGetTime()) - frame_update_time;
+    float frame_draw_time = static_cast<float>(glfwGetTime());
+    time_drawing += frame_draw_time - frame_start_time;
+    game->update();
+    time_updating += static_cast<float>(glfwGetTime()) - frame_draw_time;
     
     // Print the frame rate every once and a while.
     if (frame % print_frequency == 0) {
