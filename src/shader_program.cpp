@@ -4,13 +4,14 @@
 
 #include "error.h"
 
-Shader::Shader() : handle_(0) {}
+Shader::Shader() : handle_(0), filename_("") {}
 
 Shader::~Shader() {
   if (handle_ != 0) glDeleteShader(handle_);
 }
 
 void Shader::load(string filename, GLenum type) {
+  filename_ = filename;
   // Read the file into a buffer.
   FILE *file_pointer = fopen(filename.c_str(), "r");
   if (file_pointer == NULL) {
@@ -35,7 +36,7 @@ void Shader::load(string filename, GLenum type) {
     glGetShaderiv(handle_, GL_INFO_LOG_LENGTH , &log_length);
     GLchar *log = new GLchar[log_length];
     glGetShaderInfoLog(handle_, log_length, NULL, log);
-    error("%s", log);
+    error("Error compiling file %s:\n%s", filename_.c_str(), log);
   }
   delete source;
 }
@@ -48,7 +49,7 @@ Program::~Program() {
   if (handle_ != 0) glDeleteProgram(handle_);
 }
 
-void Program::create() {
+void Program::init() {
   handle_ = glCreateProgram();
 }
 
@@ -63,7 +64,7 @@ void Program::link() {
   glLinkProgram(handle_);
   GLint linked;
   // Comment out for gDebugger??
-  glGetProgramiv(handle_, GL_COMPILE_STATUS, &linked);
+  glGetProgramiv(handle_, GL_LINK_STATUS, &linked);
   if (linked == GL_FALSE) {
     GLint log_length;
     glGetProgramiv(handle_, GL_INFO_LOG_LENGTH , &log_length);

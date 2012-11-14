@@ -2,10 +2,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <cstddef>
 
-#include "circles.h"
-#include "transform2D.h"
 #include "random.h"
 
 static const float kParticleLifetime = 1.5f;
@@ -61,14 +58,17 @@ void Emitter::init(int num_particles) {
     glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, transform_feedbacks_[i]);
     glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buffer_objects_[i]);
   }
+  delete particles;
 }
 
+//static int counter = 0;
 void Emitter::update(float delta_time) {
+  Renderer::instance().useProgram("particle_feedback");
+
   glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, transform_feedbacks_[current_dest_]);
   glEnable(GL_RASTERIZER_DISCARD);
   glBeginTransformFeedback(GL_POINTS);
 
-  Renderer::instance().useProgram("particle_feedback");
   glUniform3fv(Renderer::instance().uniformHandle("emitter_position"), 1, glm::value_ptr(position_));
   glUniform4fv(Renderer::instance().uniformHandle("emitter_color"), 1, glm::value_ptr(color_));
   glUniform1f(Renderer::instance().uniformHandle("emitter_visible"), visible_ ? 1.0f : 0.0f);
@@ -83,6 +83,14 @@ void Emitter::update(float delta_time) {
 
   current_source_ = (current_source_ + 1) % 2;
   current_dest_ = (current_dest_ + 1) % 2;
+  //if (counter == 0) {
+  //  glFinish();
+  //  Particle particles[100];
+  //  glBindBuffer(GL_ARRAY_BUFFER, buffer_objects_[1]);
+  //  glGetBufferSubData(GL_ARRAY_BUFFER, NULL, sizeof(particles), particles);
+  //  int test = 0;
+  //}
+  //counter++;
 }
 
 void Emitter::drawArray() {

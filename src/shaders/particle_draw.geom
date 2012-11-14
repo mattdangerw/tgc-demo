@@ -6,10 +6,10 @@ uniform vec3 camera_position;
 uniform float particle_radius;
 
 layout(points) in;
-in vec4 geom_color;
-in float visible;
+in vec4 geom_color[];
+in float visible[];
 
-layout(triangle_fan, max_vertices = 4) out;
+layout(triangle_strip, max_vertices = 4) out;
 out vec4 frag_color;
 out vec2 frag_tex_coord;
 
@@ -21,8 +21,8 @@ vec4 transform(vec3 position) {
 }
 
 void main() {
-  if (visible > 0.0) {
-    frag_color = geom_color;
+  if (visible[0] > 0.0) {
+    frag_color = geom_color[0];
     vec3 position = gl_in[0].gl_Position.xyz;
     vec3 to_camera = normalize(camera_position - position);
     vec3 right = particle_radius * cross(vec3(0.0, 1.0, 0.0), to_camera);
@@ -34,11 +34,11 @@ void main() {
     gl_Position = transform(position + right - up);
     frag_tex_coord = vec2(1.0, 0.0);
     EmitVertex();
-    gl_Position = transform(position + right + up);
-    frag_tex_coord = vec2(1.0, 1.0);
-    EmitVertex();
     gl_Position = transform(position - right + up);
     frag_tex_coord = vec2(0.0, 1.0);
+    EmitVertex();
+    gl_Position = transform(position + right + up);
+    frag_tex_coord = vec2(1.0, 1.0);
     EmitVertex();
     EndPrimitive();
   }

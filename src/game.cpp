@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 
 #include "renderer.h"
+#include "error.h"
 
 // Where we want the character to be position horizantally on the screen 0 to 1.
 static const float kCharacterScreenX = 0.5f;
@@ -53,6 +54,8 @@ void Game::init(int width, int height) {
   crowds_[1].init(&character_, &ground_, kids, 0.03f, 0.0f, 0.4f, 1.2f);
   entities_.push_back(crowds_ + 1);
   
+  // Check for any bad GL calls. For debugging.
+  checkForGLError();
   last_frame_time_ = static_cast<float>(glfwGetTime());
 }
 
@@ -111,10 +114,14 @@ void Game::update() {
   space_pressed_ = false;
   last_frame_time_ = now;
   last_state_ = state_;
+  // Check for any bad GL calls. For debugging.
+  checkForGLError();
 }
 
 void Game::draw() {
   Renderer::instance().draw();
+  // Check for any bad GL calls. For debugging.
+  checkForGLError();
 }
 
 bool Game::stillRunning() {

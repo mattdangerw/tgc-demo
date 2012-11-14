@@ -221,7 +221,6 @@ void ThoughtBubble::update(float delta_time, GameState *state) {
     mass.applyForce(spring_force);
     mass.update(delta_time);
   }
-
 }
 
 bool ThoughtBubble::collideIdea(glm::vec2 *position, glm::vec2 *velocity) {

@@ -17,13 +17,14 @@ class Shader {
 
   private:
     GLuint handle_;
+    string filename_;
 };
 
 class Program {
   public:
     Program();
     ~Program();
-    void create();
+    void init();
     void addShader(Shader *shader);
     void link();
     void use();

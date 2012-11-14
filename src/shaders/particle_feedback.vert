@@ -4,7 +4,7 @@ uniform vec3 emitter_position;
 uniform vec4 emitter_color;
 uniform float emitter_visible;
 uniform float delta_time;
-unifrom float alpha_decay;
+uniform float alpha_decay;
 uniform float lifetime;
 
 in vec3 position;
@@ -29,7 +29,7 @@ void main() {
   if (feedback_age > lifetime) {
     feedback_position = emitter_position;
     // TODO: random velocity.
-    feedback_velocity = vec3();
+    feedback_velocity = vec3(0.0);
     feedback_color = emitter_color;
     feedback_age = 0.0;
     feedback_visible = emitter_visible;

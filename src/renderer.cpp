@@ -80,7 +80,7 @@ void Renderer::init(int width, int height) {
 
   // OpenGL settings.
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-  glClearDepth(1.0);
+  glClearDepth(1.0f);
   glDepthFunc(GL_LESS);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -196,42 +196,53 @@ void Renderer::loadShaders() {
   particle_draw_geom.load("src/shaders/particle_draw.geom", GL_GEOMETRY_SHADER);
   particle_draw_frag.load("src/shaders/particle_draw.frag", GL_FRAGMENT_SHADER);
   
+  programs_["textured"].init();
   programs_["textured"].addShader(&general_vert);
   programs_["textured"].addShader(&textured_frag);
 
+  programs_["textured_with_shadows"].init();
   programs_["textured_with_shadows"].addShader(&general_vert);
   programs_["textured_with_shadows"].addShader(&textured_with_shadows_frag);
 
+  programs_["minimal"].init();
   programs_["minimal"].addShader(&general_vert);
   programs_["minimal"].addShader(&minimal_frag);
   
+  programs_["minimal_animated"].init();
   programs_["minimal_animated"].addShader(&animated_vert);
   programs_["minimal_animated"].addShader(&minimal_frag);
 
+  programs_["quadric"].init();
   programs_["quadric"].addShader(&general_vert);
   programs_["quadric"].addShader(&quadric_frag);
   
+  programs_["quadric_animated"].init();
   programs_["quadric_animated"].addShader(&animated_vert);
   programs_["quadric_animated"].addShader(&quadric_frag);
 
+  programs_["circles"].init();
   programs_["circles"].addShader(&general_vert);
   programs_["circles"].addShader(&circles_frag);
   
+  programs_["circles_screen_textured"].init();
   programs_["circles_screen_textured"].addShader(&general_vert);
   programs_["circles_screen_textured"].addShader(&circles_screen_textured_frag);
 
+  programs_["shadows"].init();
   programs_["shadows"].addShader(&shadows_vert);
   programs_["shadows"].addShader(&shadows_frag);
 
+  programs_["particle_feedback"].init();
   programs_["particle_feedback"].addShader(&particle_feedback_vert);
   const GLchar* varyings[5];
   varyings[0] = "feedback_position";
-  varyings[3] = "feedback_velocity";
-  varyings[1] = "feedback_color";
-  varyings[2] = "feedback_age";
+  varyings[1] = "feedback_velocity";
+  varyings[2] = "feedback_color";
+  varyings[3] = "feedback_age";
   varyings[4] = "feedback_visible";
   glTransformFeedbackVaryings(programs_["particle_feedback"].handle(), 5, varyings, GL_INTERLEAVED_ATTRIBS);
 
+  programs_["particle_draw"].init();
   programs_["particle_draw"].addShader(&particle_draw_vert);
   programs_["particle_draw"].addShader(&particle_draw_geom);
   programs_["particle_draw"].addShader(&particle_draw_frag);
@@ -242,7 +253,6 @@ void Renderer::loadShaders() {
 
 void Renderer::setAttributesAndLink() {
   for (map<string, Program>::iterator program_it = programs_.begin(); program_it != programs_.end(); ++program_it) {
-    program_it->second.create();
     // Keep our vertex attributes in a consistent location accross programs.
     // This way we can VAOs with different programs without worrying.
     for (map<string, GLuint>::iterator attr_it = attribute_handles_.begin(); attr_it != attribute_handles_.end(); ++attr_it) {
