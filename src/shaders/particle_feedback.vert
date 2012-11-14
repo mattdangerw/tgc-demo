@@ -23,7 +23,7 @@ void main() {
   feedback_position = position + velocity * delta_time;
   feedback_velocity = velocity;
   feedback_color = color;
-  feedback_color.a  += delta_time * alpha_decay; 
+  feedback_color.a -= delta_time * alpha_decay; 
   feedback_age = age + delta_time;
   feedback_visible = visible;
   if (feedback_age > lifetime) {
@@ -31,7 +31,7 @@ void main() {
     // TODO: random velocity.
     feedback_velocity = vec3(0.0);
     feedback_color = emitter_color;
-    feedback_age = 0.0;
+    feedback_age = feedback_age - lifetime;
     feedback_visible = emitter_visible;
   }
 }

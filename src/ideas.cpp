@@ -99,6 +99,7 @@ void IdeaManager::update(float delta_time, GameState *state) {
     }
   }
 
+  drawer_.setTransform2D(translate2D(glm::mat3(1.0f), thought_bubble_->center()));
   for (size_t i = 0; i < ideas_.size(); ++i) {
     drawer_.setEmitterPosition(i, ideas_[i].position);
   }

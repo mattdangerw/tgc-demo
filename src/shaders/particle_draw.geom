@@ -7,7 +7,7 @@ uniform float particle_radius;
 
 layout(points) in;
 in vec4 geom_color[];
-in float visible[];
+in float geom_visible[];
 
 layout(triangle_strip, max_vertices = 4) out;
 out vec4 frag_color;
@@ -21,7 +21,7 @@ vec4 transform(vec3 position) {
 }
 
 void main() {
-  if (visible[0] > 0.0) {
+  if (geom_visible[0] > 0.0) {
     frag_color = geom_color[0];
     vec3 position = gl_in[0].gl_Position.xyz;
     vec3 to_camera = normalize(camera_position - position);

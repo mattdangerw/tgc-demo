@@ -25,12 +25,13 @@ void Emitter::init(int num_particles) {
   glGenBuffers(2, buffer_objects_);
 
   Particle *particles = new Particle[num_particles];
+  float age = 0.0f;
   for (int i = 0; i < num_particles; ++i) {
     Particle &particle = particles[i];
     particle.position = glm::vec3();
     particle.velocity = glm::vec3();
     particle.color = glm::vec4();
-    particle.age = randomFloat(0.0f, kParticleLifetime);
+    particle.age = (kParticleLifetime * i) / (num_particles - 1);
     particle.visible = 0.0f;
   }
 
@@ -83,14 +84,16 @@ void Emitter::update(float delta_time) {
 
   current_source_ = (current_source_ + 1) % 2;
   current_dest_ = (current_dest_ + 1) % 2;
-  //if (counter == 0) {
-  //  glFinish();
-  //  Particle particles[100];
-  //  glBindBuffer(GL_ARRAY_BUFFER, buffer_objects_[1]);
-  //  glGetBufferSubData(GL_ARRAY_BUFFER, NULL, sizeof(particles), particles);
-  //  int test = 0;
+  //if (visible_) {
+  //  if (counter == 120) {
+  //    glFinish();
+  //    Particle particles[10];
+  //    glBindBuffer(GL_ARRAY_BUFFER, buffer_objects_[1]);
+  //    glGetBufferSubData(GL_ARRAY_BUFFER, NULL, sizeof(particles), particles);
+  //    int test = 0;
+  //  }
+  //  counter++;
   //}
-  //counter++;
 }
 
 void Emitter::drawArray() {
