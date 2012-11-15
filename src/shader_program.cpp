@@ -63,7 +63,6 @@ void Program::link() {
   }
   glLinkProgram(handle_);
   GLint linked;
-  // Comment out for gDebugger??
   glGetProgramiv(handle_, GL_LINK_STATUS, &linked);
   if (linked == GL_FALSE) {
     GLint log_length;

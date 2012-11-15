@@ -6,7 +6,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/color_space.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <algorithm>
 
 #include "transform2D.h"
 #include "random.h"

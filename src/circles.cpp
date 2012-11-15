@@ -21,7 +21,7 @@ void CircleDrawer::init(vector<Circle> *circles) {
   
   glBindBuffer(GL_ARRAY_BUFFER, buffer_object_);
   glBufferData(GL_ARRAY_BUFFER, sizeof(square), square, GL_STATIC_DRAW);
-  GLint handle = Renderer::instance().attributeHandle("position");
+  GLuint handle = Renderer::instance().attributeHandle("position");
   glEnableVertexAttribArray(handle);
   glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 

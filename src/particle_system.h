@@ -19,8 +19,11 @@ class Emitter {
     Emitter();
     ~Emitter();
     void init(int num_particles);
+    bool visible() { return visible_; }
     void setVisible(bool visible) { visible_ = visible; }
+    glm::vec3 position() { return position_; }
     void setPosition(glm::vec3 position) { position_ = position; }
+    glm::vec4 color() { return color_; }
     void setColor(glm::vec4 color) { color_ = color; }
     void update(float delta_time);
     // Binds current VAO and draws it. Uniforms set by particle system before hand.
@@ -53,7 +56,9 @@ class ParticleSystem : public Drawable {
     glm::mat4 inverseProjection() { return inverse_projection_; }
 
   private:
+    void sortDepthIndex();
     vector<Emitter> emitters_;
+    vector<int> emitters_by_depth_;
     glm::mat4 projection_, inverse_projection_, transform3D_;
     glm::mat3 transform2D_;
     // GL stuff

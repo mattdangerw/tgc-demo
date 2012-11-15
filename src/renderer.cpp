@@ -115,7 +115,7 @@ void Renderer::setupScreenQuad() {
   
   glBindBuffer(GL_ARRAY_BUFFER, buffer_objects[0]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-  GLint handle = programs_["shadows"].attributeHandle("position");
+  GLuint handle = programs_["shadows"].attributeHandle("position");
   glEnableVertexAttribArray(handle);
   glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 

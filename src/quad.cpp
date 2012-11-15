@@ -30,7 +30,7 @@ void Quad::init() {
   glGenBuffers(1, &position_buffer_object_);
   glBindBuffer(GL_ARRAY_BUFFER, position_buffer_object_);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_), vertices_, GL_STATIC_DRAW);
-  GLint handle = Renderer::instance().attributeHandle("position");
+  GLuint handle = Renderer::instance().attributeHandle("position");
   glEnableVertexAttribArray(handle);
   glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 

@@ -2,6 +2,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <algorithm>
 
 #include "random.h"
 
@@ -40,7 +41,7 @@ void Emitter::init(int num_particles) {
     glBindBuffer(GL_ARRAY_BUFFER, buffer_objects_[i]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Particle) * num_particles, particles, GL_DYNAMIC_DRAW);
     // VAO varyings.
-    GLint handle = Renderer::instance().attributeHandle("position");
+    GLuint handle = Renderer::instance().attributeHandle("position");
     glEnableVertexAttribArray(handle);
     glVertexAttribPointer(handle, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void *)offsetof(Particle, position));
     handle = Renderer::instance().attributeHandle("velocity");
@@ -104,6 +105,7 @@ void ParticleSystem::init(int num_emitters) {
   emitters_.resize(num_emitters);
   for (int i = 0; i < num_emitters; ++i) {
     emitters_[i].init(100);
+    emitters_by_depth_.push_back(i);
   }
   Renderer::instance().useProgram("particle_draw");
   glUniform1f(Renderer::instance().uniformHandle("particle_radius"), 0.012f);
@@ -117,6 +119,7 @@ void ParticleSystem::update(float delta_time) {
 }
 
 void ParticleSystem::draw() {
+  sortDepthIndex();
   Renderer::instance().useProgram("particle_draw");
   glUniformMatrix4fv(Renderer::instance().uniformHandle("transform3D"), 1, GL_FALSE, 
     glm::value_ptr(projection_ * transform3D_));
@@ -124,20 +127,20 @@ void ParticleSystem::draw() {
     glm::value_ptr(Renderer::instance().rootNode()->fullTransform() * transform2D_));
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture_handle_);
-  for (vector<Emitter>::iterator it = emitters_.begin(); it != emitters_.end(); ++it) {
-    it->drawArray();
+  for (vector<int>::iterator it = emitters_by_depth_.begin(); it != emitters_by_depth_.end(); ++it) {
+    emitters_[*it].drawArray();
   }
 }
 
-//struct DepthSortFunctor {
-//  bool operator() (const int left, const int right) {
-//    return emitters->at(left).position.z < emitters->at(right).position.z;
-//  }
-//  vector<Emitter> *emitters;
-//};
-//
-//void ParticleSystem::sortDepthIndex() {
-//  DepthSortFunctor functor;
-//  functor.emitters = &emitters_;
-//  std::sort(emitters_by_depth_.begin(), emitters_by_depth_.end(), functor);
-//}
+struct DepthSortFunctor {
+  bool operator() (const int left, const int right) {
+    return emitters->at(left).position().z < emitters->at(right).position().z;
+  }
+  vector<Emitter> *emitters;
+};
+
+void ParticleSystem::sortDepthIndex() {
+  DepthSortFunctor functor;
+  functor.emitters = &emitters_;
+  std::sort(emitters_by_depth_.begin(), emitters_by_depth_.end(), functor);
+}

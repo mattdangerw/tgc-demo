@@ -228,7 +228,7 @@ void PathShape::createVAOs() {
       glEnableVertexAttribArray(Renderer::instance().attributeHandle("lerp_position2"));
     } else {
       glBindBuffer(GL_ARRAY_BUFFER, data_->solidBufferObject());
-      GLint handle = Renderer::instance().attributeHandle("position");
+      GLuint handle = Renderer::instance().attributeHandle("position");
       glEnableVertexAttribArray(handle);
       glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
     }
@@ -246,7 +246,7 @@ void PathShape::createVAOs() {
     } else {
       // Set up the quadric vertices vertex buffer
       glBindBuffer(GL_ARRAY_BUFFER, data_->quadricBufferObject());
-      GLint handle = Renderer::instance().attributeHandle("position");
+      GLuint handle = Renderer::instance().attributeHandle("position");
       glEnableVertexAttribArray(handle);
       glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
