@@ -1,10 +1,10 @@
-#include "particle_system.h"
+#include "render/particle_system.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <algorithm>
 
-#include "random.h"
+#include "util/random.h"
 
 static const float kParticleLifetime = 1.2f;
 static const float kParticleAlphaDecay = 0.5f;

@@ -1,8 +1,8 @@
-#include "circles.h"
+#include "render/circles.h"
 
 #include <glm/gtc/type_ptr.hpp>
 
-#include "transform2D.h"
+#include "util/transform2D.h"
 
 CircleDrawer::CircleDrawer()
   : delta_radius_(0.0f),

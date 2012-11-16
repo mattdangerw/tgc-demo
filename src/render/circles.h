@@ -4,9 +4,9 @@
 #include <GL/glew.h>
 #include <vector>
 
-#include "shader_program.h"
-#include "renderer.h"
-#include "quad.h"
+#include "render/shader_program.h"
+#include "render/renderer.h"
+#include "render/quad.h"
 
 struct Circle {
   Circle() : color(0.0f, 0.0f, 0.0f, 1.0f), center(), radius(1.0f) {}

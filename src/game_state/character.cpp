@@ -1,9 +1,9 @@
-#include "character.h"
+#include "game_state/character.h"
 
 #include <GL/glew.h>
 
-#include "transform2D.h"
-#include "random.h"
+#include "util/transform2D.h"
+#include "util/random.h"
 
 static const float kSpeed = 0.4f;
 static const float kPlayerWidth = 0.008f;

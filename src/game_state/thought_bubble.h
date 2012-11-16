@@ -5,11 +5,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "character.h"
-#include "point_mass.h"
-#include "game_entity.h"
-#include "circles.h"
-#include "quad.h"
+#include "game_state/character.h"
+#include "game_state/point_mass.h"
+#include "game_state/game_entity.h"
+#include "render/circles.h"
+#include "render/quad.h"
 
 using std::vector;
 

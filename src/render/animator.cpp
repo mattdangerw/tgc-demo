@@ -1,4 +1,4 @@
-#include "animator.h"
+#include "render/animator.h"
 
 Animation::Animation()
   : repeat_(false),

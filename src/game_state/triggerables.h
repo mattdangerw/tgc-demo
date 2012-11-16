@@ -4,9 +4,9 @@
 #include <string>
 #include <glm/glm.hpp>
 
-#include "character.h"
-#include "ideas.h"
-#include "game_entity.h"
+#include "game_state/character.h"
+#include "game_state/ideas.h"
+#include "game_state/game_entity.h"
 
 using std::string;
 

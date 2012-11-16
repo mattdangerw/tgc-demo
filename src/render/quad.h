@@ -5,8 +5,8 @@
 #include <glm/glm.hpp>
 #include <string>
 
-#include "shader_program.h"
-#include "renderer.h"
+#include "render/shader_program.h"
+#include "render/renderer.h"
 
 class Quad : public SceneNode {
   public:

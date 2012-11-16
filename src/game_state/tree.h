@@ -1,8 +1,8 @@
 #ifndef SRC_TREE_H_
 #define SRC_TREE_H_
 
-#include "path_shape.h"
-#include "quad.h"
+#include "render/path_shape.h"
+#include "render/quad.h"
 
 class Tree : public SceneNode {
   public:

@@ -1,11 +1,11 @@
-#include "thought_bubble.h"
+#include "game_state/thought_bubble.h"
 
 #include <cmath>
 #include <limits>
 #include <GL/glew.h>
 
-#include "renderer.h"
-#include "transform2D.h"
+#include "render/renderer.h"
+#include "util/transform2D.h"
 
 static const float kCharacterDistance = 0.35f;
 static const float kHorizantalLeeway = 0.18f;

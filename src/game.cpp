@@ -6,8 +6,8 @@
 #include <GL/glfw.h>
 #include <glm/glm.hpp>
 
-#include "renderer.h"
-#include "error.h"
+#include "render/renderer.h"
+#include "util/error.h"
 
 // Where we want the character to be position horizantally on the screen 0 to 1.
 static const float kCharacterScreenX = 0.5f;

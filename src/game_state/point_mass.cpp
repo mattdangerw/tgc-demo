@@ -1,4 +1,4 @@
-#include "point_mass.h"
+#include "game_state/point_mass.h"
 
 PointMass::PointMass()
   : position_(0.0f),

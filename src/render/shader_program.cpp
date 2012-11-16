@@ -1,8 +1,8 @@
-#include "shader_program.h"
+#include "render/shader_program.h"
 
 #include <cstdio>
 
-#include "error.h"
+#include "util/error.h"
 
 Shader::Shader() : handle_(0), filename_("") {}
 

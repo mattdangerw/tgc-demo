@@ -1,12 +1,12 @@
-#include "renderer.h"
+#include "render/renderer.h"
 
 #include <GL/glew.h>
 #include <gli/gli.hpp>
 #include <gli/gtx/gl_texture2d.hpp>
 #include <algorithm>
 
-#include "error.h"
-#include "transform2D.h"
+#include "util/error.h"
+#include "util/transform2D.h"
 
 SceneNode::SceneNode()
   : relative_transform_(1.0f),
@@ -181,20 +181,20 @@ void Renderer::loadShaders() {
   Shader general_vert, animated_vert, textured_frag, textured_with_shadows_frag, minimal_frag,
     quadric_frag, circles_frag, circles_screen_textured_frag, shadows_vert, shadows_frag,
     particle_feedback_vert, particle_draw_vert, particle_draw_geom, particle_draw_frag;
-  general_vert.load("src/shaders/general.vert", GL_VERTEX_SHADER);
-  animated_vert.load("src/shaders/animated.vert", GL_VERTEX_SHADER);
-  textured_frag.load("src/shaders/textured.frag", GL_FRAGMENT_SHADER);
-  textured_with_shadows_frag.load("src/shaders/textured_with_shadows.frag", GL_FRAGMENT_SHADER);
-  minimal_frag.load("src/shaders/minimal.frag", GL_FRAGMENT_SHADER);
-  quadric_frag.load("src/shaders/quadric_anti_aliased.frag", GL_FRAGMENT_SHADER);
-  circles_frag.load("src/shaders/circles_anti_aliased.frag", GL_FRAGMENT_SHADER);
-  circles_screen_textured_frag.load("src/shaders/circles_screen_textured.frag", GL_FRAGMENT_SHADER);
-  shadows_vert.load("src/shaders/shadows.vert", GL_VERTEX_SHADER);
-  shadows_frag.load("src/shaders/shadows.frag", GL_FRAGMENT_SHADER);
-  particle_feedback_vert.load("src/shaders/particle_feedback.vert", GL_VERTEX_SHADER);
-  particle_draw_vert.load("src/shaders/particle_draw.vert", GL_VERTEX_SHADER);
-  particle_draw_geom.load("src/shaders/particle_draw.geom", GL_GEOMETRY_SHADER);
-  particle_draw_frag.load("src/shaders/particle_draw.frag", GL_FRAGMENT_SHADER);
+  general_vert.load("src/render/shaders/general.vert", GL_VERTEX_SHADER);
+  animated_vert.load("src/render/shaders/animated.vert", GL_VERTEX_SHADER);
+  textured_frag.load("src/render/shaders/textured.frag", GL_FRAGMENT_SHADER);
+  textured_with_shadows_frag.load("src/render/shaders/textured_with_shadows.frag", GL_FRAGMENT_SHADER);
+  minimal_frag.load("src/render/shaders/minimal.frag", GL_FRAGMENT_SHADER);
+  quadric_frag.load("src/render/shaders/quadric_anti_aliased.frag", GL_FRAGMENT_SHADER);
+  circles_frag.load("src/render/shaders/circles_anti_aliased.frag", GL_FRAGMENT_SHADER);
+  circles_screen_textured_frag.load("src/render/shaders/circles_screen_textured.frag", GL_FRAGMENT_SHADER);
+  shadows_vert.load("src/render/shaders/shadows.vert", GL_VERTEX_SHADER);
+  shadows_frag.load("src/render/shaders/shadows.frag", GL_FRAGMENT_SHADER);
+  particle_feedback_vert.load("src/render/shaders/particle_feedback.vert", GL_VERTEX_SHADER);
+  particle_draw_vert.load("src/render/shaders/particle_draw.vert", GL_VERTEX_SHADER);
+  particle_draw_geom.load("src/render/shaders/particle_draw.geom", GL_GEOMETRY_SHADER);
+  particle_draw_frag.load("src/render/shaders/particle_draw.frag", GL_FRAGMENT_SHADER);
   
   programs_["textured"].init();
   programs_["textured"].addShader(&general_vert);

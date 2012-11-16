@@ -1,13 +1,13 @@
-#include "path_shape.h"
+#include "render/path_shape.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <cstdio>
 #include <sstream>
 #include <stdlib.h>
 
-#include "error.h"
-#include "random.h"
-#include "transform2D.h"
+#include "util/error.h"
+#include "util/random.h"
+#include "util/transform2D.h"
 
 static inline glm::vec2 midpoint(glm::vec2 a, glm::vec2 b) {
   return glm::mix(a, b, 0.5f);

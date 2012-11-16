@@ -7,7 +7,7 @@
 #include <vector>
 #include <map>
 
-#include "shader_program.h"
+#include "render/shader_program.h"
 
 using std::string;
 using std::vector;

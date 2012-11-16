@@ -4,10 +4,10 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-#include "circles.h"
-#include "character.h"
-#include "ground.h"
-#include "game_entity.h"
+#include "game_state/game_entity.h"
+#include "game_state/character.h"
+#include "game_state/ground.h"
+#include "render/circles.h"
 
 using std::vector;
 

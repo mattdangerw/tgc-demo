@@ -5,11 +5,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "ground.h"
-#include "game_entity.h"
-#include "path_shape.h"
-#include "quad.h"
-#include "circles.h"
+#include "game_state/ground.h"
+#include "game_state/game_entity.h"
+#include "render/path_shape.h"
+#include "render/quad.h"
+#include "render/circles.h"
 
 using std::string;
 

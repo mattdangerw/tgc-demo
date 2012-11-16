@@ -1,9 +1,9 @@
-#include "ground.h"
+#include "game_state/ground.h"
 
 #include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "transform2D.h"
+#include "util/transform2D.h"
 
 Ground::Ground() {}
 

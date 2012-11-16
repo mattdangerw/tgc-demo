@@ -7,9 +7,9 @@
 #include <vector>
 #include <map>
 
-#include "quad.h"
-#include "shader_program.h"
-#include "animator.h"
+#include "render/quad.h"
+#include "render/shader_program.h"
+#include "render/animator.h"
 
 using std::string;
 using std::vector;

@@ -1,4 +1,4 @@
-#include "error.h"
+#include "util/error.h"
 
 #include <cstdio>
 #include <GL/glew.h>

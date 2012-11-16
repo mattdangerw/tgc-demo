@@ -5,10 +5,10 @@
 #include <list>
 #include <map>
 
-#include "game_entity.h"
-#include "ground.h"
-#include "path_shape.h"
-#include "quad.h"
+#include "game_state/game_entity.h"
+#include "game_state/ground.h"
+#include "render/path_shape.h"
+#include "render/quad.h"
 
 using std::list;
 using std::map;

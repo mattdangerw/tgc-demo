@@ -1,4 +1,4 @@
-#include "triggerables.h"
+#include "game_state/triggerables.h"
 
 #include <algorithm>
 #include <GL/glew.h>

@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <list>
 
-#include "renderer.h"
+#include "render/renderer.h"
 
 using std::list;
 

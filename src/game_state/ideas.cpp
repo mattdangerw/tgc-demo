@@ -1,4 +1,4 @@
-#include "ideas.h"
+#include "game_state/ideas.h"
 
 #include <cmath>
 #include <stdlib.h>
@@ -7,8 +7,8 @@
 #include <glm/gtx/color_space.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "transform2D.h"
-#include "random.h"
+#include "util/transform2D.h"
+#include "util/random.h"
 
 static const float kNearZBoundary = -2.2f;
 static const float kFarZBoundary = -4.0f;

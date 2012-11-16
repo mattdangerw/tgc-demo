@@ -1,6 +1,6 @@
-#include "jumping_crowd.h"
+#include "game_state/jumping_crowd.h"
 
-#include "random.h"
+#include "util/random.h"
 
 static const float kActivateDistance = 0.1f;
 static const float kGravity = -8.0f;

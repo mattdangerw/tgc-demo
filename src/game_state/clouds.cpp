@@ -1,13 +1,13 @@
-#include "clouds.h"
+#include "game_state/clouds.h"
 
 #include <GL/glew.h>
 #include <stdlib.h>
 
-#include "renderer.h"
-#include "transform2D.h"
-#include "path_shape.h"
-#include "quad.h"
-#include "random.h"
+#include "render/renderer.h"
+#include "render/path_shape.h"
+#include "render/quad.h"
+#include "util/transform2D.h"
+#include "util/random.h"
 
 static const float kCloudMinScale = 0.18f;
 static const float kCloudMaxScale = 0.3f;

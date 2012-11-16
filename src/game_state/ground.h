@@ -4,10 +4,10 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-#include "path_shape.h"
-#include "quad.h"
-#include "tree.h"
-#include "game_entity.h"
+#include "game_state/game_entity.h"
+#include "game_state/tree.h"
+#include "render/path_shape.h"
+#include "render/quad.h"
 
 using std::vector;
 
