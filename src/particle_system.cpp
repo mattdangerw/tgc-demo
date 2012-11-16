@@ -6,7 +6,7 @@
 
 #include "random.h"
 
-static const float kParticleLifetime = 1.5f;
+static const float kParticleLifetime = 1.2f;
 static const float kParticleAlphaDecay = 0.5f;
 
 Emitter::Emitter()
@@ -30,7 +30,7 @@ void Emitter::init(int num_particles) {
   for (int i = 0; i < num_particles; ++i) {
     Particle &particle = particles[i];
     particle.position = glm::vec3();
-    particle.velocity = glm::vec3();
+    particle.velocity = 0.02f * randomDirection3D();
     particle.color = glm::vec4();
     particle.age = (kParticleLifetime * i) / (num_particles - 1);
     particle.visible = 0.0f;
@@ -104,7 +104,7 @@ void ParticleSystem::init(int num_emitters) {
   texture_handle_ = Renderer::instance().getTexture("textures/particle.dds");
   emitters_.resize(num_emitters);
   for (int i = 0; i < num_emitters; ++i) {
-    emitters_[i].init(100);
+    emitters_[i].init(300);
     emitters_by_depth_.push_back(i);
   }
   Renderer::instance().useProgram("particle_draw");

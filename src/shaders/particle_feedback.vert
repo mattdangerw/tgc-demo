@@ -29,7 +29,7 @@ void main() {
   if (feedback_age > lifetime) {
     feedback_position = emitter_position;
     // TODO: random velocity.
-    feedback_velocity = vec3(0.0);
+    // feedback_velocity = vec3(0.0);
     feedback_color = emitter_color;
     feedback_age = feedback_age - lifetime;
     feedback_visible = emitter_visible;
