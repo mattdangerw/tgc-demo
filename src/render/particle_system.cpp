@@ -101,7 +101,7 @@ ParticleSystem::ParticleSystem() {
 ParticleSystem::~ParticleSystem() {}
 
 void ParticleSystem::init(int num_emitters) {
-  texture_handle_ = Renderer::instance().getTexture("textures/particle.dds");
+  texture_handle_ = Renderer::instance().getTexture("content/textures/particle.dds");
   emitters_.resize(num_emitters);
   for (int i = 0; i < num_emitters; ++i) {
     emitters_[i].init(300);

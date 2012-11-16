@@ -16,7 +16,7 @@ const float kIdeaMass = .25f;
 
 void SubBubble::init(vector<Circle> *circles, float texture_scale, float darkness) {
   outer_fill_.init();
-  outer_fill_.useTexture("textures/thought_bubble.dds");
+  outer_fill_.useTexture("content/textures/thought_bubble.dds");
   outer_fill_.setTextureScale(glm::vec2(texture_scale));
   outer_fill_.setCorners(glm::vec2(-0.3f, -0.2f), glm::vec2(0.3f, 0.2f));
   outer_fill_.setColorMask(glm::vec4(darkness, darkness, darkness, 1.0f));
@@ -25,7 +25,7 @@ void SubBubble::init(vector<Circle> *circles, float texture_scale, float darknes
   outer_drawer_.useQuad(&outer_fill_);
   outer_drawer_.setParent(this);
   outer_drawer_.setIsVisible(false);
-  //inner_fill_.init("textures/inner_thought_bubble.dds");
+  //inner_fill_.init("content/textures/inner_thought_bubble.dds");
   //inner_fill_.setTextureScale(glm::vec2(texture_scale));
   //inner_fill_.setCorners(glm::vec2(-0.3f, -0.2f), glm::vec2(0.3f, 0.2f));
   //inner_drawer_.init(circles);
@@ -111,7 +111,7 @@ void ThoughtBubble::init(Character *character) {
 
   // Ready the circle drawer.
   fill_.init();
-  fill_.useTexture("textures/thought_bubble.dds");
+  fill_.useTexture("content/textures/thought_bubble.dds");
   fill_.setTextureScale(glm::vec2(2.0f));
   fill_.setCorners(glm::vec2(-0.3f, -0.2f), glm::vec2(0.3f, 0.2f));
   circle_drawer_.init(&bubble_circles_);
@@ -121,7 +121,7 @@ void ThoughtBubble::init(Character *character) {
   circle_drawer_.setIsOccluder(false);
   // Ready the circle drawer.
   circle_inside_drawer_.init(&bubble_circles_);
-  circle_inside_drawer_.useScreenSpaceTexture("textures/motion_blur1.dds");
+  circle_inside_drawer_.useScreenSpaceTexture("content/textures/motion_blur1.dds");
   circle_inside_drawer_.setDisplayPriority(101);
   circle_inside_drawer_.setIsOccluder(false);
   circle_inside_drawer_.setIs3DStencil(true);

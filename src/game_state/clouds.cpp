@@ -39,7 +39,7 @@ Cloud::~Cloud() {
 
 void Cloud::init(CloudType type) {
   quad_.init();
-  quad_.useTexture("textures/paper3.dds");
+  quad_.useTexture("content/textures/paper3.dds");
   quad_.setColorMask(glm::vec4(shade_, shade_, shade_, 1.0f));
   quad_.setTextureScale(glm::vec2(scale_));
   switch (type) {
@@ -78,26 +78,26 @@ void Cloud::initAnimator(float delay, bool small) {
 
 void Cloud::initBigCloudShape() {
   vector<string> filenames;
-  filenames.push_back("paths/big_cloud1.path");
-  filenames.push_back("paths/big_cloud2.path");
-  filenames.push_back("paths/big_cloud3.path");
+  filenames.push_back("content/paths/big_cloud1.path");
+  filenames.push_back("content/paths/big_cloud2.path");
+  filenames.push_back("content/paths/big_cloud3.path");
   initAnimator(25.0f, false);
   shape_.init(filenames, &quad_, &animator_);
 }
 
 void Cloud::initMediumCloudShape() {
   vector<string> filenames;
-  filenames.push_back("paths/medium_cloud1.path");
-  filenames.push_back("paths/medium_cloud2.path");
-  filenames.push_back("paths/medium_cloud3.path");
+  filenames.push_back("content/paths/medium_cloud1.path");
+  filenames.push_back("content/paths/medium_cloud2.path");
+  filenames.push_back("content/paths/medium_cloud3.path");
   initAnimator(18.0f, false);
   shape_.init(filenames, &quad_, &animator_);
 }
 
 void Cloud::initSmallCloudShape() {
   vector<string> filenames;
-  filenames.push_back("paths/small_cloud1.path");
-  filenames.push_back("paths/small_cloud2.path");
+  filenames.push_back("content/paths/small_cloud1.path");
+  filenames.push_back("content/paths/small_cloud2.path");
   initAnimator(12.0f, true);
   shape_.init(filenames, &quad_, &animator_);
 }
