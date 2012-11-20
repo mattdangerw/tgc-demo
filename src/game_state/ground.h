@@ -5,11 +5,15 @@
 #include <vector>
 
 #include "game_state/game_entity.h"
-#include "game_state/tree.h"
 #include "render/path_shape.h"
 #include "render/quad.h"
 
 using std::vector;
+
+struct Tree {
+  Quad trunk_quad_, leaves_quad_;
+  PathShape trunk_shape_, leaves_shape_;
+}
 
 class Ground : public GameEntity {
   public:
@@ -23,13 +27,14 @@ class Ground : public GameEntity {
     void colorTarget(Target target);
   private:
     void initTrees();
+    void addTree(glm::vec2 location, float scale, float rotation, int display_priority);
     void initPathShape();
     vector<glm::vec2> points_;
     // Drawables.
     PathShape shape_;
     Quad quad_;
     Quad background_;
-    Tree trees_[10];
+    vector<Tree *> trees_;
     int ground_target_id_, background_target_id_, tree6_target_id_,
       tree7_target_id_, tree8_target_id_, tree9_target_id_;
 };

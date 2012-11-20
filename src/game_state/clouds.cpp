@@ -53,6 +53,7 @@ void Cloud::init(CloudType type) {
       initSmallCloudShape();
       break;
   }
+  shape_.setParent(Renderer::instance().rootNode());
   width_ = shape_.width() * scale_;
   updateShapeTransform();
 }

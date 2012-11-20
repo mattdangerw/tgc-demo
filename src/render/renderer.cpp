@@ -15,14 +15,7 @@ SceneNode::SceneNode()
     occluder_color_(0.0f),
     is_3D_stencil_(false),
     is_visible_(true),
-    parent_(Renderer::instance().rootNode()) {
-  // Root node.
-  if (parent_ == this) {
-    parent_ = NULL;
-  } else {
-    parent_->addChild(this);
-  }
-}
+    parent_(NULL) {}
 
 SceneNode::~SceneNode() {
   vector<SceneNode *>::iterator it;
@@ -57,6 +50,7 @@ void SceneNode::addChild(SceneNode *child) {
   children_.push_back(child);
 }
 
+// Ineffecient, but unless we build a large and dynamic scene graph shouldn't matter.
 void SceneNode::removeChild(SceneNode *child) {
   vector<SceneNode *>::iterator it;
   for (it = children_.begin(); it != children_.end(); ++it) {

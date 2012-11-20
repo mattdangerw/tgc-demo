@@ -18,11 +18,15 @@ class Drawable {
     virtual void draw() = 0;
 };
 
+// The SceneNode class provides some very minimal scene graph functionality.
+// All nodes that are decendents of Renderer::rootNode() are drawn.
+// Parent transform are multiplied in to children but the other attrs are independent of parents.
+// Not memory managed. All SceneNodes must be created and destroyed by client.
 class SceneNode : public Drawable {
   public:
     SceneNode();
-    virtual ~SceneNode();
-    // Make the GL calls to draw this object. Drawables should redefine these.
+    ~SceneNode();
+    // Drawables should redefine these.
     virtual void draw() {}
     virtual void drawOccluder() {}
     // Sets the drawable parent. Setting parent to NULL removes this drawable and all children from the scene graph.
@@ -50,6 +54,11 @@ class SceneNode : public Drawable {
     bool is3DStencil() { return is_3D_stencil_; }
     void setIs3DStencil(bool stencil) { is_3D_stencil_ = stencil; }
   private:
+    // This would either make our links madness or we would need to mem manage the scene graph.
+    // So no copy!
+    SceneNode(const SceneNode &other);
+    SceneNode& operator=(SceneNode other);
+    // Helpers
     void addChild(SceneNode *child);
     void removeChild(SceneNode *child);
     // Member data.

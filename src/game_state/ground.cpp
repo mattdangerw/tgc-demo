@@ -7,7 +7,12 @@
 
 Ground::Ground() {}
 
-Ground::~Ground() {}
+Ground::~Ground() {
+  vector<Tree *>::iterator it;
+  for (it = trees_.begin(); it != trees_.end(); ++it) {
+    delete *it;
+  }
+}
 
 void Ground::init() {
   // TODO: please load from file or something.
@@ -74,6 +79,7 @@ void Ground::init() {
 
   initPathShape();
   background_.init();
+  background_.setParent(Renderer::instance().rootNode());
   background_.useTexture("content/textures/background.dds");
   background_.setDisplayPriority(-99);
   background_.setCorners(glm::vec2(0.0f, 0.0f), glm::vec2(width(), 1.0f));
@@ -85,95 +91,29 @@ void Ground::init() {
 }
 
 void Ground::initTrees() {
-  Tree *tree = &trees_[0];
-  tree->init();
-  glm::mat3 transform(1.0f);
-  transform = translate2D(transform, glm::vec2(4.0f, 0.09f));
-  transform = scale2D(transform, glm::vec2(0.22f));
-  transform = rotate2D(transform, 2.0f);
-  tree->setRelativeTransform(transform);
-  tree->setDisplayPriority(6);
+  addTree(glm::vec2(4.0f, 0.09f), 0.22f, 2.0f, 6);
+  addTree(glm::vec2(4.2f, 0.10f), 0.25f, 0.0f, 1);
+  addTree(glm::vec2(4.39f, 0.09f), 0.22f, -4.0f, 6);
+  addTree(glm::vec2(4.62f, 0.11f), 0.18f, 1.0f, 1);
+  addTree(glm::vec2(7.4f, 0.08f), 0.16f, 0.0f, 6);
+  addTree(glm::vec2(7.65f, 0.09f), 0.2f, 3.0f, 1);
+  addTree(glm::vec2(8.95f, 0.15f), 0.2f, 0.0f, 6);
+  addTree(glm::vec2(9.15f, 0.1f), 0.26f, 0.0f, 1);
+  addTree(glm::vec2(9.36f, 0.1f), 0.24f, 0.0f, 6);
+  addTree(glm::vec2(9.5f, 0.12f), 0.21f, 0.0f, 1);
+}
 
-  tree = &trees_[1];
+void Ground::addTree(glm::vec2 location, float scale, float rotation, int display_priority) {
+  Tree *tree = new Tree();
   tree->init();
-  transform = glm::mat3(1.0f);
-  transform = translate2D(transform, glm::vec2(4.2f, 0.10f));
-  transform = scale2D(transform, glm::vec2(0.25f));
-  transform = rotate2D(transform, 0.0f);
+  tree->setParent(Renderer::instance().rootNode());
+  glm::mat3 transform = glm::mat3(1.0f);
+  transform = translate2D(transform, location);
+  transform = scale2D(transform, glm::vec2(scale));
+  transform = rotate2D(transform, rotation);
   tree->setRelativeTransform(transform);
-  tree->setDisplayPriority(1);
-
-  tree = &trees_[2];
-  tree->init();
-  transform = glm::mat3(1.0f);
-  transform = translate2D(transform, glm::vec2(4.39f, 0.09f));
-  transform = scale2D(transform, glm::vec2(0.22f));
-  transform = rotate2D(transform, -4.0f);
-  tree->setRelativeTransform(transform);
-  tree->setDisplayPriority(6);
-
-  tree = &trees_[3];
-  tree->init();
-  transform = glm::mat3(1.0f);
-  transform = translate2D(transform, glm::vec2(4.62f, 0.11f));
-  transform = scale2D(transform, glm::vec2(0.18f));
-  transform = rotate2D(transform, 1.0f);
-  tree->setRelativeTransform(transform);
-  tree->setDisplayPriority(1);
-
-  tree = &trees_[4];
-  tree->init();
-  transform = glm::mat3(1.0f);
-  transform = translate2D(transform, glm::vec2(7.4f, 0.08f));
-  transform = scale2D(transform, glm::vec2(0.16f));
-  transform = rotate2D(transform, 0.0f);
-  tree->setRelativeTransform(transform);
-  tree->setDisplayPriority(6);
-
-  tree = &trees_[5];
-  tree->init();
-  transform = glm::mat3(1.0f);
-  transform = translate2D(transform, glm::vec2(7.65f, 0.09f));
-  transform = scale2D(transform, glm::vec2(0.2f));
-  transform = rotate2D(transform, 3.0f);
-  tree->setRelativeTransform(transform);
-  tree->setDisplayPriority(1);
-
-  tree = &trees_[6];
-  tree->init();
-  transform = glm::mat3(1.0f);
-  transform = translate2D(transform, glm::vec2(8.95f, 0.15f));
-  transform = scale2D(transform, glm::vec2(0.2f));
-  transform = rotate2D(transform, 0.0f);
-  tree->setRelativeTransform(transform);
-  tree->setDisplayPriority(6);
-
-  tree = &trees_[7];
-  tree->init();
-  transform = glm::mat3(1.0f);
-  transform = translate2D(transform, glm::vec2(9.15f, 0.1f));
-  transform = scale2D(transform, glm::vec2(0.26f));
-  transform = rotate2D(transform, 0.0f);
-  tree->setRelativeTransform(transform);
-  tree->setDisplayPriority(1);
-
-  tree = &trees_[8];
-  tree->init();
-  transform = glm::mat3(1.0f);
-  transform = translate2D(transform, glm::vec2(9.36f, 0.1f));
-  transform = scale2D(transform, glm::vec2(0.24f));
-  transform = rotate2D(transform, 0.0f);
-  tree->setRelativeTransform(transform);
-  tree->setDisplayPriority(6);
-
-  tree = &trees_[9];
-  tree->init();
-  transform = glm::mat3(1.0f);
-  transform = translate2D(transform, glm::vec2(9.5f, 0.12f));
-  transform = scale2D(transform, glm::vec2(0.21f));
-  transform = rotate2D(transform, 0.0f);
-  tree->setRelativeTransform(transform);
-  tree->setDisplayPriority(1);
+  tree->setDisplayPriority(display_priority);
+  trees_.push_back(tree);
 }
 
 void Ground::initPathShape() {
@@ -194,6 +134,7 @@ void Ground::initPathShape() {
   quad_.init();
   quad_.useTexture("content/textures/ground.dds");
   shape_.init(path, &quad_);
+  shape_.setParent(Renderer::instance().rootNode());
   //shape_.setOccluder(false);
 }
 
@@ -260,12 +201,12 @@ void Ground::colorTarget(Target target) {
   } else if (target.id == background_target_id_) {
     background_.setColorMask(glm::vec4(0.55f, 0.87f, 0.98f, 1.0f));
   } else if (target.id == tree6_target_id_) {
-    trees_[6].setColor(glm::vec4(0.0f, 0.8f, 1.0f, 1.0f));
+    trees_[6]->setColor(glm::vec4(0.0f, 0.8f, 1.0f, 1.0f));
   } else if (target.id == tree7_target_id_) {
-    trees_[7].setColor(glm::vec4(0.0f, 0.8f, 0.8f, 1.0f));
+    trees_[7]->setColor(glm::vec4(0.0f, 0.8f, 0.8f, 1.0f));
   } else if (target.id == tree8_target_id_) {
-    trees_[8].setColor(glm::vec4(0.0f, 0.9f, 0.6f, 1.0f));
+    trees_[8]->setColor(glm::vec4(0.0f, 0.9f, 0.6f, 1.0f));
   } else if (target.id == tree9_target_id_) {
-    trees_[9].setColor(glm::vec4(0.0f, 0.6f, 0.9f, 1.0f));
+    trees_[9]->setColor(glm::vec4(0.0f, 0.6f, 0.9f, 1.0f));
   }
 }

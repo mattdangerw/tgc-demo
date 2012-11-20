@@ -11,8 +11,8 @@ static const float kParticleAlphaDecay = 0.5f;
 
 Emitter::Emitter()
   : visible_(false),
-    position_(),
-    color_(),
+    position_(0.0f),
+    color_(0.0f),
     current_source_(0),
     current_dest_(1),
     num_particles_(0) {}
