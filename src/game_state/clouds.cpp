@@ -38,10 +38,8 @@ Cloud::~Cloud() {
 }
 
 void Cloud::init(CloudType type) {
-  quad_.init();
-  quad_.useTexture("content/textures/paper3.dds");
+  quad_.init("content/textures/paper3.dds", glm::vec2(scale_));
   quad_.setColorMask(glm::vec4(shade_, shade_, shade_, 1.0f));
-  quad_.setTextureScale(glm::vec2(scale_));
   switch (type) {
     case BIG_CLOUD:
       initBigCloudShape();

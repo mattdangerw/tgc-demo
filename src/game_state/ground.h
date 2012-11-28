@@ -5,15 +5,11 @@
 #include <vector>
 
 #include "game_state/game_entity.h"
+#include "game_state/tree.h"
 #include "render/path_shape.h"
 #include "render/quad.h"
 
 using std::vector;
-
-struct Tree {
-  Quad trunk_quad_, leaves_quad_;
-  PathShape trunk_shape_, leaves_shape_;
-}
 
 class Ground : public GameEntity {
   public:

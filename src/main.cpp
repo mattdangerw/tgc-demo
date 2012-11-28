@@ -6,8 +6,11 @@
 #include "game.h"
 
 static Game *game = NULL;
-// Set false when debugging!!
+#ifdef DEBUG
 static bool fullscreen = false;
+#else
+static bool fullscreen = true;
+#endif
 
 void cleanupAndExit(int exit_code) {
   glfwTerminate();
@@ -109,10 +112,10 @@ int main(int argc, char *argv[]) {
       float time_elapsed = frame_start_time - last_print_time;
       printf("FPS: %f\n", print_frequency / (time_elapsed));
       last_print_time = frame_start_time;
-      printf("Update time per frame: %f.\n", time_updating / print_frequency);
-      time_updating = 0.0f;
       printf("Draw time per frame: %f.\n", time_drawing / print_frequency);
       time_drawing = 0.0f;
+      printf("Update time per frame: %f.\n", time_updating / print_frequency);
+      time_updating = 0.0f;
     }
     glfwSwapBuffers();
   }

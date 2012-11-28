@@ -78,9 +78,8 @@ void Ground::init() {
   points_.push_back(glm::vec2(10.17f, 0.20f));
 
   initPathShape();
-  background_.init();
+  background_.init("content/textures/background.dds", glm::vec2(1.0f));
   background_.setParent(Renderer::instance().rootNode());
-  background_.useTexture("content/textures/background.dds");
   background_.setDisplayPriority(-99);
   background_.setCorners(glm::vec2(0.0f, 0.0f), glm::vec2(width(), 1.0f));
   background_.setIsOccluder(false);
@@ -131,8 +130,7 @@ void Ground::initPathShape() {
   end.position = glm::vec2(points_[points_.size() - 1].x, 0.0f);
   end.type = ON_PATH;
   path.push_back(end);
-  quad_.init();
-  quad_.useTexture("content/textures/ground.dds");
+  quad_.init("content/textures/ground.dds", glm::vec2(1.0f));
   shape_.init(path, &quad_);
   shape_.setParent(Renderer::instance().rootNode());
   //shape_.setOccluder(false);

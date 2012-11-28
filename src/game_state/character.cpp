@@ -5,7 +5,11 @@
 #include "util/transform2D.h"
 #include "util/random.h"
 
+#ifdef DEBUG
+static const float kSpeed = 10.0f;
+#else
 static const float kSpeed = 0.4f;
+#endif
 static const float kPlayerWidth = 0.008f;
 static const float kGrowthRate = 0.004f;
 static const float kHeightAboveGround = 0.0f;

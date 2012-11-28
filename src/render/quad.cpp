@@ -23,7 +23,18 @@ Quad::Quad() :
 
 Quad::~Quad() {}
 
-void Quad::init() {
+void Quad::init(glm::vec4 color) {
+  initHelper();
+  useColor(color);
+}
+
+void Quad::init(string texture_file, glm::vec2 tex_scale) {
+  initHelper();
+  useTexture(texture_file);
+  setTextureScale(tex_scale);
+}
+
+void Quad::initHelper() {
   glGenVertexArrays(1, &array_object_);
   glBindVertexArray(array_object_);
   

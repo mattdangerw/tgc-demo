@@ -34,6 +34,7 @@ void JumpingCrowd::init(Character *character, Ground *ground, const vector<float
   }
   // Ready drawable.
   drawer_.init(&crowd_);
+  drawer_.setParent(Renderer::instance().rootNode());
   drawer_.setDisplayPriority(2);
 }
 
