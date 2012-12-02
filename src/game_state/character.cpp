@@ -6,7 +6,7 @@
 #include "util/random.h"
 
 #ifdef DEBUG
-static const float kSpeed = 10.0f;
+static const float kSpeed = 5.0f;
 #else
 static const float kSpeed = 0.4f;
 #endif

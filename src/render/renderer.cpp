@@ -97,6 +97,22 @@ glm::mat3 SceneNode::fullTransform() {
   return parent_->fullTransform() * relative_transform_;
 }
 
+// These conditions for visible, occluding etc. seem kinda stupid. Change them?
+bool SceneNode::isVisible() {
+  if (isLocked()) return is_visible_ && locking_ancestor_->isVisible();
+  return is_visible_;
+}
+
+bool SceneNode::isOccluder() {
+  if (isLocked()) return is_occluder_ && is_visible_ && locking_ancestor_->isOccluder();
+  return is_occluder_ && is_visible_;
+}
+
+bool SceneNode::is3DStencil() {
+  if (isLocked()) return is_3D_stencil_ && locking_ancestor_->isVisible();
+  return is_3D_stencil_;
+}
+
 void SceneNode::addChild(SceneNode *child) {
   children_.push_back(child);
 }

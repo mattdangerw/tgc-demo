@@ -18,14 +18,9 @@ class SubBubble: public SceneNode  {
     SubBubble() {}
     ~SubBubble() {}
     void init(vector<Circle> *circles, float texture_scale, float darkness);
-    void draw() {
-      outer_drawer_.draw();
-      //inner_drawer_.draw();
-    }
-    void drawOcclude(glm::mat3 view) {}
   private:
-    CircleDrawer outer_drawer_;//, inner_drawer_;
-    Quad outer_fill_;//, inner_fill_;
+    CircleDrawer outer_drawer_;
+    Quad outer_fill_;
 };
 
 class ThoughtBubble : public GameEntity {

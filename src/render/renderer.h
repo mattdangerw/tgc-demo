@@ -48,24 +48,15 @@ class SceneNode : public Drawable {
     float displayPriority() const { return priority_; }
     void setDisplayPriority(float priority) { priority_ = priority; }
     // Controls visibility.
-    bool isVisible() { 
-      if (isLocked()) return locking_ancestor_->isVisible();
-      return is_visible_;
-    }
+    bool isVisible();
     void setIsVisible(bool visible) { is_visible_ = visible; }
     // Controls whether or not to consider this shape an occluder while shading.
-    bool isOccluder() {
-      if (isLocked()) return locking_ancestor_->isOccluder();
-      return is_occluder_ && is_visible_;
-    }
+    bool isOccluder();
     void setIsOccluder(bool occluder) { is_occluder_ = occluder; }
     float occluderColor() { return occluder_color_; }
     void setOccluderColor(float color) { occluder_color_ = color; }
     // Controls whether or not to draw this shape to the stencil buffer for the stencil test before the 3D is drawn.
-    bool is3DStencil() {
-      if (isLocked()) return locking_ancestor_->isVisible();
-      return is_3D_stencil_;
-    }
+    bool is3DStencil();
     void setIs3DStencil(bool stencil) { is_3D_stencil_ = stencil; }
   private:
     // This would either make our links madness or we would need to mem manage the scene graph.

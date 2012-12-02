@@ -22,14 +22,8 @@ void SubBubble::init(vector<Circle> *circles, float texture_scale, float darknes
   //outer_drawer_.changeRadii(border_width);
   outer_drawer_.useQuad(&outer_fill_);
   outer_drawer_.setParent(this);
-  outer_drawer_.setIsVisible(false);
-  //inner_fill_.init("content/textures/inner_thought_bubble.dds");
-  //inner_fill_.setTextureScale(glm::vec2(texture_scale));
-  //inner_fill_.setCorners(glm::vec2(-0.3f, -0.2f), glm::vec2(0.3f, 0.2f));
-  //inner_drawer_.init(circles);
-  //inner_drawer_.useQuad(&inner_fill_);
-  //inner_drawer_.setParent(this);
-  //inner_drawer_.setIsVisible(false);
+  outer_drawer_.setIsOccluder(false);
+  lockChildren();
 }
 
 ThoughtBubble::ThoughtBubble()

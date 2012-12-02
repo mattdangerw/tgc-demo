@@ -10,8 +10,6 @@ class Tree : public SceneNode {
     ~Tree();
     void init();
     void setColor(glm::vec4 color);
-    void draw();
-    void drawOccluder();
 
   private:
     Quad trunk_quad_, leaves_quad_;
