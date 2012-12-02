@@ -23,7 +23,7 @@ class Ground : public GameEntity {
     void colorTarget(Target target);
   private:
     void initTrees();
-    void addTree(glm::vec2 location, float scale, float rotation, int display_priority);
+    void addTree(glm::vec2 location, float scale, float rotation, float display_priority);
     void initPathShape();
     vector<glm::vec2> points_;
     // Drawables.

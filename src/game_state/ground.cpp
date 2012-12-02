@@ -80,7 +80,7 @@ void Ground::init() {
   initPathShape();
   background_.init("content/textures/background.dds", glm::vec2(1.0f));
   background_.setParent(Renderer::instance().rootNode());
-  background_.setDisplayPriority(-99);
+  background_.setDisplayPriority(-99.0f);
   background_.setCorners(glm::vec2(0.0f, 0.0f), glm::vec2(width(), 1.0f));
   background_.setIsOccluder(false);
   background_.setShadowed(true);
@@ -102,7 +102,7 @@ void Ground::initTrees() {
   addTree(glm::vec2(9.5f, 0.12f), 0.21f, 0.0f, 1);
 }
 
-void Ground::addTree(glm::vec2 location, float scale, float rotation, int display_priority) {
+void Ground::addTree(glm::vec2 location, float scale, float rotation, float display_priority) {
   Tree *tree = new Tree();
   tree->init();
   tree->setParent(Renderer::instance().rootNode());

@@ -5,6 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
 #include <vector>
+#include <list>
 #include <map>
 
 #include "render/shader_program.h"
@@ -32,26 +33,39 @@ class SceneNode : public Drawable {
     // Sets the drawable parent. Setting parent to NULL removes this drawable and all children from the scene graph.
     SceneNode *parent() { return parent_; }
     void setParent(SceneNode *parent);
-    // Gets all visible descendents of tree for rendering.
-    void getVisibleDescendants(vector<SceneNode *> *drawables);
+    // Locks children to have all the same visibility, occlusion and priority of this node.
+    void lockChildren();
+    bool isLocking() { return is_locking_; }
+    bool isLocked() { return is_locked_; }
+    // Get this node and all descendents sorted by priority for rendering.
+    void getSortedDescendants(vector<SceneNode *> *drawables);
     // Get the full transform of drawable element.
     glm::mat3 fullTransform();
     // Get the transform relative to the parent drawable
     glm::mat3 relativeTransform() { return relative_transform_; }
     void setRelativeTransform(const glm::mat3 &transform) { relative_transform_ = transform; }
     // We care about order cause we render in flatland.
-    int displayPriority() const { return priority_; }
-    void setDisplayPriority(int priority) { priority_ = priority; }
+    float displayPriority() const { return priority_; }
+    void setDisplayPriority(float priority) { priority_ = priority; }
     // Controls visibility.
-    bool isVisible() { return is_visible_; }
+    bool isVisible() { 
+      if (isLocked()) return locking_ancestor_->isVisible();
+      return is_visible_;
+    }
     void setIsVisible(bool visible) { is_visible_ = visible; }
     // Controls whether or not to consider this shape an occluder while shading.
-    bool isOccluder() { return is_occluder_ && is_visible_; }
+    bool isOccluder() {
+      if (isLocked()) return locking_ancestor_->isOccluder();
+      return is_occluder_ && is_visible_;
+    }
     void setIsOccluder(bool occluder) { is_occluder_ = occluder; }
     float occluderColor() { return occluder_color_; }
     void setOccluderColor(float color) { occluder_color_ = color; }
     // Controls whether or not to draw this shape to the stencil buffer for the stencil test before the 3D is drawn.
-    bool is3DStencil() { return is_3D_stencil_; }
+    bool is3DStencil() {
+      if (isLocked()) return locking_ancestor_->isVisible();
+      return is_3D_stencil_;
+    }
     void setIs3DStencil(bool stencil) { is_3D_stencil_ = stencil; }
   private:
     // This would either make our links madness or we would need to mem manage the scene graph.
@@ -61,18 +75,22 @@ class SceneNode : public Drawable {
     // Helpers
     void addChild(SceneNode *child);
     void removeChild(SceneNode *child);
+    void lock(SceneNode *locking_ancestor);
+    void getDescendants(vector<SceneNode *> *drawables);
+    void getNonLockedDescendants(vector<SceneNode *> *drawables);
     // Member data.
     SceneNode *parent_;
     vector<SceneNode *> children_;
     glm::mat3 relative_transform_;
-    int priority_;
-    bool is_occluder_, is_3D_stencil_, is_visible_;
+    float priority_;
+    SceneNode *locking_ancestor_;
+    bool is_occluder_, is_3D_stencil_, is_visible_, is_locking_, is_locked_;
     float occluder_color_;
 };
 
 // Does all the setting up of OpenGL and draws all the shapes in the scene.
 // Also manages textures and shader loading.
-// A singleton class, because I only ever want one and I'm too lazy to pass it around everywhere.
+// A singleton class, mainly because I only ever want one and I'm too lazy to pass it around everywhere.
 class Renderer {
   public:
     static Renderer& instance() {

@@ -10,11 +10,13 @@
 
 SceneNode::SceneNode()
   : relative_transform_(1.0f),
-    priority_(0),
+    priority_(0.0f),
     is_occluder_(true),
     occluder_color_(0.0f),
     is_3D_stencil_(false),
     is_visible_(true),
+    is_locking_(false),
+    is_locked_(false),
     parent_(NULL) {}
 
 SceneNode::~SceneNode() {
@@ -33,11 +35,60 @@ void SceneNode::setParent(SceneNode *parent) {
   if (parent_ != NULL) parent_->addChild(this);
 }
 
-void SceneNode::getVisibleDescendants(vector<SceneNode *> *drawables) {
-  if (isVisible()) drawables->push_back(this);
+void SceneNode::lockChildren() {
+  is_locking_ = true;
   vector<SceneNode *>::iterator it;
   for (it = children_.begin(); it != children_.end(); ++it) {
-    (*it)->getVisibleDescendants(drawables);
+    (*it)->lock(this);
+  }
+}
+
+void SceneNode::lock(SceneNode *locking_ancestor) {
+  locking_ancestor_ = locking_ancestor;
+  is_locked_ = true;
+  vector<SceneNode *>::iterator it;
+  for (it = children_.begin(); it != children_.end(); ++it) {
+    (*it)->lock(locking_ancestor);
+  }
+}
+
+struct PrioritySortFunctor {
+  bool operator() (const SceneNode *left, const SceneNode *right) {
+    return left->displayPriority() < right->displayPriority();
+  }
+};
+
+void SceneNode::getSortedDescendants(vector<SceneNode *> *drawables) {
+  vector<SceneNode *> non_locked;
+  getNonLockedDescendants(&non_locked);
+  std::stable_sort(non_locked.begin(), non_locked.end(), PrioritySortFunctor());
+  vector<SceneNode *>::iterator it;
+  for (it = non_locked.begin(); it != non_locked.end(); ++it) {
+    if ((*it)->isLocking()) { 
+      vector<SceneNode *> sub_tree;
+      (*it)->getDescendants(&sub_tree);
+      std::stable_sort(sub_tree.begin(), sub_tree.end(), PrioritySortFunctor());
+      drawables->insert(drawables->end(), sub_tree.begin(), sub_tree.end());
+    } else {
+      drawables->push_back(*it);
+    }
+  }
+}
+
+void SceneNode::getDescendants(vector<SceneNode *> *drawables) {
+  drawables->push_back(this);
+  vector<SceneNode *>::iterator it;
+  for (it = children_.begin(); it != children_.end(); ++it) {
+    (*it)->getDescendants(drawables);
+  }
+}
+
+void SceneNode::getNonLockedDescendants(vector<SceneNode *> *drawables) {
+  drawables->push_back(this);
+  if (this->isLocking()) return;
+  vector<SceneNode *>::iterator it;
+  for (it = children_.begin(); it != children_.end(); ++it) {
+    (*it)->getNonLockedDescendants(drawables);
   }
 }
 
@@ -274,12 +325,6 @@ void Renderer::setTextureUnits() {
   glUniform1i(uniformHandle("color_texture"), 0);
 }
 
-struct PrioritySortFunctor {
-  bool operator() (const SceneNode *left, const SceneNode *right) {
-    return left->displayPriority() < right->displayPriority();
-  }
-};
-
 void Renderer::draw() {
   // 2D rendering modelview
   glm::mat3 view(1.0f);
@@ -290,8 +335,7 @@ void Renderer::draw() {
 
   // Sort drawables by priority.
   vector<SceneNode *> draw2D;
-  root_node_.getVisibleDescendants(&draw2D);
-  std::stable_sort(draw2D.begin(), draw2D.end(), PrioritySortFunctor());
+  root_node_.getSortedDescendants(&draw2D);
 
   // Draw occluders to texture.
   //glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -337,7 +381,7 @@ void Renderer::draw() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
   for (vector<SceneNode *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
-    (*it)->draw();
+    if ((*it)->isVisible()) (*it)->draw();
   }
 
   if (do_stencil_) {

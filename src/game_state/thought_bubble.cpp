@@ -114,27 +114,27 @@ void ThoughtBubble::init(Character *character) {
   circle_drawer_.setParent(Renderer::instance().rootNode());
   circle_drawer_.useQuad(&fill_);
   circle_drawer_.changeRadii(0.01f);
-  circle_drawer_.setDisplayPriority(100);
+  circle_drawer_.setDisplayPriority(100.0f);
   circle_drawer_.setIsOccluder(false);
   // Ready the circle drawer.
   circle_inside_drawer_.init(&bubble_circles_);
   circle_inside_drawer_.useScreenSpaceTexture("content/textures/motion_blur1.dds");
-  circle_inside_drawer_.setDisplayPriority(101);
+  circle_inside_drawer_.setDisplayPriority(101.0f);
   circle_inside_drawer_.setIsOccluder(false);
   circle_inside_drawer_.setIs3DStencil(true);
   circle_inside_drawer_.setParent(&circle_drawer_);
   // same for sub bubble
   sub_bubble_.init(&sub_bubble_circles_, 1.0f, 0.85f);
   sub_bubble_.setParent(Renderer::instance().rootNode());
-  sub_bubble_.setDisplayPriority(99);
+  sub_bubble_.setDisplayPriority(99.0f);
 
   sub_bubble2_.init(&sub_bubble_circles_, 0.5f, 0.7f);
   sub_bubble2_.setParent(Renderer::instance().rootNode());
-  sub_bubble2_.setDisplayPriority(98);
+  sub_bubble2_.setDisplayPriority(98.0f);
 
   sub_bubble3_.init(&sub_bubble_circles_, 0.3f, 0.55f);
   sub_bubble3_.setParent(Renderer::instance().rootNode());
-  sub_bubble3_.setDisplayPriority(97);
+  sub_bubble3_.setDisplayPriority(97.0f);
 }
 
 void ThoughtBubble::update(float delta_time, GameState *state) {
