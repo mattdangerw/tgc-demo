@@ -46,6 +46,8 @@ add_executable(tgc-demo
   src/render/path_shape.h
   src/render/quad.cpp
   src/render/quad.h
+  src/render/scene_node.cpp
+  src/render/scene_node.h
   src/render/renderer.cpp
   src/render/renderer.h
   src/render/shader_program.cpp

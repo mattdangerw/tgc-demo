@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "render/shader_program.h"
+#include "render/scene_node.h"
 #include "render/renderer.h"
 #include "render/quad.h"
 

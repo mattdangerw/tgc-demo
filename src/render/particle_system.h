@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <list>
 
+#include "render/scene_node.h"
 #include "render/renderer.h"
 
 using std::list;

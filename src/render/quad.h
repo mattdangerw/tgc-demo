@@ -6,6 +6,7 @@
 #include <string>
 
 #include "render/shader_program.h"
+#include "render/scene_node.h"
 #include "render/renderer.h"
 
 class Quad : public SceneNode {

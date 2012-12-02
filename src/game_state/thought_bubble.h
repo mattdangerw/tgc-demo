@@ -8,6 +8,7 @@
 #include "game_state/character.h"
 #include "game_state/point_mass.h"
 #include "game_state/game_entity.h"
+#include "render/scene_node.h"
 #include "render/circles.h"
 #include "render/quad.h"
 
