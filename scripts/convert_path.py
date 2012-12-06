@@ -10,7 +10,7 @@ if __name__ == "__main__":
     to_json = []
     for line in infile:
       tokens = line.split()
-      to_json.append((int(tokens[0]), float(tokens[1]), float(tokens[2])))
+      to_json.append({"type":int(tokens[0]), "x":float(tokens[1]), "y":float(tokens[2])})
     infile.close()
     outfile = open(file_name, 'w')
     outfile.write(json.dumps(to_json))

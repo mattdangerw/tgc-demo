@@ -83,11 +83,11 @@ void PathShapeData::readVertices(string filename, vector<PathVertex> *vertices) 
   for (size_t i = 0; i < path_json->u.object.length; i++) {
     PathVertex vertex;
     json_value elem = (*path_json)[i];
-    int type = elem[0].u.integer;
+    int type = elem["type"].u.integer;
     if (type == 0) continue;
     vertex.type = (PathVertexType)type;
-    vertex.position.x = static_cast<float>(elem[1].u.dbl);
-    vertex.position.y = static_cast<float>(elem[2].u.dbl);
+    vertex.position.x = static_cast<float>(elem["x"].u.dbl);
+    vertex.position.y = static_cast<float>(elem["y"].u.dbl);
     vertices->push_back(vertex);
   }
   json_value_free(path_json);
