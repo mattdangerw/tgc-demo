@@ -7,7 +7,8 @@ from svgfig import *
 output_paths = []
 
 class OutputPath:
-  path = []
+  def __init__(self):
+    self.path = []
   # min_x = float("inf")
   # max_x = float("-inf")
   # min_y = float("inf")
@@ -66,9 +67,13 @@ filename = sys.argv[1]
 drawing = load(filename)
 findPaths(drawing)
 index = 0
+prefix = filename.rpartition(".")[0]
+# group_file = open(prefix + ".group", "w")
 for path in output_paths:
-  outname = filename.rpartition(".")[0] + ".path"
+  outname = prefix + ".path"
   if len(output_paths) > 1:
-    outname = filename.rpartition(".")[0] + str(index) + ".path"
+    outname = prefix + str(index) + ".path"
   index+=1
   path.write(outname)
+  # group_file.write(outname + "\n")
+# group_file.close()

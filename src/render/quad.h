@@ -14,11 +14,11 @@ class Quad : public SceneNode {
     Quad();
     ~Quad();
     void init(glm::vec4 color);
-    void init(string texture_file, glm::vec2 tex_scale);
+    void init(string texture_file, glm::vec2 texture_scale);
     void getCorners(glm::vec2 *min, glm::vec2 *max);
     void setCorners(glm::vec2 min, glm::vec2 max);
     void useTexture(string texture_file);
-    void setTextureScale(glm::vec2 scale) { tex_scale_ = scale; }
+    void setTextureScale(glm::vec2 scale) { texture_scale_ = scale; }
     void useColor(glm::vec4 color);
     void setShadowed(bool shadowed) { shadowed_ = shadowed; }
     void setColorMask(glm::vec4 color_mask) { color_mask_ = color_mask; }
@@ -30,7 +30,7 @@ class Quad : public SceneNode {
     // Member data.
     bool shadowed_, textured_;
     glm::vec2 vertices_[4], tex_coords_[4];
-    glm::vec2 tex_scale_;
+    glm::vec2 texture_scale_;
     glm::vec4 color_mask_, color_;
     // GL.
     GLuint array_object_;

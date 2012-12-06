@@ -8,7 +8,7 @@
 Ground::Ground() {}
 
 Ground::~Ground() {
-  vector<Tree *>::iterator it;
+  vector<ShapeGroup *>::iterator it;
   for (it = trees_.begin(); it != trees_.end(); ++it) {
     delete *it;
   }
@@ -103,8 +103,8 @@ void Ground::initTrees() {
 }
 
 void Ground::addTree(glm::vec2 location, float scale, float rotation, float display_priority) {
-  Tree *tree = new Tree();
-  tree->init();
+  ShapeGroup *tree = new ShapeGroup();
+  tree->init("content/paths/tree_test.group");
   tree->setParent(Renderer::instance().rootNode());
   glm::mat3 transform = glm::mat3(1.0f);
   transform = translate2D(transform, location);
@@ -199,12 +199,12 @@ void Ground::colorTarget(Target target) {
   } else if (target.id == background_target_id_) {
     background_.setColorMask(glm::vec4(0.55f, 0.87f, 0.98f, 1.0f));
   } else if (target.id == tree6_target_id_) {
-    trees_[6]->setColor(glm::vec4(0.0f, 0.8f, 1.0f, 1.0f));
+    //trees_[6]->setColor(glm::vec4(0.0f, 0.8f, 1.0f, 1.0f));
   } else if (target.id == tree7_target_id_) {
-    trees_[7]->setColor(glm::vec4(0.0f, 0.8f, 0.8f, 1.0f));
+    //trees_[7]->setColor(glm::vec4(0.0f, 0.8f, 0.8f, 1.0f));
   } else if (target.id == tree8_target_id_) {
-    trees_[8]->setColor(glm::vec4(0.0f, 0.9f, 0.6f, 1.0f));
+    //trees_[8]->setColor(glm::vec4(0.0f, 0.9f, 0.6f, 1.0f));
   } else if (target.id == tree9_target_id_) {
-    trees_[9]->setColor(glm::vec4(0.0f, 0.6f, 0.9f, 1.0f));
+    //trees_[9]->setColor(glm::vec4(0.0f, 0.6f, 0.9f, 1.0f));
   }
 }

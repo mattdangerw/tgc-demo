@@ -7,6 +7,7 @@
 #include "game_state/game_entity.h"
 #include "game_state/tree.h"
 #include "render/path_shape.h"
+#include "render/shape_group.h"
 #include "render/quad.h"
 
 using std::vector;
@@ -30,7 +31,7 @@ class Ground : public GameEntity {
     PathShape shape_;
     Quad quad_;
     Quad background_;
-    vector<Tree *> trees_;
+    vector<ShapeGroup *> trees_;
     int ground_target_id_, background_target_id_, tree6_target_id_,
       tree7_target_id_, tree8_target_id_, tree9_target_id_;
 };

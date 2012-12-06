@@ -44,6 +44,8 @@ add_executable(tgc-demo
   src/render/particle_system.h
   src/render/path_shape.cpp
   src/render/path_shape.h
+  src/render/shape_group.cpp
+  src/render/shape_group.h
   src/render/quad.cpp
   src/render/quad.h
   src/render/scene_node.cpp

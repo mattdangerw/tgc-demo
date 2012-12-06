@@ -7,7 +7,7 @@
 Quad::Quad() :
     color_(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
     color_mask_(glm::vec4(1.0f)),
-    tex_scale_(1.0f),
+    texture_scale_(1.0f),
     shadowed_(false),
     textured_(false) {
   vertices_[0] = glm::vec2(0.0f, 0.0f);
@@ -28,10 +28,10 @@ void Quad::init(glm::vec4 color) {
   useColor(color);
 }
 
-void Quad::init(string texture_file, glm::vec2 tex_scale) {
+void Quad::init(string texture_file, glm::vec2 texture_scale) {
   initHelper();
   useTexture(texture_file);
-  setTextureScale(tex_scale);
+  setTextureScale(texture_scale);
 }
 
 void Quad::initHelper() {
@@ -66,7 +66,7 @@ void Quad::setCorners(glm::vec2 min, glm::vec2 max) {
   glBindBuffer(GL_ARRAY_BUFFER, position_buffer_object_);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_), vertices_, GL_STATIC_DRAW);
 
-  glm::vec2 size = tex_scale_ * (max - min);
+  glm::vec2 size = texture_scale_ * (max - min);
   tex_coords_[0] = glm::vec2(0.0f, 0.0f);
   tex_coords_[1] = glm::vec2(size.x, 0.0f);
   tex_coords_[2] = glm::vec2(size.x, size.y);
