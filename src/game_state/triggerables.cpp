@@ -13,7 +13,7 @@ Triggerable::~Triggerable() {}
 
 void Triggerable::init(float trigger_point, float animation_duration, GameState trigger_state, int emitters_to_add) {
   trigger_point_ = trigger_point;
-#ifdef DEBUG
+#ifdef _DEBUG
   animation_duration_ = 0.1f;
 #else
   animation_duration_ = animation_duration;

@@ -1,5 +1,3 @@
-#works with 2.7 don't know about other versions
-
 import sys
 import inspect
 from svgfig import *
@@ -59,21 +57,21 @@ def findPaths(elem):
       parsePath(elem)
     for child in elem.sub:
       findPaths(child)
-
-if len(sys.argv) != 2:
-  print "Give a file yo"
-  exit(0)
-filename = sys.argv[1]
-drawing = load(filename)
-findPaths(drawing)
-index = 0
-prefix = filename.rpartition(".")[0]
-# group_file = open(prefix + ".group", "w")
-for path in output_paths:
-  outname = prefix + ".path"
-  if len(output_paths) > 1:
-    outname = prefix + str(index) + ".path"
-  index+=1
-  path.write(outname)
-  # group_file.write(outname + "\n")
-# group_file.close()
+if __name__ == "__main__":
+  if len(sys.argv) != 2:
+    print "Give a file yo"
+    exit(0)
+  filename = sys.argv[1]
+  drawing = load(filename)
+  findPaths(drawing)
+  index = 0
+  prefix = filename.rpartition(".")[0]
+  # group_file = open(prefix + ".group", "w")
+  for path in output_paths:
+    outname = prefix + ".path"
+    if len(output_paths) > 1:
+      outname = prefix + str(index) + ".path"
+    index+=1
+    path.write(outname)
+    # group_file.write(outname + "\n")
+  # group_file.close()

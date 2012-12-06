@@ -6,7 +6,7 @@
 #include "game.h"
 
 static Game *game = NULL;
-#ifdef DEBUG
+#ifdef _DEBUG
 static bool fullscreen = false;
 #else
 static bool fullscreen = true;

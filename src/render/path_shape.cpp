@@ -1,11 +1,12 @@
 #include "render/path_shape.h"
 
 #include <glm/gtc/type_ptr.hpp>
-#include <cstdio>
 #include <sstream>
 #include <stdlib.h>
 
+#include "util/json.h"
 #include "util/error.h"
+#include "util/read_file.h"
 #include "util/random.h"
 #include "util/transform2D.h"
 
@@ -78,21 +79,18 @@ void PathShapeData::corners(glm::vec2 *min, glm::vec2 *max) {
 }
 
 void PathShapeData::readVertices(string filename, vector<PathVertex> *vertices) {
-  FILE *file_pointer = fopen(filename.c_str(), "r");
-  if (file_pointer == NULL) error("Path file %s not found.\n", filename.c_str());
-  char line[128];
-  while (fgets(line, 128, file_pointer) != NULL) {
+  json_value *path_json = readFileToJSON(filename);
+  for (size_t i = 0; i < path_json->u.object.length; i++) {
     PathVertex vertex;
-    int type;
-    std::istringstream stream(line);
-    stream >> type;
+    json_value elem = (*path_json)[i];
+    int type = elem[0].u.integer;
     if (type == 0) continue;
     vertex.type = (PathVertexType)type;
-    stream >> vertex.position.x;
-    stream >> vertex.position.y;
+    vertex.position.x = static_cast<float>(elem[1].u.dbl);
+    vertex.position.y = static_cast<float>(elem[2].u.dbl);
     vertices->push_back(vertex);
   }
-  fclose(file_pointer);
+  json_value_free(path_json);
 }
 
 void PathShapeData::prepVertices(const vector<PathVertex> &vertices, vector<glm::vec2> *solids, vector<glm::vec2> *quadrics) {

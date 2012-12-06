@@ -5,7 +5,7 @@
 #include "util/transform2D.h"
 #include "util/random.h"
 
-#ifdef DEBUG
+#ifdef _DEBUG
 static const float kSpeed = 5.0f;
 #else
 static const float kSpeed = 0.4f;

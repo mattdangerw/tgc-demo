@@ -58,6 +58,10 @@ add_executable(tgc-demo
   src/util/error.cpp
   src/util/random.h
   src/util/transform2D.h
+  src/util/read_file.h
+  src/util/read_file.cpp
+  src/util/json.h
+  src/util/json.c
   )
 
 target_link_libraries(tgc-demo glew glfw ${OPENGL_LIBRARIES})

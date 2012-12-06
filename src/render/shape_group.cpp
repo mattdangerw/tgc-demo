@@ -4,7 +4,7 @@
 #include <sstream>
 #include <stdlib.h>
 
-#include "util/error.h"
+#include "util/read_file.h"
 
 ShapeGroup::ShapeGroup() {}
 
@@ -18,21 +18,20 @@ ShapeGroup::~ShapeGroup() {
 }
 
 void ShapeGroup::init(string filename) {
-  FILE *file_pointer = fopen(filename.c_str(), "r");
-  if (file_pointer == NULL) error("PathGroup file %s not found.\n", filename.c_str());
-  char line[128];
-  float priority = 0.0f;
-  while (fgets(line, 128, file_pointer) != NULL) {
-    std::istringstream stream(line);
-    string path_file, texture_file;
+  json_value *group_json = readFileToJSON(filename);
+  float priority = 0;
+  for (size_t i = 0; i < group_json->u.object.length; i++) {
+    json_value elem = (*group_json)[i];
+    string path_file = elem["path_file"];
+    string texture_file = elem["texture_file"];
     glm::vec2 texture_scale;
-    stream >> path_file >> texture_file >> texture_scale.x >> texture_scale.y;
-    if (path_file.empty() || texture_file.empty()) continue;
+    texture_scale.x = static_cast<float>(elem["texture_scale"]["x"].u.dbl);
+    texture_scale.y = static_cast<float>(elem["texture_scale"]["y"].u.dbl);
 
     Quad *fill = new Quad();
-    fill->init(texture_file, texture_scale);
+    fill->init("content/textures/" + texture_file, texture_scale);
     PathShape *shape = new PathShape();
-    shape->init(path_file, fill);
+    shape->init("content/paths/" + path_file, fill);
     shape->setParent(this);
     shape->setDisplayPriority(priority);
 

@@ -3,6 +3,7 @@
 #include <cstdio>
 
 #include "util/error.h"
+#include "util/read_file.h"
 
 Shader::Shader() : handle_(0), filename_("") {}
 
@@ -13,17 +14,7 @@ Shader::~Shader() {
 void Shader::load(string filename, GLenum type) {
   filename_ = filename;
   // Read the file into a buffer.
-  FILE *file_pointer = fopen(filename.c_str(), "r");
-  if (file_pointer == NULL) {
-    error("Shader file %s not found.\n", filename.c_str());
-  }
-  fseek(file_pointer, 0, SEEK_END);
-  long size = ftell(file_pointer);
-  fseek(file_pointer, 0, SEEK_SET);
-  char *source = new char[size + 1];
-  long chars_read = fread(source, sizeof(char), size, file_pointer);
-  source[chars_read] = '\0';
-  fclose(file_pointer);
+  char *source = readFileToCString(filename);
   // Set up and compile shader.
   handle_ = glCreateShader(type);
   glShaderSource(handle_, 1, const_cast<const GLchar **>(&source), NULL);
