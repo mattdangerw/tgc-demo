@@ -56,13 +56,18 @@ class PathShapeData {
     GLuint solid_buffer_object_, quadric_buffer_object_, bezier_coords_buffer_object_;
 };
 
+struct NamedShape {
+  string name;
+  string file;
+};
+
 class PathShape : public SceneNode {
   public:
     PathShape();
     ~PathShape();
     void init(const vector<PathVertex> &vertices, Quad *fill);
     void init(string filename, Quad *fill);
-    void init(const vector<string> &keyframe_files, Quad *fill, Animator *animator);
+    void init(const vector<NamedShape> &keyframes, Quad *fill, Animator *animator);
     void setOccluderColor(float color);
     float width();
     float height();
@@ -80,7 +85,7 @@ class PathShape : public SceneNode {
     Quad *fill_;
     PathShapeData *data_;
     // Animation stuff.
-    vector<PathShapeData *> keyframes_;
+    map<string, PathShapeData *> keyframes_;
     Animator *animator_;
     float lerp_ts_[2];
     // OpenGL stuff

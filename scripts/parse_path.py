@@ -70,7 +70,7 @@ if __name__ == "__main__":
   for path in output_paths:
     outname = prefix + ".path"
     if len(output_paths) > 1:
-      outname = prefix + str(index) + ".path"
+      outname = prefix + "_shape" + str(index) + ".path"
     index+=1
     path.write(outname)
     # group_file.write(outname + "\n")

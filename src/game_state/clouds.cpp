@@ -59,9 +59,9 @@ void Cloud::init(CloudType type) {
 void Cloud::initAnimator(float delay, bool small) {
   Animation slow_change;
   Keyframe frame1, frame2, frame3;
-  frame1.index = 1;
-  frame2.index = small ? 0 : 2;
-  frame3.index = 0;
+  frame1.name = "frame2";
+  frame2.name = small ? "frame1" : "frame3";
+  frame3.name = "frame1";
   frame1.time = delay;
   frame2.time = 2 * delay;
   frame3.time = 3 * delay;
@@ -69,36 +69,55 @@ void Cloud::initAnimator(float delay, bool small) {
   slow_change.addKeyframe(frame2);
   if (!small) slow_change.addKeyframe(frame3);
   slow_change.setRepeats(true);
-  animator_.setStartKeyframe(0);
+  animator_.init("frame1");
   animator_.addAnimation("slow_change", slow_change);
   animator_.queueAnimation("slow_change");
   animator_.update(randomFloat(0.0f, 3 * delay));
 }
 
 void Cloud::initBigCloudShape() {
-  vector<string> filenames;
-  filenames.push_back("content/paths/big_cloud1.path");
-  filenames.push_back("content/paths/big_cloud2.path");
-  filenames.push_back("content/paths/big_cloud3.path");
+  vector<NamedShape> frames;
+  NamedShape shape;
+  shape.file = "content/paths/big_cloud1.path";
+  shape.name = "frame1";
+  frames.push_back(shape);
+  shape.file = "content/paths/big_cloud2.path";
+  shape.name = "frame2";
+  frames.push_back(shape);
+  shape.file = "content/paths/big_cloud3.path";
+  shape.name = "frame3";
+  frames.push_back(shape);
   initAnimator(25.0f, false);
-  shape_.init(filenames, &quad_, &animator_);
+  shape_.init(frames, &quad_, &animator_);
 }
 
 void Cloud::initMediumCloudShape() {
-  vector<string> filenames;
-  filenames.push_back("content/paths/medium_cloud1.path");
-  filenames.push_back("content/paths/medium_cloud2.path");
-  filenames.push_back("content/paths/medium_cloud3.path");
+  vector<NamedShape> frames;
+  NamedShape shape;
+  shape.file = "content/paths/medium_cloud1.path";
+  shape.name = "frame1";
+  frames.push_back(shape);
+  shape.file = "content/paths/medium_cloud2.path";
+  shape.name = "frame2";
+  frames.push_back(shape);
+  shape.file = "content/paths/medium_cloud3.path";
+  shape.name = "frame3";
+  frames.push_back(shape);
   initAnimator(18.0f, false);
-  shape_.init(filenames, &quad_, &animator_);
+  shape_.init(frames, &quad_, &animator_);
 }
 
 void Cloud::initSmallCloudShape() {
-  vector<string> filenames;
-  filenames.push_back("content/paths/small_cloud1.path");
-  filenames.push_back("content/paths/small_cloud2.path");
+  vector<NamedShape> frames;
+  NamedShape shape;
+  shape.file = "content/paths/small_cloud1.path";
+  shape.name = "frame1";
+  frames.push_back(shape);
+  shape.file = "content/paths/small_cloud2.path";
+  shape.name = "frame2";
+  frames.push_back(shape);
   initAnimator(12.0f, true);
-  shape_.init(filenames, &quad_, &animator_);
+  shape_.init(frames, &quad_, &animator_);
 }
 
 glm::vec2 Cloud::center() {
@@ -106,7 +125,7 @@ glm::vec2 Cloud::center() {
 }
 
 void Cloud::update(float delta_time) {
-  animator_.update(delta_time);
+  animator_.update(30 * delta_time);
   position_.x -= velocity_ * delta_time;
   updateShapeTransform();
 }

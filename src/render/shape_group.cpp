@@ -39,5 +39,6 @@ void ShapeGroup::init(string filename) {
     shapes_.push_back(shape);
     priority++;
   }
+  json_value_free(group_json);
   lockChildren();
 }

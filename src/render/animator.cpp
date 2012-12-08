@@ -7,10 +7,7 @@ Animation::Animation()
     stop_next_keyframe_(false),
     next_keyframe_(0),
     time_(0.0f),
-    lerp_t_(0.0f) {
-  last_keyframe_.index = 0;
-  last_keyframe_.time = 0.0f;  
-}
+    lerp_t_(0.0f) {}
 
 Animation::~Animation() {}
 
@@ -25,8 +22,8 @@ void Animation::addKeyframe(Keyframe key) {
   keyframes_.insert(it, key);
 }
 
-void Animation::start(int keyframe_index) {
-  last_keyframe_.index = keyframe_index;
+void Animation::start(string frame_name) {
+  last_keyframe_.name = frame_name;
   last_keyframe_.time = 0.0f;
   next_keyframe_ = 0;
   time_ = 0.0f;
@@ -35,11 +32,11 @@ void Animation::start(int keyframe_index) {
   stop_next_keyframe_ = false;
 }
 
-void Animation::startForced(int keyframe1, int keyframe2, float lerp_t) {
+void Animation::startForced(string frame_name1, string frame_name2, float lerp_t) {
   forcing_ = true;
-  last_keyframe_second_index_ = keyframe2;
+  last_keyframe_second_name_ = frame_name2;
   last_keyframe_lerp_t_ = lerp_t;
-  start(keyframe1);
+  start(frame_name1);
 }
 
 void Animation::update(float delta_time) {
@@ -58,7 +55,7 @@ void Animation::update(float delta_time) {
       // We just finished. Start over if repeat is true.
       if (repeat_) {
         float remaining_time = time_ - last_keyframe_.time;
-        start(last_keyframe_.index);
+        start(last_keyframe_.name);
         update(remaining_time);
       } else {
         finished_ = true;
@@ -69,28 +66,28 @@ void Animation::update(float delta_time) {
   lerp_t_ = (time_ - last_keyframe_.time) / (keyframes_[next_keyframe_].time - last_keyframe_.time);
 }
 
-void Animation::currentKeyState(int keyframes[], float lerp_ts[]) {
+void Animation::currentKeyState(string frames[], float lerp_ts[]) {
   if (forcing_ == true) {
     // We forced this animation to start in middle of another. So interpolting three different keyframes.
-    keyframes[0] = last_keyframe_.index;
-    keyframes[1] = last_keyframe_second_index_;
-    keyframes[2] = keyframes_[next_keyframe_].index;
+    frames[0] = last_keyframe_.name;
+    frames[1] = last_keyframe_second_name_;
+    frames[2] = keyframes_[next_keyframe_].name;
     lerp_ts[0] = last_keyframe_lerp_t_;
     lerp_ts[1] = lerp_t_;
   } else if (finished_) {
-    // Nothings really interpoling here, we just resting on the final keyframe of animation.
-    keyframes[0] = keyframes[1] = keyframes[2] = last_keyframe_.index;
+    // Nothing needs interpoling here, we just resting on the final keyframe of animation.
+    frames[0] = frames[1] = frames[2] = last_keyframe_.name;
     lerp_ts[0] = lerp_ts[1] = 0.0f;
   } else {
     // Interpolating between two keyframes in this animation.
-    keyframes[0] = last_keyframe_.index;
-    keyframes[1] = keyframes[2] = keyframes_[next_keyframe_].index;
+    frames[0] = last_keyframe_.name;
+    frames[1] = frames[2] = keyframes_[next_keyframe_].name;
     lerp_ts[0] = lerp_t_;
     lerp_ts[1] = 0.0f;
   }
 }
 
-Animator::Animator() : start_keyframe_index_(0) {}
+Animator::Animator() {}
 
 Animator::~Animator() {}
 
@@ -98,7 +95,7 @@ void Animator::queueAnimation(string name) {
   Animation *next = &animations_[name];
   if (queued_.empty()) {
     // Nothings been animated yet. Start this one right away.
-    next->start(start_keyframe_index_);
+    next->start(start_keyframe_name_);
   } else if (queued_.front()->repeats()) {
     // This animation repeats forever so we need to ask it to stop.
     queued_.front()->stopAtNextKeyframe();
@@ -110,7 +107,7 @@ void Animator::forceAnimation(string name) {
   Animation *next = &animations_[name];
   if (queued_.empty()) {
     // Nothings been animated yet. Start this one right away.
-    next->start(start_keyframe_index_);
+    next->start(start_keyframe_name_);
   } else {
     Animation *prev = queued_.front();
     // Clear queue.
@@ -123,9 +120,9 @@ void Animator::forceAnimation(string name) {
     } else {
       // Force this animation to start from two interpolated keyframes.
       if (prev->finished()) {
-        next->start(prev->lastKeyframeIndex());
+        next->start(prev->lastKeyframeName());
       } else {
-        next->startForced(prev->lastKeyframeIndex(), prev->nextKeyframeIndex(), prev->lerpT());
+        next->startForced(prev->lastKeyframeName(), prev->nextKeyframeName(), prev->lerpT());
       }
     }
   }
@@ -138,16 +135,16 @@ void Animator::update(float delta_time) {
       // Move on to next animation.
       Animation *last = queued_.front();
       queued_.pop();
-      queued_.front()->start(last->lastKeyframeIndex());
+      queued_.front()->start(last->lastKeyframeName());
     }
     queued_.front()->update(delta_time);
   }
 }
 
-void Animator::currentKeyState(int keyframes[], float lerp_ts[]) {
+void Animator::currentKeyState(string frames[], float lerp_ts[]) {
   if (!queued_.empty()) {
-    return queued_.front()->currentKeyState(keyframes, lerp_ts);
+    return queued_.front()->currentKeyState(frames, lerp_ts);
   }
-  keyframes[0] = keyframes[1] = keyframes[2] = start_keyframe_index_;
+  frames[0] = frames[1] = frames[2] = start_keyframe_name_;
   lerp_ts[0] = lerp_ts[1] = 0.0f;
 }

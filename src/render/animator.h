@@ -7,13 +7,15 @@
 #include <map>
 #include <queue>
 
+#include "util/json.h"
+
 using std::string;
 using std::vector;
 using std::map;
 using std::queue;
 
 struct Keyframe {
-  int index;
+  string name;
   float time;
 };
 
@@ -29,28 +31,30 @@ class Animation {
 
     // Functions for during use (used by Animator).
     // Start animation from the given keyframe.
-    void start(int keyframe_index);
+    void start(string frame_name);
     // Start animation in the middle of another animation. So will briefly be interpolating between three keyframes.
-    void startForced(int keyframe1, int keyframe2, float lerp_t);
+    void startForced(string frame_name1, string frame_name2, float lerp_t);
     void stopAtNextKeyframe() { stop_next_keyframe_ = true; }
     void update(float delta_time);
     // Is currently interpolating with three keyframes.
     bool forcing() { return forcing_; }
     bool finished() { return finished_; }
     // The last keyframe used in animation. If forcing there is no one keyframe, use currentKeyState.
-    int lastKeyframeIndex() { return last_keyframe_.index; }
-    int nextKeyframeIndex() { return keyframes_[next_keyframe_].index; }
+    string lastKeyframeName() { return last_keyframe_.name; }
+    string nextKeyframeName() { return keyframes_[next_keyframe_].name; }
     float lerpT() { return lerp_t_; }
     // Gets the current keyframe state for use in rendering.
     // Always gives three keyframes and two lerp values, no matter how many keyframes are actually used.
-    void currentKeyState(int *keyframes, float *lerp_ts);
+    void currentKeyState(string frames[], float lerp_ts[]);
 
   private:
     vector<Keyframe> keyframes_;
     bool repeat_, finished_, forcing_, stop_next_keyframe_;
     Keyframe last_keyframe_;
-    int next_keyframe_, last_keyframe_second_index_;
-    float time_, lerp_t_, last_keyframe_lerp_t_;
+    string last_keyframe_second_name_;
+    float last_keyframe_lerp_t_;
+    int next_keyframe_;
+    float time_, lerp_t_;
 };
 
 class Animator {
@@ -58,7 +62,8 @@ class Animator {
     Animator();
     ~Animator();
     // Set up function.
-    void setStartKeyframe(int index) { start_keyframe_index_ = index; }
+    void init(string start_frame) { start_keyframe_name_ = start_frame; }
+    void initFromJSON(json_value &animation_json, string start_frame) {}
     void addAnimation(string name, const Animation &animation) { animations_[name] = animation; }
 
     // Functions for during use.
@@ -71,12 +76,12 @@ class Animator {
     void update(float delta_time);
     // Gets the current keyframe state for use in rendering.
     // Always gives three keyframes and two lerp values, no matter how many keyframes are actually used.
-    void currentKeyState(int keyframes[], float lerp_ts[]);
+    void currentKeyState(string frames[], float lerp_ts[]);
 
   private:
     map<string, Animation> animations_;
     queue<Animation *> queued_;
-    int start_keyframe_index_;
+    string start_keyframe_name_;
 };
 
 #endif  // SRC_ANIMATOR_H_

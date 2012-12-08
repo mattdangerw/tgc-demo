@@ -188,20 +188,20 @@ void PathShape::init(string filename, Quad *fill) {
   initHelper(fill, min, max);
 }
 
-void PathShape::init(const vector<string> &keyframe_files, Quad *fill, Animator *animator) {
+void PathShape::init(const vector<NamedShape> &keyframes, Quad *fill, Animator *animator) {
   from_file_ = true;
   animated_ = true;
 
   glm::vec2 min(std::numeric_limits<float>::max()), max(std::numeric_limits<float>::min());
-  for (vector<string>::const_iterator it = keyframe_files.begin(); it != keyframe_files.end(); ++it) {
-    PathShapeData *data = loadIfNeeded(*it);
+  for (vector<NamedShape>::const_iterator it = keyframes.begin(); it != keyframes.end(); ++it) {
+    PathShapeData *data = loadIfNeeded(it->file);
     glm::vec2 frame_min, frame_max;
     data->corners(&frame_min, &frame_max);
     min = glm::min(frame_min, min);
     max = glm::max(frame_max, max);
-    keyframes_.push_back(data);
+    keyframes_[it->name] = data;
   }
-  data_ = keyframes_[0];
+  data_ = keyframes_.begin()->second;
   animator_ = animator;
   initHelper(fill, min, max);
 }
@@ -258,12 +258,12 @@ void PathShape::createVAOs() {
 }
 
 void PathShape::bindKeyframeBuffers() {
-  int keyframe_indices[3];
-  animator_->currentKeyState(keyframe_indices, lerp_ts_);
+  string keyframe_names[3];
+  animator_->currentKeyState(keyframe_names, lerp_ts_);
 
-  PathShapeData *keyframe1 = keyframes_[keyframe_indices[0]];
-  PathShapeData *keyframe2 = keyframes_[keyframe_indices[1]];
-  PathShapeData *keyframe3 = keyframes_[keyframe_indices[2]];
+  PathShapeData *keyframe1 = keyframes_[keyframe_names[0]];
+  PathShapeData *keyframe2 = keyframes_[keyframe_names[1]];
+  PathShapeData *keyframe3 = keyframes_[keyframe_names[2]];
   if (data_->hasSolidVertices()) {
     glBindVertexArray(solid_array_object_);
     glBindBuffer(GL_ARRAY_BUFFER, keyframe1->solidBufferObject());
