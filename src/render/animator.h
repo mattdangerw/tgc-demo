@@ -63,7 +63,7 @@ class Animator {
     ~Animator();
     // Set up function.
     void init(string start_frame) { start_keyframe_name_ = start_frame; }
-    void initFromJSON(json_value &animation_json, string start_frame) {}
+    void init(const json_value &json_animations, string start_frame);
     void addAnimation(string name, const Animation &animation) { animations_[name] = animation; }
 
     // Functions for during use.

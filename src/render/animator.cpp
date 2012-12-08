@@ -91,6 +91,24 @@ Animator::Animator() {}
 
 Animator::~Animator() {}
 
+void Animator::init(const json_value &json_animations, string start_frame) {
+  init(start_frame);
+  for (int i = 0; i < json_animations.getLength(); i++) {
+    string name = json_animations.getNameAt(i);
+    const json_value &json_animation = json_animations.getValueAt(i);
+    Animation animation;
+    animation.setRepeats(json_animation["repeats"].getBoolean());
+    const json_value &json_keyframes = json_animation["keyframes"];
+    for (int j = 0; j < json_keyframes.getLength(); j++) {
+      const json_value &json_keyframe = json_keyframes[j];
+      Keyframe keyframe;
+      keyframe.name = json_keyframe["name"].getString();
+      keyframe.time = json_keyframe["time"].getFloat();
+      animation.addKeyframe(keyframe);
+    }
+  }
+}
+
 void Animator::queueAnimation(string name) {
   Animation *next = &animations_[name];
   if (queued_.empty()) {

@@ -38,6 +38,8 @@
 #ifdef __cplusplus
 
    #include <string.h>
+   #include <cassert>
+   using std::string;
 
    extern "C"
    {
@@ -127,21 +129,17 @@ typedef struct _json_value
          {  memset (this, 0, sizeof (_json_value));
          }
 
-         inline const struct _json_value &operator [] (int index) const
+         inline const struct _json_value &operator [] (unsigned int index) const
          {
-            if (type != json_array || index < 0
-                     || ((unsigned int) index) >= u.array.length)
-            {
-               return json_value_none;
-            }
+           assert(type == json_array);
+           assert(index >= 0 && index < u.array.length);
 
-            return *u.array.values [index];
+           return *u.array.values [index];
          }
 
          inline const struct _json_value &operator [] (const char * index) const
          { 
-            if (type != json_object)
-               return json_value_none;
+            assert(type == json_object);
 
             for (unsigned int i = 0; i < u.object.length; ++ i)
                if (!strcmp (u.object.values [i].name, index))
@@ -150,26 +148,42 @@ typedef struct _json_value
             return json_value_none;
          }
 
-         inline operator const char * () const
-         {  
-            switch (type)
-            {
-               case json_string:
-                  return u.string.ptr;
-
-               default:
-                  return "";
-            };
+         // Adding these to do some type checking and make errors more obvious.
+         inline string getNameAt(unsigned int index) const {
+            assert(type == json_object);
+            return string(u.object.values[index].name);
          }
 
-         inline operator long () const
-         {  return u.integer;
+         inline const struct _json_value &getValueAt(unsigned int index) const {
+            assert(type == json_object);
+            return *u.object.values[index].value;
          }
 
-         inline operator bool () const
-         {  return u.boolean != 0;
+         inline int getLength() const {
+           assert(type == json_object || type == json_array);
+           if (type == json_object) return u.object.length;
+           return u.array.length;
          }
 
+         inline float getFloat() const {
+           assert(type == json_double);
+           return static_cast<float>(u.dbl);
+         }
+
+         inline bool getBoolean() const {
+           assert(type == json_boolean);
+           return u.boolean != 0;
+         }
+
+         inline string getString() const {
+           assert(type == json_string);
+           return string(u.string.ptr);
+         }
+
+         inline int getInteger() const {
+           assert(type == json_integer);
+           return u.integer;
+         }
    #endif
 
 } json_value;

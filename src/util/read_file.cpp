@@ -17,7 +17,7 @@ char *readFileToCString(string filename) {
   return text;
 }
 
-json_value *readFileToJSON(string filename) {
+json_value &readFileToJSON(string filename) {
   char *raw_text = readFileToCString(filename);
   json_settings settings;
   memset (&settings, 0, sizeof (json_settings));
@@ -27,5 +27,5 @@ json_value *readFileToJSON(string filename) {
     error("Error parsing JSON in file %s.\n%s", filename.c_str(), err);
   }
   delete raw_text;
-  return json;
+  return *json;
 }

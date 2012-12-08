@@ -8,7 +8,7 @@
 Ground::Ground() {}
 
 Ground::~Ground() {
-  vector<ShapeGroup *>::iterator it;
+  vector<Tree *>::iterator it;
   for (it = trees_.begin(); it != trees_.end(); ++it) {
     delete *it;
   }
@@ -103,8 +103,8 @@ void Ground::initTrees() {
 }
 
 void Ground::addTree(glm::vec2 location, float scale, float rotation, float display_priority) {
-  ShapeGroup *tree = new ShapeGroup();
-  tree->init("content/paths/tree_test.group");
+  Tree *tree = new Tree();
+  tree->init();
   tree->setParent(Renderer::instance().rootNode());
   glm::mat3 transform = glm::mat3(1.0f);
   transform = translate2D(transform, location);

@@ -79,18 +79,18 @@ void PathShapeData::corners(glm::vec2 *min, glm::vec2 *max) {
 }
 
 void PathShapeData::readVertices(string filename, vector<PathVertex> *vertices) {
-  json_value *path_json = readFileToJSON(filename);
-  for (size_t i = 0; i < path_json->u.object.length; i++) {
+  json_value &path_json = readFileToJSON(filename);
+  for (int i = 0; i < path_json.getLength(); i++) {
     PathVertex vertex;
-    json_value elem = (*path_json)[i];
-    int type = elem["type"].u.integer;
+    const json_value &elem = path_json[i];
+    int type = elem["type"].getInteger();
     if (type == 0) continue;
     vertex.type = (PathVertexType)type;
-    vertex.position.x = static_cast<float>(elem["x"].u.dbl);
-    vertex.position.y = static_cast<float>(elem["y"].u.dbl);
+    vertex.position.x = elem["x"].getFloat();
+    vertex.position.y = elem["y"].getFloat();
     vertices->push_back(vertex);
   }
-  json_value_free(path_json);
+  json_value_free(&path_json);
 }
 
 void PathShapeData::prepVertices(const vector<PathVertex> &vertices, vector<glm::vec2> *solids, vector<glm::vec2> *quadrics) {
