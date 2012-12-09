@@ -22,6 +22,8 @@ class SceneNode : public Drawable {
     // Drawables should redefine these.
     virtual void draw() {}
     virtual void drawOccluder() {}
+    //virtual void extent(glm::vec2 lower_left, glm::vec2 upper_right);
+    //void transformedExtent(glm::vec2 lower_left, glm::vec2 upper_right);
     // Sets the drawable parent. Setting parent to NULL removes this drawable and all children from the scene graph.
     SceneNode *parent() { return parent_; }
     void setParent(SceneNode *parent);

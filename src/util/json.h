@@ -137,12 +137,13 @@ typedef struct _json_value
            return *u.array.values [index];
          }
 
-         inline const struct _json_value &operator [] (const char * index) const
+         inline const struct _json_value &operator [] (const string index) const
          { 
             assert(type == json_object);
 
+            const char *c_index = index.c_str();
             for (unsigned int i = 0; i < u.object.length; ++ i)
-               if (!strcmp (u.object.values [i].name, index))
+               if (!strcmp (u.object.values [i].name, c_index))
                   return *u.object.values [i].value;
 
             return json_value_none;

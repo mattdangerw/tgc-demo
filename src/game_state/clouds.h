@@ -7,8 +7,7 @@
 
 #include "game_state/game_entity.h"
 #include "game_state/ground.h"
-#include "render/path_shape.h"
-#include "render/quad.h"
+#include "render/shape_group.h"
 
 using std::list;
 using std::map;
@@ -38,18 +37,12 @@ class Cloud {
     void setColorMask(glm::vec4 color_mask);
 
   private:
-    void initAnimator(float delay, bool small);
-    void initBigCloudShape();
-    void initMediumCloudShape();
-    void initSmallCloudShape();
     void updateShapeTransform();
     // State.
     glm::vec2 position_;
     float scale_, velocity_, width_, shade_;
     // Drawables.
-    PathShape shape_;
-    Quad quad_;
-    Animator animator_;
+    ShapeGroup shape_;
 };
 
 class CloudManager : public GameEntity {

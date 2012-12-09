@@ -13,13 +13,9 @@ Animation::~Animation() {}
 
 void Animation::addKeyframe(Keyframe key) {
   assert(key.time > 0);
-  // Add the keyframe in and keep things sorted.
-  // Obviously inefficient for many many keyframes, but that's not in the usage plan.
-  vector<Keyframe>::iterator it;
-  for (it = keyframes_.begin(); it != keyframes_.end(); ++it) {
-    if ( key.time < it->time) break;
-  }
-  keyframes_.insert(it, key);
+  //Added relative to last time, but we'll store global time as it make calculations easier.
+  if (!keyframes_.empty()) key.time += keyframes_.back().time;
+  keyframes_.push_back(key);
 }
 
 void Animation::start(string frame_name) {
@@ -106,10 +102,12 @@ void Animator::init(const json_value &json_animations, string start_frame) {
       keyframe.time = json_keyframe["time"].getFloat();
       animation.addKeyframe(keyframe);
     }
+    addAnimation(name, animation);
   }
 }
 
 void Animator::queueAnimation(string name) {
+  assert(animations_.count(name) != 0);
   Animation *next = &animations_[name];
   if (queued_.empty()) {
     // Nothings been animated yet. Start this one right away.

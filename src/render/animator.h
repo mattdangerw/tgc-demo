@@ -23,7 +23,7 @@ class Animation {
   public:
     Animation();
     ~Animation();
-    // Set up functions.
+    // Add a keyframe with the name of the frame and time to morph.
     void addKeyframe(Keyframe key);
     // Repeat animation forever till asked to stop.
     bool repeats() { return repeat_; }

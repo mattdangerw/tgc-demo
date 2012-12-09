@@ -3,17 +3,15 @@
     "cloud":{"file":"paper3.dds", "scale":{"x":0.25, "y":0.25}}
   },
   "frames":{
-    "frame1":{"cloud":"big_cloud1.path"},
-    "frame2":{"cloud":"big_cloud2.path"},
-    "frame3":{"cloud":"big_cloud3.path"}
+    "frame1":{"cloud":"small_cloud1.path"},
+    "frame2":{"cloud":"small_cloud2.path"}
   },
   "animations":{
     "slow_change":{
       "repeats":true,
       "keyframes":[
-        {"name":"frame2", "time":25.0},
-        {"name":"frame3", "time":25.0},
-        {"name":"frame1", "time":25.0}
+        {"name":"frame2", "time":12.0},
+        {"name":"frame1", "time":12.0}
       ]
     }
   },

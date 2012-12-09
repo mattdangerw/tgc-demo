@@ -1,21 +1,13 @@
 {
-  "frames":{
-    "frame1":[
-      {"path_file":"tree_frame1_shape0.path", "texture_file":"bark.dds", "texture_scale":{"x":0.2, "y":0.2}},
-      {"path_file":"tree_frame1_shape1.path", "texture_file":"leaves.dds", "texture_scale":{"x":0.2, "y":0.2}},
-    ],
-    "frame2":[
-      {"path_file":"tree_frame2_shape0.path", "texture_file":"bark.dds", "texture_scale":{"x":0.2, "y":0.2}},
-      {"path_file":"tree_frame2_shape1.path", "texture_file":"leaves.dds", "texture_scale":{"x":0.2, "y":0.2}},
-    ]
+  "fills":{
+    "trunk":{"file":"bark.dds", "scale":{"x":0.2, "y":0.2}},
+    "leaves":{"file":"leaves.dds", "scale":{"x":0.2, "y":0.2}}
   },
-  "animations":{
-    "wind":{
-      "repeats":false,
-      "keyframes":[
-        {"frame":"frame2", "time":1.0},
-        {"frame":"frame1", "time":1.0}
-      ]
-    }
+  "frames":{
+    "frame1":{"trunk":"small_cloud1.path", "leaves":"trunk.path"}
+  },
+  "colors":{
+    "trunk":{"r":1.2, "g":0.6, "b":0.3, "a":1.0},
+    "leaves":{"r":1.0, "g":2.0, "b":1.0, "a":1.0}
   }
 }

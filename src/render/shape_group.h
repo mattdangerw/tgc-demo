@@ -1,7 +1,8 @@
 #ifndef SRC_SHAPE_GROUP_H_
 #define SRC_SHAPE_GROUP_H_
 
-#include <vector>
+#include <glm/glm.hpp>
+#include <map>
 #include <string>
 
 #include "render/scene_node.h"
@@ -10,16 +11,24 @@
 #include "render/animator.h"
 
 using std::string;
-using std::vector;
+using std::map;
+
+struct ShapeAndFill{
+  PathShape shape;
+  Quad fill;
+};
 
 class ShapeGroup : public SceneNode { 
   public:
     ShapeGroup();
     ~ShapeGroup();
     void init(string filename);
+    Animator &animator() { return animator_; }
+    void colorize();
+    void setColorMasks(glm::vec4 color);
   private:
-    vector<Quad *> fills_;
-    vector<PathShape *> shapes_;
+    map<string, ShapeAndFill *> shapes_;
+    map<string, glm::vec4> colors_;
     Animator animator_;
 };
 

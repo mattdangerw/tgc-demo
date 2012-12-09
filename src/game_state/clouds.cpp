@@ -38,86 +38,21 @@ Cloud::~Cloud() {
 }
 
 void Cloud::init(CloudType type) {
-  quad_.init("content/textures/paper3.dds", glm::vec2(scale_));
-  quad_.setColorMask(glm::vec4(shade_, shade_, shade_, 1.0f));
   switch (type) {
     case BIG_CLOUD:
-      initBigCloudShape();
+      shape_.init("big_cloud.group");
       break;
     case MEDIUM_CLOUD:
-      initMediumCloudShape();
+      shape_.init("medium_cloud.group");
       break;
     case SMALL_CLOUD:
-      initSmallCloudShape();
+      shape_.init("small_cloud.group");
       break;
   }
   shape_.setParent(Renderer::instance().rootNode());
-  width_ = shape_.width() * scale_;
+  width_ = 0.5f;
   updateShapeTransform();
-}
-
-void Cloud::initAnimator(float delay, bool small) {
-  Animation slow_change;
-  Keyframe frame1, frame2, frame3;
-  frame1.name = "frame2";
-  frame2.name = small ? "frame1" : "frame3";
-  frame3.name = "frame1";
-  frame1.time = delay;
-  frame2.time = 2 * delay;
-  frame3.time = 3 * delay;
-  slow_change.addKeyframe(frame1);
-  slow_change.addKeyframe(frame2);
-  if (!small) slow_change.addKeyframe(frame3);
-  slow_change.setRepeats(true);
-  animator_.init("frame1");
-  animator_.addAnimation("slow_change", slow_change);
-  animator_.queueAnimation("slow_change");
-  animator_.update(randomFloat(0.0f, 3 * delay));
-}
-
-void Cloud::initBigCloudShape() {
-  vector<NamedShape> frames;
-  NamedShape shape;
-  shape.file = "content/paths/big_cloud1.path";
-  shape.name = "frame1";
-  frames.push_back(shape);
-  shape.file = "content/paths/big_cloud2.path";
-  shape.name = "frame2";
-  frames.push_back(shape);
-  shape.file = "content/paths/big_cloud3.path";
-  shape.name = "frame3";
-  frames.push_back(shape);
-  initAnimator(25.0f, false);
-  shape_.init(frames, &quad_, &animator_);
-}
-
-void Cloud::initMediumCloudShape() {
-  vector<NamedShape> frames;
-  NamedShape shape;
-  shape.file = "content/paths/medium_cloud1.path";
-  shape.name = "frame1";
-  frames.push_back(shape);
-  shape.file = "content/paths/medium_cloud2.path";
-  shape.name = "frame2";
-  frames.push_back(shape);
-  shape.file = "content/paths/medium_cloud3.path";
-  shape.name = "frame3";
-  frames.push_back(shape);
-  initAnimator(18.0f, false);
-  shape_.init(frames, &quad_, &animator_);
-}
-
-void Cloud::initSmallCloudShape() {
-  vector<NamedShape> frames;
-  NamedShape shape;
-  shape.file = "content/paths/small_cloud1.path";
-  shape.name = "frame1";
-  frames.push_back(shape);
-  shape.file = "content/paths/small_cloud2.path";
-  shape.name = "frame2";
-  frames.push_back(shape);
-  initAnimator(12.0f, true);
-  shape_.init(frames, &quad_, &animator_);
+  shape_.animator().queueAnimation("slow_change");
 }
 
 glm::vec2 Cloud::center() {
@@ -125,7 +60,7 @@ glm::vec2 Cloud::center() {
 }
 
 void Cloud::update(float delta_time) {
-  animator_.update(30 * delta_time);
+  shape_.animator().update( 30 * delta_time);
   position_.x -= velocity_ * delta_time;
   updateShapeTransform();
 }
@@ -142,7 +77,7 @@ void Cloud::xExtent(float *x_begin, float *x_end) {
 }
 
 void Cloud::setColorMask(glm::vec4 color_mask) {
-  quad_.setColorMask(color_mask);
+  shape_.setColorMasks(color_mask);
 }
 
 CloudManager::CloudManager() {}

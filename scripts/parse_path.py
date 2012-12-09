@@ -1,5 +1,5 @@
 import sys
-import inspect
+import json
 from svgfig import *
 
 output_paths = []
@@ -11,9 +11,9 @@ class OutputPath:
   # max_x = float("-inf")
   # min_y = float("inf")
   # max_y = float("-inf")
-  def add(self, type, x, y):
+  def add(self, vertex_type, x, y):
     # y = -y
-    self.path.append((type, x, y))
+    self.path.append((vertex_type, x, y))
     # if x < self.min_x:
     #   self.min_x = x
     # if x > self.max_x:
@@ -25,11 +25,12 @@ class OutputPath:
   def write(self, name):
     out = open(name, "w")
     scale = 1.0 / 1000
-    for (type, x, y) in self.path:
+    to_json = []
+    for (vertex_type, x, y) in self.path:
       x *= scale
       y = 1 - y * scale
-      out.write(" ".join((str(type), str(x), str(y))))
-      out.write("\n")
+      to_json.append({"type":vertex_type, "x":x, "y":y})
+    out.write(json.dumps(to_json))
     out.close()
 
 def parsePath(path):
