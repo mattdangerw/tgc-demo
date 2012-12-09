@@ -34,7 +34,7 @@ class OutputPath:
       y = 1 - y * scale
       to_json.append({"type":vertex_type, "x":x, "y":y})
     # to_json.reverse()
-    out.write(json.dumps(to_json, sort_keys=True, indent=4, separators=(',', ': ')))
+    out.write(json.dumps(to_json, sort_keys=True))
     out.close()
 
 def parsePath(path):

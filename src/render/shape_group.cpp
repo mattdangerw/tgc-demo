@@ -15,7 +15,7 @@ ShapeGroup::~ShapeGroup() {
 }
 
 void ShapeGroup::init(string filename) {
-  json_value &group_json = readFileToJSON("content/paths/" + filename);
+  json_value &group_json = readFileToJSON("content/groups/" + filename);
   float priority = 0;
   const json_value &json_fills = group_json["fills"];
   const json_value &json_frames = group_json["frames"];
