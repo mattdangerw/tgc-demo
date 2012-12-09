@@ -32,8 +32,6 @@ add_executable(tgc-demo
   src/game_state/point_mass.h
   src/game_state/thought_bubble.cpp
   src/game_state/thought_bubble.h
-  src/game_state/tree.cpp
-  src/game_state/tree.h
   src/game_state/triggerables.cpp
   src/game_state/triggerables.h
   src/render/animator.h

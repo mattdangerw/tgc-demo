@@ -67,7 +67,7 @@ class PathShape : public SceneNode {
     ~PathShape();
     void init(const vector<PathVertex> &vertices, Quad *fill);
     void init(string filename, Quad *fill);
-    void init(const vector<NamedFile> &keyframes, Quad *fill, Animator *animator);
+    void init(const vector<NamedFile> &frames, Quad *fill, Animator *animator);
     void setOccluderColor(float color);
     float width();
     float height();
@@ -85,7 +85,7 @@ class PathShape : public SceneNode {
     Quad *fill_;
     PathShapeData *data_;
     // Animation stuff.
-    map<string, PathShapeData *> keyframes_;
+    map<string, PathShapeData *> frames_;
     Animator *animator_;
     float lerp_ts_[2];
     // OpenGL stuff
