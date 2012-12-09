@@ -4,7 +4,7 @@
     "leaves":{"file":"leaves.dds", "scale":{"x":0.2, "y":0.2}}
   },
   "frames":{
-    "frame1":{"trunk":"small_cloud1.path", "leaves":"trunk.path"}
+    "frame1":{"trunk":"tree_frame1_shape0.path", "leaves":"tree_frame1_shape1.path"}
   },
   "colors":{
     "trunk":{"r":1.2, "g":0.6, "b":0.3, "a":1.0},

@@ -1,8 +1,11 @@
 import sys
 import json
+from json import encoder
 from svgfig import *
 
 output_paths = []
+
+encoder.FLOAT_REPR = lambda o: format(o, '.5f')
 
 class OutputPath:
   def __init__(self):
@@ -30,7 +33,8 @@ class OutputPath:
       x *= scale
       y = 1 - y * scale
       to_json.append({"type":vertex_type, "x":x, "y":y})
-    out.write(json.dumps(to_json))
+    # to_json.reverse()
+    out.write(json.dumps(to_json, sort_keys=True, indent=4, separators=(',', ': ')))
     out.close()
 
 def parsePath(path):
