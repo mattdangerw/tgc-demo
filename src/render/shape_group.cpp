@@ -40,17 +40,17 @@ void ShapeGroup::init(string filename) {
     fill.init("content/textures/" + texture_file, texture_scale);
     // Parse shape.
     if (multiple_frames) {
-      vector<NamedShape> keyframes;
+      vector<NamedFile> frames;
       for (int frame_index = 0; frame_index < json_frames.getLength(); frame_index++) {
-        NamedShape keyframe;
-        keyframe.name = json_frames.getNameAt(frame_index);
-        if (frame_index == 0) start_frame = keyframe.name;
+        NamedFile frame;
+        frame.name = json_frames.getNameAt(frame_index);
+        if (frame_index == 0) start_frame = frame.name;
         const json_value &json_files = json_frames.getValueAt(frame_index);
         assert(json_files.getLength() == num_fills);
-        keyframe.file = "content/paths/" + json_files[fill_name].getString();
-        keyframes.push_back(keyframe);
+        frame.file = "content/paths/" + json_files[fill_name].getString();
+        frames.push_back(frame);
       }
-      shape.init(keyframes, &fill, &animator_);
+      shape.init(frames, &fill, &animator_);
     } else {
       const json_value &json_files = json_frames.getValueAt(0);
       string filename = "content/paths/" + json_files[fill_name].getString();

@@ -188,12 +188,12 @@ void PathShape::init(string filename, Quad *fill) {
   initHelper(fill, min, max);
 }
 
-void PathShape::init(const vector<NamedShape> &keyframes, Quad *fill, Animator *animator) {
+void PathShape::init(const vector<NamedFile> &keyframes, Quad *fill, Animator *animator) {
   from_file_ = true;
   animated_ = true;
 
   glm::vec2 min(std::numeric_limits<float>::max()), max(std::numeric_limits<float>::min());
-  for (vector<NamedShape>::const_iterator it = keyframes.begin(); it != keyframes.end(); ++it) {
+  for (vector<NamedFile>::const_iterator it = keyframes.begin(); it != keyframes.end(); ++it) {
     PathShapeData *data = loadIfNeeded(it->file);
     glm::vec2 frame_min, frame_max;
     data->corners(&frame_min, &frame_max);
