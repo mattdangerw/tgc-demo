@@ -53,12 +53,12 @@ void Quad::initHelper() {
   glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 }
 
-void Quad::getCorners(glm::vec2 *min, glm::vec2 *max) {
+void Quad::extent(glm::vec2 *min, glm::vec2 *max) {
   *min = vertices_[0];
   *max = vertices_[2];
 }
 
-void Quad::setCorners(glm::vec2 min, glm::vec2 max) {
+void Quad::setExtent(glm::vec2 min, glm::vec2 max) {
   vertices_[0] = glm::vec2(min.x, min.y);
   vertices_[1] = glm::vec2(max.x, min.y);
   vertices_[2] = glm::vec2(max.x, max.y);

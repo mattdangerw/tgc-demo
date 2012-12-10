@@ -32,7 +32,7 @@ class PathShapeData {
     ~PathShapeData();
     void init(string filename);
     void init(const vector<PathVertex> &vertices);
-    void corners(glm::vec2 *min, glm::vec2 *max);
+    void extent(glm::vec2 *min, glm::vec2 *max);
     // Solids.
     bool hasSolidVertices() { return has_solids_; }
     size_t solidVerticesSize() { return solids_size_; }
@@ -69,8 +69,7 @@ class PathShape : public SceneNode {
     void init(string filename, Quad *fill);
     void init(const vector<NamedFile> &frames, Quad *fill, Animator *animator);
     void setOccluderColor(float color);
-    float width();
-    float height();
+    void extent(glm::vec2 *min, glm::vec2 *max) { fill_->extent(min, max); }
     void draw() { drawHelper(false); }
     void drawOccluder() { drawHelper(true); }
 

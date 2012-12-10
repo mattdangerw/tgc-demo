@@ -22,8 +22,9 @@ class SceneNode : public Drawable {
     // Drawables should redefine these.
     virtual void draw() {}
     virtual void drawOccluder() {}
-    //virtual void extent(glm::vec2 lower_left, glm::vec2 upper_right);
-    //void transformedExtent(glm::vec2 lower_left, glm::vec2 upper_right);
+    virtual void extent(glm::vec2 *min, glm::vec2 *max) { *min = glm::vec2(0.0f); *max = glm::vec2(0.0f); }
+    // Checks if shape extent is onscreen.
+    bool onScreen();
     // Sets the drawable parent. Setting parent to NULL removes this drawable and all children from the scene graph.
     SceneNode *parent() { return parent_; }
     void setParent(SceneNode *parent);
@@ -31,8 +32,8 @@ class SceneNode : public Drawable {
     void lockChildren();
     bool isLocking() { return is_locking_; }
     bool isLocked() { return is_locked_; }
-    // Get this node and all descendents sorted by priority for rendering.
-    void getSortedDescendants(vector<SceneNode *> *drawables);
+    // Get all visible descendents sorted by priority for rendering.
+    void getSortedVisibleDescendants(vector<SceneNode *> *drawables);
     // Get the full transform of drawable element.
     glm::mat3 fullTransform();
     // Get the transform relative to the parent drawable

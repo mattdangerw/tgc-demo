@@ -73,7 +73,7 @@ void PathShapeData::init(const vector<PathVertex> &vertices) {
   }
 }
 
-void PathShapeData::corners(glm::vec2 *min, glm::vec2 *max) {
+void PathShapeData::extent(glm::vec2 *min, glm::vec2 *max) {
   *min = min_corner_;
   *max = max_corner_;
 }
@@ -176,7 +176,7 @@ void PathShape::init(const vector<PathVertex> &vertices, Quad *fill) {
   data_ = new PathShapeData();
   data_->init(vertices);
   glm::vec2 min, max;
-  data_->corners(&min, &max);
+  data_->extent(&min, &max);
   initHelper(fill, min, max);
 }
 
@@ -184,7 +184,7 @@ void PathShape::init(string filename, Quad *fill) {
   from_file_ = true;
   data_ = loadIfNeeded(filename);
   glm::vec2 min, max;
-  data_->corners(&min, &max);
+  data_->extent(&min, &max);
   initHelper(fill, min, max);
 }
 
@@ -192,11 +192,11 @@ void PathShape::init(const vector<NamedFile> &frames, Quad *fill, Animator *anim
   from_file_ = true;
   animated_ = true;
 
-  glm::vec2 min(std::numeric_limits<float>::max()), max(std::numeric_limits<float>::min());
+  glm::vec2 min(std::numeric_limits<float>::max()), max(-std::numeric_limits<float>::max());
   for (vector<NamedFile>::const_iterator it = frames.begin(); it != frames.end(); ++it) {
     PathShapeData *data = loadIfNeeded(it->file);
     glm::vec2 frame_min, frame_max;
-    data->corners(&frame_min, &frame_max);
+    data->extent(&frame_min, &frame_max);
     min = glm::min(frame_min, min);
     max = glm::max(frame_max, max);
     frames_[it->name] = data;
@@ -209,7 +209,7 @@ void PathShape::init(const vector<NamedFile> &frames, Quad *fill, Animator *anim
 void PathShape::initHelper(Quad *fill, glm::vec2 min, glm::vec2 max) {
   fill_ = fill;
   fill_->setParent(this);
-  fill_->setCorners(min, max);
+  fill_->setExtent(min, max);
   fill_->setIsVisible(false);
   createVAOs();
 }
@@ -293,19 +293,6 @@ void PathShape::bindKeyframeBuffers() {
 
 void PathShape::setOccluderColor(float color) {
   fill_->setOccluderColor(color);
-}
-
-// For now just give the quad extent as width and height. This is the maximum extent the shape can have on screen.
-float PathShape::width() {
-  glm::vec2 min, max;
-  fill_->getCorners(&min, &max);
-  return max.x - min.x;
-}
-
-float PathShape::height() {
-  glm::vec2 min, max;
-  fill_->getCorners(&min, &max);
-  return max.y - min.y;
 }
 
 void PathShape::drawHelper(bool asOccluder) {

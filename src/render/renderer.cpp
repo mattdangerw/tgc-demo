@@ -229,7 +229,7 @@ void Renderer::draw() {
   root_node_.setRelativeTransform(view);
 
   vector<SceneNode *> draw2D;
-  root_node_.getSortedDescendants(&draw2D);
+  root_node_.getSortedVisibleDescendants(&draw2D);
 
   // Draw occluders to texture.
   //glBindFramebuffer(GL_FRAMEBUFFER, 0);

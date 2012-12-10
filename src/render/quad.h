@@ -15,8 +15,8 @@ class Quad : public SceneNode {
     ~Quad();
     void init(glm::vec4 color);
     void init(string texture_file, glm::vec2 texture_scale);
-    void getCorners(glm::vec2 *min, glm::vec2 *max);
-    void setCorners(glm::vec2 min, glm::vec2 max);
+    void extent(glm::vec2 *min, glm::vec2 *max);
+    void setExtent(glm::vec2 min, glm::vec2 max);
     void useTexture(string texture_file);
     void setTextureScale(glm::vec2 scale) { texture_scale_ = scale; }
     void useColor(glm::vec4 color);

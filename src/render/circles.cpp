@@ -1,6 +1,7 @@
 #include "render/circles.h"
 
 #include <glm/gtc/type_ptr.hpp>
+#include <algorithm>
 
 #include "util/transform2D.h"
 
@@ -28,6 +29,17 @@ void CircleDrawer::init(vector<Circle> *circles) {
   handle = Renderer::instance().attributeHandle("bezier_coord");
   glEnableVertexAttribArray(handle);
   glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+}
+
+void CircleDrawer::extent(glm::vec2 *min, glm::vec2 *max) {
+  *min = glm::vec2(std::numeric_limits<float>::max());
+  *max = glm::vec2(-std::numeric_limits<float>::max());
+  for (vector<Circle>::iterator it = circles_->begin(); it != circles_->end(); ++it) {
+    min->x = std::min(it->center.x - it->radius, min->x);
+    min->y = std::min(it->center.y - it->radius, min->y);
+    max->x = std::max(it->center.x + it->radius, min->x);
+    max->y = std::max(it->center.y + it->radius, min->y);
+  }
 }
 
 void CircleDrawer::useScreenSpaceTexture(string texture_filename) {

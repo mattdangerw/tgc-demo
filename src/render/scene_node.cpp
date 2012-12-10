@@ -23,6 +23,25 @@ SceneNode::~SceneNode() {
   }
 }
 
+bool SceneNode::onScreen() {
+  glm::vec2 corners[4];
+  extent(corners, corners + 1);
+  corners[2] = glm::vec2(corners[0].x, corners[1].y);
+  corners[3] = glm::vec2(corners[1].x, corners[0].y);
+  glm::mat3 transform = fullTransform();
+  glm::vec2 min_coords(std::numeric_limits<float>::max()), max_coords(-std::numeric_limits<float>::max());
+  for (int i = 0; i < 4; ++i) {
+    glm::vec3 transformed = transform * glm::vec3(corners[i], 1.0f);
+    transformed.x /= transformed.z;
+    transformed.y /= transformed.z;
+    min_coords.x = std::min(transformed.x, min_coords.x);
+    min_coords.y = std::min(transformed.y, min_coords.y);
+    max_coords.x = std::max(transformed.x, max_coords.x);
+    max_coords.y = std::max(transformed.y, max_coords.y);
+  }
+  return (max_coords.x > -1.0f && max_coords.y > -1.0f && min_coords.x < 1.0f && min_coords.y < 1.0f);
+}
+
 void SceneNode::setParent(SceneNode *parent) {
   if (parent_ != NULL) parent_->removeChild(this);
   parent_ = parent;
@@ -52,7 +71,9 @@ struct PrioritySortFunctor {
   }
 };
 
-void SceneNode::getSortedDescendants(vector<SceneNode *> *drawables) {
+void SceneNode::getSortedVisibleDescendants(vector<SceneNode *> *drawables) {
+  // Get and sort all descendants.
+  vector<SceneNode *> sorted_drawables;
   vector<SceneNode *> non_locked;
   getNonLockedDescendants(&non_locked);
   std::stable_sort(non_locked.begin(), non_locked.end(), PrioritySortFunctor());
@@ -62,10 +83,14 @@ void SceneNode::getSortedDescendants(vector<SceneNode *> *drawables) {
       vector<SceneNode *> sub_tree;
       (*it)->getDescendants(&sub_tree);
       std::stable_sort(sub_tree.begin(), sub_tree.end(), PrioritySortFunctor());
-      drawables->insert(drawables->end(), sub_tree.begin(), sub_tree.end());
+      sorted_drawables.insert(sorted_drawables.end(), sub_tree.begin(), sub_tree.end());
     } else {
-      drawables->push_back(*it);
+      sorted_drawables.push_back(*it);
     }
+  }
+  // Cull out offsceen nodes.
+  for (it = sorted_drawables.begin(); it != sorted_drawables.end(); ++it) {
+    if ((*it)->onScreen()) drawables->push_back(*it);
   }
 }
 

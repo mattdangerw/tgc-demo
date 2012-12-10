@@ -22,6 +22,7 @@ class CircleDrawer : public SceneNode {
     ~CircleDrawer();
     // Set up the VAOs and VBOs and what not.
     void init(vector<Circle> *circles);
+    void extent(glm::vec2 *min, glm::vec2 *max);  
     void useScreenSpaceTexture(string texture_filename);
     void useQuad(Quad *quad);
     void changeRadii(float delta_radius) { delta_radius_ = delta_radius; }

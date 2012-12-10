@@ -81,7 +81,7 @@ void Ground::init() {
   background_.init("content/textures/background.dds", glm::vec2(1.0f));
   background_.setParent(Renderer::instance().rootNode());
   background_.setDisplayPriority(-99.0f);
-  background_.setCorners(glm::vec2(0.0f, 0.0f), glm::vec2(width(), 1.0f));
+  background_.setExtent(glm::vec2(0.0f, 0.0f), glm::vec2(width(), 1.0f));
   background_.setIsOccluder(false);
   background_.setShadowed(true);
   initTrees();

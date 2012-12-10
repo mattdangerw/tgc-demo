@@ -16,7 +16,7 @@ const float kIdeaMass = .25f;
 
 void SubBubble::init(vector<Circle> *circles, float texture_scale, float darkness) {
   outer_fill_.init("content/textures/thought_bubble.dds", glm::vec2(texture_scale));
-  outer_fill_.setCorners(glm::vec2(-0.3f, -0.2f), glm::vec2(0.3f, 0.2f));
+  outer_fill_.setExtent(glm::vec2(-0.3f, -0.2f), glm::vec2(0.3f, 0.2f));
   outer_fill_.setColorMask(glm::vec4(darkness, darkness, darkness, 1.0f));
   outer_drawer_.init(circles);
   //outer_drawer_.changeRadii(border_width);
@@ -103,7 +103,7 @@ void ThoughtBubble::init(Character *character) {
 
   // Ready the circle drawer.
   fill_.init("content/textures/thought_bubble.dds", glm::vec2(2.0f));
-  fill_.setCorners(glm::vec2(-0.3f, -0.2f), glm::vec2(0.3f, 0.2f));
+  fill_.setExtent(glm::vec2(-0.3f, -0.2f), glm::vec2(0.3f, 0.2f));
   circle_drawer_.init(&bubble_circles_);
   circle_drawer_.setParent(Renderer::instance().rootNode());
   circle_drawer_.useQuad(&fill_);
