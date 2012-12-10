@@ -53,6 +53,7 @@ void Cloud::init(CloudType type) {
   width_ = 0.5f;
   updateShapeTransform();
   shape_.animator().queueAnimation("slow_change");
+  shape_.setColorMasks(glm::vec4(shade_, shade_, shade_, 1.0f));
 }
 
 glm::vec2 Cloud::center() {
