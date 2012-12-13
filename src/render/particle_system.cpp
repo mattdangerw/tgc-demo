@@ -41,19 +41,19 @@ void Emitter::init(int num_particles) {
     glBindBuffer(GL_ARRAY_BUFFER, buffer_objects_[i]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Particle) * num_particles, particles, GL_DYNAMIC_DRAW);
     // VAO varyings.
-    GLuint handle = Renderer::instance().attributeHandle("position");
+    GLuint handle = theRenderer().attributeHandle("position");
     glEnableVertexAttribArray(handle);
     glVertexAttribPointer(handle, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void *)offsetof(Particle, position));
-    handle = Renderer::instance().attributeHandle("velocity");
+    handle = theRenderer().attributeHandle("velocity");
     glEnableVertexAttribArray(handle);
     glVertexAttribPointer(handle, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void *)offsetof(Particle, velocity));
-    handle = Renderer::instance().attributeHandle("color");
+    handle = theRenderer().attributeHandle("color");
     glEnableVertexAttribArray(handle);
     glVertexAttribPointer(handle, 4, GL_FLOAT, GL_FALSE, sizeof(Particle), (void *)offsetof(Particle, color));
-    handle = Renderer::instance().attributeHandle("age");
+    handle = theRenderer().attributeHandle("age");
     glEnableVertexAttribArray(handle);
     glVertexAttribPointer(handle, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (void *)offsetof(Particle, age));
-    handle = Renderer::instance().attributeHandle("visible");
+    handle = theRenderer().attributeHandle("visible");
     glEnableVertexAttribArray(handle);
     glVertexAttribPointer(handle, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (void *)offsetof(Particle, visible));
     // Transform feedback init.
@@ -62,17 +62,17 @@ void Emitter::init(int num_particles) {
   }
   delete particles;
   
-  Renderer::instance().useProgram("particle_feedback");
-  glUniform1f(Renderer::instance().uniformHandle("alpha_decay"), kParticleAlphaDecay);
-  glUniform1f(Renderer::instance().uniformHandle("lifetime"), kParticleLifetime);
+  theRenderer().useProgram("particle_feedback");
+  glUniform1f(theRenderer().uniformHandle("alpha_decay"), kParticleAlphaDecay);
+  glUniform1f(theRenderer().uniformHandle("lifetime"), kParticleLifetime);
 }
 
 void Emitter::update(float delta_time) {
-  Renderer::instance().useProgram("particle_feedback");
-  glUniform3fv(Renderer::instance().uniformHandle("emitter_position"), 1, glm::value_ptr(position_));
-  glUniform4fv(Renderer::instance().uniformHandle("emitter_color"), 1, glm::value_ptr(color_));
-  glUniform1f(Renderer::instance().uniformHandle("emitter_visible"), visible_ ? 1.0f : 0.0f);
-  glUniform1f(Renderer::instance().uniformHandle("delta_time"), delta_time);
+  theRenderer().useProgram("particle_feedback");
+  glUniform3fv(theRenderer().uniformHandle("emitter_position"), 1, glm::value_ptr(position_));
+  glUniform4fv(theRenderer().uniformHandle("emitter_color"), 1, glm::value_ptr(color_));
+  glUniform1f(theRenderer().uniformHandle("emitter_visible"), visible_ ? 1.0f : 0.0f);
+  glUniform1f(theRenderer().uniformHandle("delta_time"), delta_time);
 
   //glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, transform_feedbacks_[current_dest_]);
   glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, buffer_objects_[current_dest_]);
@@ -101,15 +101,15 @@ ParticleSystem::ParticleSystem() {
 ParticleSystem::~ParticleSystem() {}
 
 void ParticleSystem::init(int num_emitters) {
-  texture_handle_ = Renderer::instance().getTexture("content/textures/particle.dds");
+  texture_handle_ = theRenderer().getTexture("content/textures/particle.dds");
   emitters_.resize(num_emitters);
   for (int i = 0; i < num_emitters; ++i) {
     emitters_[i].init(300);
     emitters_by_depth_.push_back(i);
   }
-  Renderer::instance().useProgram("particle_draw");
-  glUniform1f(Renderer::instance().uniformHandle("particle_radius"), 0.012f);
-  glUniform3fv(Renderer::instance().uniformHandle("camera_position"), 1, glm::value_ptr(glm::vec3(0.0f)));
+  theRenderer().useProgram("particle_draw");
+  glUniform1f(theRenderer().uniformHandle("particle_radius"), 0.012f);
+  glUniform3fv(theRenderer().uniformHandle("camera_position"), 1, glm::value_ptr(glm::vec3(0.0f)));
 }
 
 void ParticleSystem::update(float delta_time) {
@@ -120,11 +120,11 @@ void ParticleSystem::update(float delta_time) {
 
 void ParticleSystem::draw() {
   sortDepthIndex();
-  Renderer::instance().useProgram("particle_draw");
-  glUniformMatrix4fv(Renderer::instance().uniformHandle("transform3D"), 1, GL_FALSE, 
+  theRenderer().useProgram("particle_draw");
+  glUniformMatrix4fv(theRenderer().uniformHandle("transform3D"), 1, GL_FALSE, 
     glm::value_ptr(projection_ * transform3D_));
-  glUniformMatrix3fv(Renderer::instance().uniformHandle("transform2D"), 1, GL_FALSE, 
-    glm::value_ptr(Renderer::instance().rootNode()->fullTransform() * transform2D_));
+  glUniformMatrix3fv(theRenderer().uniformHandle("transform2D"), 1, GL_FALSE, 
+    glm::value_ptr(theRenderer().rootNode()->fullTransform() * transform2D_));
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture_handle_);
   for (vector<int>::iterator it = emitters_by_depth_.begin(); it != emitters_by_depth_.end(); ++it) {

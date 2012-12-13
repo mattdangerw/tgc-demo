@@ -221,12 +221,12 @@ void PathShape::createVAOs() {
     glGenVertexArrays(1, &solid_array_object_);
     glBindVertexArray(solid_array_object_);
     if (animated_) {
-      glEnableVertexAttribArray(Renderer::instance().attributeHandle("position"));
-      glEnableVertexAttribArray(Renderer::instance().attributeHandle("lerp_position1"));
-      glEnableVertexAttribArray(Renderer::instance().attributeHandle("lerp_position2"));
+      glEnableVertexAttribArray(theRenderer().attributeHandle("position"));
+      glEnableVertexAttribArray(theRenderer().attributeHandle("lerp_position1"));
+      glEnableVertexAttribArray(theRenderer().attributeHandle("lerp_position2"));
     } else {
       glBindBuffer(GL_ARRAY_BUFFER, data_->solidBufferObject());
-      GLuint handle = Renderer::instance().attributeHandle("position");
+      GLuint handle = theRenderer().attributeHandle("position");
       glEnableVertexAttribArray(handle);
       glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
     }
@@ -237,20 +237,20 @@ void PathShape::createVAOs() {
     glGenVertexArrays(1, &quadric_array_object_);
     glBindVertexArray(quadric_array_object_);
     if (animated_) {
-      glEnableVertexAttribArray(Renderer::instance().attributeHandle("position"));
-      glEnableVertexAttribArray(Renderer::instance().attributeHandle("lerp_position1"));
-      glEnableVertexAttribArray(Renderer::instance().attributeHandle("lerp_position2"));
-      glEnableVertexAttribArray(Renderer::instance().attributeHandle("bezier_coord"));      
+      glEnableVertexAttribArray(theRenderer().attributeHandle("position"));
+      glEnableVertexAttribArray(theRenderer().attributeHandle("lerp_position1"));
+      glEnableVertexAttribArray(theRenderer().attributeHandle("lerp_position2"));
+      glEnableVertexAttribArray(theRenderer().attributeHandle("bezier_coord"));      
     } else {
       // Set up the quadric vertices vertex buffer
       glBindBuffer(GL_ARRAY_BUFFER, data_->quadricBufferObject());
-      GLuint handle = Renderer::instance().attributeHandle("position");
+      GLuint handle = theRenderer().attributeHandle("position");
       glEnableVertexAttribArray(handle);
       glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
       // Pass in the bezier texture coords.
       glBindBuffer(GL_ARRAY_BUFFER, data_->bezierCoordsBufferObject());
-      handle = Renderer::instance().attributeHandle("bezier_coord");
+      handle = theRenderer().attributeHandle("bezier_coord");
       glEnableVertexAttribArray(handle);
       glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
     }
@@ -267,27 +267,27 @@ void PathShape::bindKeyframeBuffers() {
   if (data_->hasSolidVertices()) {
     glBindVertexArray(solid_array_object_);
     glBindBuffer(GL_ARRAY_BUFFER, keyframe1->solidBufferObject());
-    glVertexAttribPointer(Renderer::instance().attributeHandle("position"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(theRenderer().attributeHandle("position"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
     glBindBuffer(GL_ARRAY_BUFFER, keyframe2->solidBufferObject());
-    glVertexAttribPointer(Renderer::instance().attributeHandle("lerp_position1"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(theRenderer().attributeHandle("lerp_position1"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
     glBindBuffer(GL_ARRAY_BUFFER, keyframe3->solidBufferObject());
-    glVertexAttribPointer(Renderer::instance().attributeHandle("lerp_position2"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(theRenderer().attributeHandle("lerp_position2"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
   }
   if (data_->hasQuadricVertices()) {
     glBindVertexArray(quadric_array_object_);
     glBindBuffer(GL_ARRAY_BUFFER, keyframe1->quadricBufferObject());
-    glVertexAttribPointer(Renderer::instance().attributeHandle("position"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(theRenderer().attributeHandle("position"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
     glBindBuffer(GL_ARRAY_BUFFER, keyframe2->quadricBufferObject());
-    glVertexAttribPointer(Renderer::instance().attributeHandle("lerp_position1"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(theRenderer().attributeHandle("lerp_position1"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
     glBindBuffer(GL_ARRAY_BUFFER, keyframe3->quadricBufferObject());
-    glVertexAttribPointer(Renderer::instance().attributeHandle("lerp_position2"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(theRenderer().attributeHandle("lerp_position2"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
     glBindBuffer(GL_ARRAY_BUFFER, keyframe1->bezierCoordsBufferObject());
-    glVertexAttribPointer(Renderer::instance().attributeHandle("bezier_coord"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(theRenderer().attributeHandle("bezier_coord"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
   }
 }
 
@@ -307,27 +307,27 @@ void PathShape::drawHelper(bool asOccluder) {
   // Draw solid and quadric triangles, inverting the stencil each time.
   if (data_->hasSolidVertices()) {
     if (animated_) {
-      Renderer::instance().useProgram("minimal_animated");
-      glUniform1f(Renderer::instance().uniformHandle("lerp_t1"), lerp_ts_[0]);
-      glUniform1f(Renderer::instance().uniformHandle("lerp_t2"), lerp_ts_[1]);
+      theRenderer().useProgram("minimal_animated");
+      glUniform1f(theRenderer().uniformHandle("lerp_t1"), lerp_ts_[0]);
+      glUniform1f(theRenderer().uniformHandle("lerp_t2"), lerp_ts_[1]);
     } else {
-      Renderer::instance().useProgram("minimal");
+      theRenderer().useProgram("minimal");
     }
-    glUniformMatrix3fv(Renderer::instance().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
+    glUniformMatrix3fv(theRenderer().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
     glBindVertexArray(solid_array_object_);
     glDrawArrays(GL_TRIANGLE_FAN, 0, data_->solidVerticesSize());
   }
 
   if (data_->hasQuadricVertices()) {
     if (animated_) {
-      Renderer::instance().useProgram("quadric_animated");
-      glUniform1f(Renderer::instance().uniformHandle("lerp_t1"), lerp_ts_[0]);
-      glUniform1f(Renderer::instance().uniformHandle("lerp_t2"), lerp_ts_[1]);
+      theRenderer().useProgram("quadric_animated");
+      glUniform1f(theRenderer().uniformHandle("lerp_t1"), lerp_ts_[0]);
+      glUniform1f(theRenderer().uniformHandle("lerp_t2"), lerp_ts_[1]);
     } else {
-      Renderer::instance().useProgram("quadric");
+      theRenderer().useProgram("quadric");
     }
     glEnable(GL_DEPTH_TEST);
-    glUniformMatrix3fv(Renderer::instance().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
+    glUniformMatrix3fv(theRenderer().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
     glBindVertexArray(quadric_array_object_);
     glDrawArrays(GL_TRIANGLES, 0, data_->quadricVerticesSize());
     glDisable(GL_DEPTH_TEST);

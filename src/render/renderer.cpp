@@ -7,11 +7,19 @@
 #include "util/error.h"
 #include "util/transform2D.h"
 
+Renderer the_renderer;
+
+Renderer &theRenderer() {
+  return the_renderer;
+}
+
 Renderer::Renderer()
   : left_of_window_(0.0f),
     do_stencil_(true),
     light_position_(0.0f),
     current_program_(NULL) {}
+
+Renderer::~Renderer() {}
 
 void Renderer::init(int width, int height) {
   width_ = width;

@@ -5,8 +5,7 @@
 #include <list>
 #include <map>
 
-#include "game_state/game_entity.h"
-#include "game_state/ground.h"
+#include "game_state/entity.h"
 #include "render/shape_group.h"
 
 using std::list;
@@ -18,7 +17,7 @@ enum CloudType {
   SMALL_CLOUD
 };
 
-class Cloud {
+class Cloud : Entity {
   public:
     Cloud(glm::vec2 position, float velocity, float scale, float shade);
     ~Cloud();
@@ -45,25 +44,21 @@ class Cloud {
     ShapeGroup shape_;
 };
 
-class CloudManager : public GameEntity {
+class CloudManager : public Entity {
   public:
     CloudManager();
     ~CloudManager();
-    void init(Ground * ground);
+    void init();
     // Keeps clouds wrapping around viewable area.
-    void update(float delta_time, GameState *state);
-    void getTargets(vector<Target> *targets);
-    void colorTarget(Target target);
+    void update(float delta_time);
 
   private:
     // Helper methods
     void addRandomCloud(float x_position);
 
     // Member data.
-    Ground *ground_;
     list<Cloud *> clouds_;
     float dist_to_next_cloud_;
-    map<int, Cloud *> target_to_cloud_;
 };
 
 #endif  // SRC_CLOUDS_H_

@@ -22,11 +22,11 @@ void CircleDrawer::init(vector<Circle> *circles) {
   
   glBindBuffer(GL_ARRAY_BUFFER, buffer_object_);
   glBufferData(GL_ARRAY_BUFFER, sizeof(square), square, GL_STATIC_DRAW);
-  GLuint handle = Renderer::instance().attributeHandle("position");
+  GLuint handle = theRenderer().attributeHandle("position");
   glEnableVertexAttribArray(handle);
   glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
-  handle = Renderer::instance().attributeHandle("bezier_coord");
+  handle = theRenderer().attributeHandle("bezier_coord");
   glEnableVertexAttribArray(handle);
   glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 }
@@ -44,7 +44,7 @@ void CircleDrawer::extent(glm::vec2 *min, glm::vec2 *max) {
 
 void CircleDrawer::useScreenSpaceTexture(string texture_filename) {
   use_texture_ = true;
-  texture_handle_ = Renderer::instance().getTexture(texture_filename);
+  texture_handle_ = theRenderer().getTexture(texture_filename);
 }
 
 void CircleDrawer::useQuad(Quad *quad) {
@@ -65,20 +65,20 @@ void CircleDrawer::draw() {
 }
 
 void CircleDrawer::drawOccluder() {
-  Renderer::instance().useProgram("circles");
+  theRenderer().useProgram("circles");
   glm::vec4 occluder_vec(1.0f);
   occluder_vec.r = occluderColor();
-  glUniform4fv(Renderer::instance().uniformHandle("color"), 1, glm::value_ptr(glm::vec4(occluder_vec)));
+  glUniform4fv(theRenderer().uniformHandle("color"), 1, glm::value_ptr(glm::vec4(occluder_vec)));
   makeDrawCalls(false);
 }
 
 void CircleDrawer::drawColored() {
-  Renderer::instance().useProgram("circles");
+  theRenderer().useProgram("circles");
   makeDrawCalls(true);
 }
 
 void CircleDrawer::drawWithScreenTexture() {
-  Renderer::instance().useProgram("circles_screen_textured");
+  theRenderer().useProgram("circles_screen_textured");
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture_handle_);
   makeDrawCalls(false);
@@ -89,7 +89,7 @@ void CircleDrawer::drawWithQuad() {
   glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
   glStencilFunc(GL_ALWAYS, 0, 0xFF);
   glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-  Renderer::instance().useProgram("circles");
+  theRenderer().useProgram("circles");
   makeDrawCalls(false);
   glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
   glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
@@ -104,9 +104,9 @@ void CircleDrawer::makeDrawCalls(bool sendColors) {
     glm::mat3 circle_transform(1.0f);
     circle_transform = translate2D(circle_transform, it->center);
     circle_transform = scale2D(circle_transform, glm::vec2(it->radius + delta_radius_));
-    glUniformMatrix3fv(Renderer::instance().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform() * circle_transform));
+    glUniformMatrix3fv(theRenderer().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform() * circle_transform));
     if (sendColors) {
-      glUniform4fv(Renderer::instance().uniformHandle("color"), 1, glm::value_ptr(it->color));
+      glUniform4fv(theRenderer().uniformHandle("color"), 1, glm::value_ptr(it->color));
     }
     glBindVertexArray(array_object_);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);

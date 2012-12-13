@@ -17,23 +17,14 @@ add_executable(tgc-demo
   src/main.cpp
   src/game.h
   src/game.cpp
-  src/game_state/character.cpp
-  src/game_state/character.h
   src/game_state/clouds.cpp
   src/game_state/clouds.h
-  src/game_state/game_entity.h
-  src/game_state/ground.cpp
-  src/game_state/ground.h
-  src/game_state/ideas.cpp
-  src/game_state/ideas.h
-  src/game_state/jumping_crowd.cpp
-  src/game_state/jumping_crowd.h
-  src/game_state/point_mass.cpp
-  src/game_state/point_mass.h
-  src/game_state/thought_bubble.cpp
-  src/game_state/thought_bubble.h
-  src/game_state/triggerables.cpp
-  src/game_state/triggerables.h
+  src/game_state/entity.h
+  src/game_state/entity.cpp
+  src/game_state/state.h
+  src/game_state/state.cpp
+  src/game_state/updater.h
+  src/game_state/updater.cpp
   src/render/animator.h
   src/render/animator.cpp
   src/render/circles.cpp

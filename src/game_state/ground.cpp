@@ -79,14 +79,14 @@ void Ground::init() {
 
   initPathShape();
   background_.init("content/textures/background.dds", glm::vec2(1.0f));
-  background_.setParent(Renderer::instance().rootNode());
+  background_.setParent(theRenderer().rootNode());
   background_.setDisplayPriority(-99.0f);
   background_.setExtent(glm::vec2(0.0f, 0.0f), glm::vec2(width(), 1.0f));
   background_.setIsOccluder(false);
   background_.setShadowed(true);
   initTrees();
 
-  Renderer::instance().setLightPosition(glm::vec2(5.0f, 10.0f));
+  theRenderer().setLightPosition(glm::vec2(5.0f, 10.0f));
 }
 
 void Ground::initTrees() {
@@ -105,7 +105,7 @@ void Ground::initTrees() {
 void Ground::addTree(glm::vec2 location, float scale, float rotation, float display_priority) {
   ShapeGroup *tree = new ShapeGroup();
   tree->init("tree.group");
-  tree->setParent(Renderer::instance().rootNode());
+  tree->setParent(theRenderer().rootNode());
   glm::mat3 transform = glm::mat3(1.0f);
   transform = translate2D(transform, location);
   transform = scale2D(transform, glm::vec2(scale));
@@ -132,7 +132,7 @@ void Ground::initPathShape() {
   path.push_back(end);
   quad_.init("content/textures/ground.dds", glm::vec2(1.0f));
   shape_.init(path, &quad_);
-  shape_.setParent(Renderer::instance().rootNode());
+  shape_.setParent(theRenderer().rootNode());
   //shape_.setOccluder(false);
 }
 
@@ -153,7 +153,7 @@ float Ground::heightAt(float x) {
 void Ground::getTargets(vector<Target> *targets) {
   Target ground_target;
   ground_target.entity = this;
-  Renderer &renderer = Renderer::instance();
+  Renderer &renderer = theRenderer();
   float left = renderer.getLeftOfWindow();
   float win_width = renderer.windowWidth();
   float x_ground_target = left + win_width/2.0f;

@@ -105,7 +105,7 @@ void ThoughtBubble::init(Character *character) {
   fill_.init("content/textures/thought_bubble.dds", glm::vec2(2.0f));
   fill_.setExtent(glm::vec2(-0.3f, -0.2f), glm::vec2(0.3f, 0.2f));
   circle_drawer_.init(&bubble_circles_);
-  circle_drawer_.setParent(Renderer::instance().rootNode());
+  circle_drawer_.setParent(theRenderer().rootNode());
   circle_drawer_.useQuad(&fill_);
   circle_drawer_.changeRadii(0.01f);
   circle_drawer_.setDisplayPriority(100.0f);
@@ -119,15 +119,15 @@ void ThoughtBubble::init(Character *character) {
   circle_inside_drawer_.setParent(&circle_drawer_);
   // same for sub bubble
   sub_bubble_.init(&sub_bubble_circles_, 1.0f, 0.85f);
-  sub_bubble_.setParent(Renderer::instance().rootNode());
+  sub_bubble_.setParent(theRenderer().rootNode());
   sub_bubble_.setDisplayPriority(99.0f);
 
   sub_bubble2_.init(&sub_bubble_circles_, 0.5f, 0.7f);
-  sub_bubble2_.setParent(Renderer::instance().rootNode());
+  sub_bubble2_.setParent(theRenderer().rootNode());
   sub_bubble2_.setDisplayPriority(98.0f);
 
   sub_bubble3_.init(&sub_bubble_circles_, 0.3f, 0.55f);
-  sub_bubble3_.setParent(Renderer::instance().rootNode());
+  sub_bubble3_.setParent(theRenderer().rootNode());
   sub_bubble3_.setDisplayPriority(97.0f);
 }
 
@@ -141,7 +141,7 @@ void ThoughtBubble::update(float delta_time, GameState *state) {
       sub_bubble_.setIsVisible(false);
       sub_bubble2_.setIsVisible(false);
       sub_bubble3_.setIsVisible(false);
-      Renderer &renderer = Renderer::instance();
+      Renderer &renderer = theRenderer();
       start_ = bubble_mass_.position();
       end_ = glm::vec2(renderer.getLeftOfWindow() + renderer.windowWidth()/2, 0.75f);
       midway_ = glm::mix(start_, end_, 0.8f);

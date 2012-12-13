@@ -4,8 +4,6 @@
 #include <stdlib.h>
 
 #include "render/renderer.h"
-#include "render/path_shape.h"
-#include "render/quad.h"
 #include "util/transform2D.h"
 #include "util/random.h"
 
@@ -38,6 +36,7 @@ Cloud::~Cloud() {
 }
 
 void Cloud::init(CloudType type) {
+  Entity::init();
   switch (type) {
     case BIG_CLOUD:
       shape_.init("big_cloud.group");
@@ -49,7 +48,7 @@ void Cloud::init(CloudType type) {
       shape_.init("small_cloud.group");
       break;
   }
-  shape_.setParent(Renderer::instance().rootNode());
+  shape_.setParent(theRenderer().rootNode());
   width_ = 0.5f;
   updateShapeTransform();
   shape_.animator().queueAnimation("slow_change");
@@ -61,7 +60,7 @@ glm::vec2 Cloud::center() {
 }
 
 void Cloud::update(float delta_time) {
-  shape_.animator().update( 30 * delta_time);
+  shape_.animator().update(delta_time);
   position_.x -= velocity_ * delta_time;
   updateShapeTransform();
 }
@@ -89,10 +88,10 @@ CloudManager::~CloudManager() {
   }
 }
 
-void CloudManager::init(Ground *ground) {
-  ground_ = ground;
+void CloudManager::init() {
+  Entity::init();
   float x_position = randomFloat(0.0f, kCloudMaxXDistance);
-  while (x_position < ground_->width()) {
+  while (x_position < theRenderer().windowWidth()) {
     addRandomCloud(x_position);
     x_position += randomFloat(kCloudMinXDistance, kCloudMaxXDistance);
   }
@@ -100,8 +99,7 @@ void CloudManager::init(Ground *ground) {
 }
 
 // Keeps clouds wrapping around viewable area.
-void CloudManager::update(float delta_time, GameState *state) {
-  if (*state == PRE_EXPLODING || *state == EXPLODING) return;
+void CloudManager::update(float delta_time) {
   float last_cloud_x = 0.0f;
   list<Cloud *>::iterator it;
   for (it = clouds_.begin(); it != clouds_.end();) {
@@ -109,7 +107,7 @@ void CloudManager::update(float delta_time, GameState *state) {
     float x_begin, x_end;
     cloud->xExtent(&x_begin, &x_end);
     if (x_begin > last_cloud_x) last_cloud_x = x_begin;
-    float left_of_window = Renderer::instance().getLeftOfWindow();
+    float left_of_window = theRenderer().getLeftOfWindow();
     if (x_end < 0.0f) {
       delete *it;
       it = clouds_.erase(it);
@@ -118,11 +116,9 @@ void CloudManager::update(float delta_time, GameState *state) {
       ++it;
     }
   }
-  if (ground_->width() - last_cloud_x > dist_to_next_cloud_) {
-    if (*state != ENDING) {
-      addRandomCloud(last_cloud_x + dist_to_next_cloud_);
-      dist_to_next_cloud_ = randomFloat(kCloudMinXDistance, kCloudMaxXDistance);
-    }
+  if (theRenderer().windowWidth() - last_cloud_x > dist_to_next_cloud_) {
+    addRandomCloud(last_cloud_x + dist_to_next_cloud_);
+    dist_to_next_cloud_ = randomFloat(kCloudMinXDistance, kCloudMaxXDistance);
   }
 }
 
@@ -141,25 +137,4 @@ void CloudManager::addRandomCloud(float x_position) {
     }
     cloud->init(type);
     clouds_.push_back(cloud);
-}
-
-void CloudManager::getTargets(vector<Target> *targets) {
-  for (list<Cloud *>::iterator it = clouds_.begin(); it != clouds_.end(); ++it) {
-    Cloud *cloud = *it;
-    float x_begin, x_end;
-    cloud->xExtent(&x_begin, &x_end);
-    float left_of_window = Renderer::instance().getLeftOfWindow();
-    if (x_end > left_of_window) {
-      Target target;
-      target.position = cloud->center();
-      target.entity = this;
-      target.id = targets->size();
-      targets->push_back(target);
-      target_to_cloud_[target.id] = cloud;
-    }
-  }
-}
-
-void CloudManager::colorTarget(Target target) {
-  target_to_cloud_[target.id]->setColorMask(kCloudColors[target.id%numColors]);
 }

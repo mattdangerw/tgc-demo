@@ -15,15 +15,17 @@ using std::string;
 using std::vector;
 using std::map;
 
+class Renderer;
+
+Renderer &theRenderer();
+
 // Does all the setting up of OpenGL and draws all the shapes in the scene.
 // Also manages textures and shader loading.
 // A singleton class, mainly because I only ever want one and I'm too lazy to pass it around everywhere.
 class Renderer {
   public:
-    static Renderer& instance() {
-      static Renderer instance;
-      return instance;
-    }
+    Renderer();
+    ~Renderer();
     // Does GL calls to prep for rendering.
     void init(int width, int height);
     void draw();
@@ -50,10 +52,6 @@ class Renderer {
     GLuint getTexture(string filename);
 
   private:
-    // Singleton. Keep these private.
-    Renderer();
-    Renderer(Renderer const& copy);
-    Renderer& operator=(Renderer const& copy);
     // Helper methods.
     void setupScreenQuad();
     void setupFBOs();

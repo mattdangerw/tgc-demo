@@ -51,7 +51,7 @@ void IdeaManager::init(ThoughtBubble *thought_bubble) {
   thought_bubble_ = thought_bubble;
   // TODO: get the number of particles somewhere else.
   drawer_.init(20);
-  Renderer::instance().addDrawable3D(&drawer_);
+  theRenderer().addDrawable3D(&drawer_);
 }
 
 void IdeaManager::addIdeas(int num_ideas) {
@@ -126,7 +126,7 @@ void IdeaManager::setTargets(const vector<Target> &targets) {
       time_till_escape+=delta_escape;
       delta_escape*=0.85f;
     } else {
-      Renderer &renderer = Renderer::instance();
+      Renderer &renderer = theRenderer();
       glm::vec2 randomScreenSpace(renderer.getLeftOfWindow() + randomFloat(0.0f, 1.0f) * renderer.windowWidth(),
         randomFloat(0.0f, 1.0f));
       // Transform to particle sys coordinate system.

@@ -32,10 +32,8 @@ class Game {
     void handleKeyboardEvent(int key, int action);
 
   private:
-    GameState state_, last_state_;
-
     // Last time update was called in seconds since start.
-    float last_frame_time_, time_in_ending_, time_in_exploding_;
+    float last_frame_time_;
 
     // Key state tracking
     bool leave_game_;
@@ -43,18 +41,6 @@ class Game {
     bool left_down_, right_down_;
     // Space bar was just pressed.
     bool space_pressed_;
-
-    vector<Target> targets_;
-    
-    // Game entities
-    vector<GameEntity *> entities_;
-    Ground ground_;
-    Character character_;
-    ThoughtBubble thought_bubble_;
-    IdeaManager idea_manager_;
-    CloudManager cloud_manager_;
-    TriggerableManager triggerable_manager_;
-    JumpingCrowd crowds_[2];
 };
 
 #endif  // SRC_GAME_H_

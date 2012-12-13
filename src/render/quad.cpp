@@ -41,14 +41,14 @@ void Quad::initHelper() {
   glGenBuffers(1, &position_buffer_object_);
   glBindBuffer(GL_ARRAY_BUFFER, position_buffer_object_);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_), vertices_, GL_STATIC_DRAW);
-  GLuint handle = Renderer::instance().attributeHandle("position");
+  GLuint handle = theRenderer().attributeHandle("position");
   glEnableVertexAttribArray(handle);
   glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
   glGenBuffers(1, &tex_coord_buffer_object_);
   glBindBuffer(GL_ARRAY_BUFFER, tex_coord_buffer_object_);
   glBufferData(GL_ARRAY_BUFFER, sizeof(tex_coords_), tex_coords_, GL_STATIC_DRAW);
-  handle = Renderer::instance().attributeHandle("tex_coord");
+  handle = theRenderer().attributeHandle("tex_coord");
   glEnableVertexAttribArray(handle);
   glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 }
@@ -77,7 +77,7 @@ void Quad::setExtent(glm::vec2 min, glm::vec2 max) {
 
 void Quad::useTexture(string texture_file) {
   textured_ = true;
-  texture_handle_ = Renderer::instance().getTexture(texture_file);
+  texture_handle_ = theRenderer().getTexture(texture_file);
 }
 
 void Quad::useColor(glm::vec4 color) {
@@ -88,25 +88,25 @@ void Quad::useColor(glm::vec4 color) {
 void Quad::draw() {
   if (textured_) {
     string program = shadowed_ ? "textured_with_shadows" : "textured";
-    Renderer::instance().useProgram(program);
-    glUniform4fv(Renderer::instance().uniformHandle("color_mask"), 1, glm::value_ptr(color_mask_));
+    theRenderer().useProgram(program);
+    glUniform4fv(theRenderer().uniformHandle("color_mask"), 1, glm::value_ptr(color_mask_));
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture_handle_);
   } else {
-    Renderer::instance().useProgram("minimal");
-    glUniform4fv(Renderer::instance().uniformHandle("color"), 1, glm::value_ptr(color_));
+    theRenderer().useProgram("minimal");
+    glUniform4fv(theRenderer().uniformHandle("color"), 1, glm::value_ptr(color_));
   }
-  glUniformMatrix3fv(Renderer::instance().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
+  glUniformMatrix3fv(theRenderer().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
   glBindVertexArray(array_object_);
   glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }
 
 void Quad::drawOccluder() {
-  Renderer::instance().useProgram("minimal");
+  theRenderer().useProgram("minimal");
   glm::vec4 occluder_vec(1.0f);
   occluder_vec.r = occluderColor();
-  glUniform4fv(Renderer::instance().uniformHandle("color"), 1, glm::value_ptr(occluder_vec));
-  glUniformMatrix3fv(Renderer::instance().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
+  glUniform4fv(theRenderer().uniformHandle("color"), 1, glm::value_ptr(occluder_vec));
+  glUniformMatrix3fv(theRenderer().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
   glBindVertexArray(array_object_);
   glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }
