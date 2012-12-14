@@ -37,7 +37,7 @@
 
 #ifdef __cplusplus
 
-   #include <string.h>
+   #include <string>
    #include <cassert>
    using std::string;
 

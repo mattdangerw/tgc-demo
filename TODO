@@ -1,0 +1,52 @@
+TODO:
+  bring some code back in
+  
+  art dawg. prototype some shit!
+
+story:
+trees->birds->ruins->frogs->rainy valley->mountain->friend
+
+code wish list:
+  alpha functions: this should be pretty simple to give a few easing functions
+  thought kill lock children instead shade group recursively set the attrs is wants on all children
+
+  modernize circle drawer to group of circles
+  or at least make screen space texture quad then we can set circle extent to be fill and clean header
+
+  bezier class
+
+  bound the springs!
+
+  fix up game state code
+    ground poorly named
+    theres two todos for that i think
+    go through all our constants figure out which ones need to be there
+
+features wish list:
+  self occluding smoke
+
+  rain do it!
+  degenerate vertices in the clouds. should be easier with example animation code done
+  particles could be harder, emitters might want to check occluder texture somehow
+
+  better textures and more content
+
+animation i need:
+  thought bubble--done
+  trees--static works in system
+  frogs--ribbit works, jumping dont
+  brids--not decided. but if done with mainly static body and wings flapping tots doable in current system
+decision go with current system
+
+nitpicky things:
+  acessors mixture of getblah() and blah()
+  revisit pointer vs ref?
+
+
+inspiration:
+  mykanos paper cutouts! http://www.youtube.com/watch?v=DT-dxG4WWf4
+  trippy solid shaped animation http://www.dailymotion.com/video/xcxt59_of-montreal-wraith-pinned-to-the-mi_music
+  paperman
+  kishi bashi another paper cutour music vid https://www.youtube.com/watch?v=EewB7xHHIvE
+  terry gilliam on cutour animation (probably not the helpful but whatevs) http://www.cartoonbrew.com/how-to/terry-gilliam-teaches-cut-out-animation-47142.html
+  tearaway http://www.youtube.com/watch?v=NK6_QvdxyXQ

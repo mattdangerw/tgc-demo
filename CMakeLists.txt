@@ -43,6 +43,8 @@ add_executable(tgc-demo
   src/render/renderer.h
   src/render/shader_program.cpp
   src/render/shader_program.h
+  src/util/settings.h
+  src/util/settings.cpp
   src/util/error.h
   src/util/error.cpp
   src/util/random.h

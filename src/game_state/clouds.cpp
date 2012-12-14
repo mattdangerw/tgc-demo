@@ -6,17 +6,7 @@
 #include "render/renderer.h"
 #include "util/transform2D.h"
 #include "util/random.h"
-
-static const float kCloudMinScale = 0.18f;
-static const float kCloudMaxScale = 0.3f;
-static const float kCloudMinY = 0.7f;
-static const float kCloudMaxY = 1.0f;
-static const float kCloudMinXDistance = 0.4f;
-static const float kCloudMaxXDistance = 0.5f;
-static const float kCloudMinVelocity = 0.03f;
-static const float kCloudMaxVelocity = 0.035f;
-static const float kCloudMinShade = 0.95f;
-static const float kCloudMaxShade = 1.15f;
+#include "util/settings.h"
 
 static const int numColors = 5;
 static const glm::vec4 kCloudColors[5] = {glm::vec4(1.0f, 0.6f, 0.5f, 1.0f),  // yellow red
@@ -90,12 +80,12 @@ CloudManager::~CloudManager() {
 
 void CloudManager::init() {
   Entity::init();
-  float x_position = randomFloat(0.0f, kCloudMaxXDistance);
+  float x_position = randomFloat(0.0f, getSetting("cloud_max_x_distance").getFloat());
   while (x_position < theRenderer().windowWidth()) {
     addRandomCloud(x_position);
-    x_position += randomFloat(kCloudMinXDistance, kCloudMaxXDistance);
+    x_position += randomFloat(getSetting("cloud_min_x_distance").getFloat(), getSetting("cloud_max_x_distance").getFloat());
   }
-  dist_to_next_cloud_ = randomFloat(kCloudMinXDistance, kCloudMaxXDistance);
+  dist_to_next_cloud_ = randomFloat(getSetting("cloud_min_x_distance").getFloat(), getSetting("cloud_max_x_distance").getFloat());
 }
 
 // Keeps clouds wrapping around viewable area.
@@ -118,15 +108,15 @@ void CloudManager::update(float delta_time) {
   }
   if (theRenderer().windowWidth() - last_cloud_x > dist_to_next_cloud_) {
     addRandomCloud(last_cloud_x + dist_to_next_cloud_);
-    dist_to_next_cloud_ = randomFloat(kCloudMinXDistance, kCloudMaxXDistance);
+    dist_to_next_cloud_ = randomFloat(getSetting("cloud_min_x_distance").getFloat(), getSetting("cloud_max_x_distance").getFloat());
   }
 }
 
 void CloudManager::addRandomCloud(float x_position) {
-    float scale = randomFloat(kCloudMinScale, kCloudMaxScale);
-    float velocity = randomFloat(kCloudMinVelocity, kCloudMaxVelocity);
-    float shade = randomFloat(kCloudMinShade, kCloudMaxShade);
-    float y_position = randomFloat(kCloudMinY, kCloudMaxY - scale);
+    float scale = randomFloat(getSetting("cloud_min_scale").getFloat(), getSetting("cloud_max_scale").getFloat());
+    float velocity = randomFloat(getSetting("cloud_min_velocity").getFloat(), getSetting("cloud_max_velocity").getFloat());
+    float shade = randomFloat(getSetting("cloud_min_shade").getFloat(), getSetting("cloud_max_shade").getFloat());
+    float y_position = randomFloat(getSetting("cloud_min_y").getFloat(), getSetting("cloud_max_y").getFloat() - scale);
     glm::vec2 position = glm::vec2(x_position, y_position);
     Cloud *cloud = new Cloud(position, velocity, scale, shade);
     CloudType type = BIG_CLOUD;

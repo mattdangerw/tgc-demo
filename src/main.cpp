@@ -4,13 +4,9 @@
 #include <GL/glfw.h>
 
 #include "game.h"
+#include "util/settings.h"
 
 static Game *game = NULL;
-#ifdef _DEBUG
-static bool fullscreen = false;
-#else
-static bool fullscreen = true;
-#endif
 
 void cleanupAndExit(int exit_code) {
   glfwTerminate();
@@ -36,6 +32,7 @@ int main(int argc, char *argv[]) {
   printf("Welcome to the demo. Controls are quite simple--left/right arrows and space to play, escape to quit. Enjoy!\n");
   printf("Press enter to continue...");
   std::getchar();
+  loadSettings("content/game_settings");
 
   // Demand a core profile. This appears to work on AMD but not nvidia cards.
   // Possibly because glew does not play nice with core profiles.
@@ -45,6 +42,7 @@ int main(int argc, char *argv[]) {
 
   // This is really for multisampling not FSAA but whatevs, we still need it.
   glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 8);
+  bool fullscreen = getSetting("fullscreen").getBoolean();
   int screen_mode = fullscreen ? GLFW_FULLSCREEN : GLFW_WINDOW;
   int width, height;
   if (fullscreen) {

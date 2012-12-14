@@ -1,0 +1,14 @@
+{
+  "debug_mode":true,
+  "fullscreen":false,
+  "cloud_min_scale":0.18,
+  "cloud_max_scale":0.3,
+  "cloud_min_y":0.7,
+  "cloud_max_y":1.0,
+  "cloud_min_x_distance":0.4,
+  "cloud_max_x_distance":0.5,
+  "cloud_min_velocity":0.03,
+  "cloud_max_velocity":0.035,
+  "cloud_min_shade":0.95,
+  "cloud_max_shade":1.15
+}
