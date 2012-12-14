@@ -2,16 +2,11 @@
 
 #include <GL/glew.h>
 
+#include "game_state/state.h"
+#include "util/settings.h"
 #include "util/transform2D.h"
 #include "util/random.h"
 
-#ifdef _DEBUG
-static const float kSpeed = 5.0f;
-#else
-static const float kSpeed = 0.4f;
-#endif
-static const float kPlayerWidth = 0.008f;
-static const float kGrowthRate = 0.004f;
 static const float kHeightAboveGround = 0.0f;
 static const float kGravity = -8.0f;
 static const float kInitialJumpVelocity = 1.2f;
@@ -23,7 +18,8 @@ Character::Character()
 
 Character::~Character() {}
 
-void Character::init(Ground *ground) {
+void Character::init() {
+  Entity::init();
   circle_vector_.push_back(Circle());
   circle_ = &circle_vector_[0];
   circle_->radius = 0.001f;
@@ -31,8 +27,7 @@ void Character::init(Ground *ground) {
   drawer_.setParent(theRenderer().rootNode());
   drawer_.setDisplayPriority(5.0f);
   drawer_.setIsVisible(true);
-  ground_ = ground;
-  position_.x = kPlayerWidth;
+  position_.x = getSetting("player_width").getFloat();
   updateY(0.0f);
   updateCircle();
 }
@@ -43,26 +38,18 @@ void Character::setInput(bool left_down, bool right_down, bool space_pressed) {
   space_pressed_ = space_pressed;
 }
 
-void Character::update(float delta_time, GameState *state) {
-  if (*state == WALKING) {
-    // Update x position.
-    if (left_down_) moveLeft(delta_time);
-    if (right_down_) moveRight(delta_time);
-    // Udpate y postion.
-    if (space_pressed_) this->jump();
-  }
-  if (*state == TRIGGERING_JUMPING || *state == ENDING) {
-    if (time_on_ground_ > time_till_next_jump_) {
-      this->jump();
-      time_till_next_jump_ = randomFloat(0.0f, 0.2f);
-    }
-  }
+void Character::update(float delta_time) {
+  // Update x position.
+  if (left_down_) moveLeft(delta_time);
+  if (right_down_) moveRight(delta_time);
+  // Udpate y postion.
+  if (space_pressed_) this->jump();
   updateY(delta_time);
   updateCircle();
 }
 
 void Character::updateCircle() {
-  float newRadius = (kPlayerWidth + kGrowthRate * position_.x);
+  float newRadius = (getSetting("player_width").getFloat() + getSetting("player_growth_rate").getFloat() * position_.x);
   if (circle_->radius < newRadius) {
     circle_->radius = newRadius;
   }
@@ -71,17 +58,17 @@ void Character::updateCircle() {
 }
 
 void Character::moveLeft(float delta_time) {
-  position_.x -= kSpeed * delta_time;
+  position_.x -= getSetting("player_speed").getFloat() * delta_time;
   if (position_.x < 0.0f) {
     position_.x = 0.0f;
   }
 }
 
 void Character::moveRight(float delta_time) {
-  position_.x += kSpeed * delta_time;
-  float level_width = ground_->width();
-  if (position_.x + kPlayerWidth > level_width) {
-    position_.x = level_width - kPlayerWidth;
+  position_.x += getSetting("player_speed").getFloat() * delta_time;
+  float level_width = theState().ground.width();
+  if (position_.x + circle_->radius > level_width) {
+    position_.x = level_width - circle_->radius;
   }
 }
 
@@ -93,7 +80,7 @@ void Character::jump() {
 }
 
 void Character::updateY(float delta_time) {
-  float minimum_height = ground_->heightAt(position_.x) + kHeightAboveGround;
+  float minimum_height = theState().ground.heightAt(position_.x) + kHeightAboveGround;
   if (is_jumping_) {
     position_.y += jump_velocity_ * delta_time;
     jump_velocity_ += kGravity * delta_time;
@@ -107,18 +94,6 @@ void Character::updateY(float delta_time) {
   }
 }
 
-void Character::getTargets(vector<Target> *targets) {
-  Target target;
-  target.position = circle_->center;
-  target.entity = this;
-  target.id = targets->size();
-  targets->push_back(target);
-}
-
-void Character::colorTarget(Target target) {
-  circle_->color = glm::vec4(0.65f, 0.47f, 0.0f, 1.0f);
-}
-
 glm::vec2 Character::groundPosition() { 
-  return glm::vec2(position_.x, ground_->heightAt(position_.x) + kHeightAboveGround);
+  return glm::vec2(position_.x, theState().ground.heightAt(position_.x) + kHeightAboveGround);
 }

@@ -5,6 +5,8 @@
 #include "game_state/background.h"
 #include "game_state/ground.h"
 #include "game_state/clouds.h"
+#include "game_state/character.h"
+#include "game_state/scroller.h"
 
 class State;
 
@@ -15,11 +17,12 @@ class State {
   public:
     void init();
     Updater updater;
-    //Character character;
     //EventManager event_manager;
     Ground ground;
     Background background;
+    Scroller scroller;
     CloudManager cloud_manager;
+    Character character;
     //ParticleManager particle_manager;
     //TreeManager tree_manager;
     //FrogManager frog_manager;

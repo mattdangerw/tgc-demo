@@ -4,7 +4,6 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-#include "game_state/game_entity.h"
 #include "render/path_shape.h"
 #include "render/shape_group.h"
 #include "render/quad.h"

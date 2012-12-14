@@ -37,7 +37,7 @@ void Game::update() {
   float delta_time = now - last_frame_time_;
 
   theState().updater.updateAll(delta_time);
-  //theState().character.setInput(left_down_, right_down_, space_pressed_);
+  theState().character.setInput(left_down_, right_down_, space_pressed_);
 
   space_pressed_ = false;
   last_frame_time_ = now;

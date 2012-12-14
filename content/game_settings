@@ -10,5 +10,9 @@
   "cloud_min_velocity":0.03,
   "cloud_max_velocity":0.035,
   "cloud_min_shade":0.95,
-  "cloud_max_shade":1.15
+  "cloud_max_shade":1.15,
+  "player_width":0.008,
+  "player_growth_rate":0.004,
+  "player_speed":0.5,
+  "player_screen_x":0.4
 }

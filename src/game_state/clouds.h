@@ -17,7 +17,7 @@ enum CloudType {
   SMALL_CLOUD
 };
 
-class Cloud : Entity {
+class Cloud : public Entity {
   public:
     Cloud(glm::vec2 position, float velocity, float scale, float shade);
     ~Cloud();

@@ -73,5 +73,7 @@ void State::init() {
 
   ground.init(ground_points);
   background.init();
+  scroller.init();
   cloud_manager.init();
+  character.init();
 }

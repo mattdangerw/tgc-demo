@@ -5,28 +5,24 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "game_state/ground.h"
-#include "game_state/game_entity.h"
+#include "game_state/entity.h"
 #include "render/path_shape.h"
 #include "render/quad.h"
 #include "render/circles.h"
 
 using std::string;
 
-class Character : public GameEntity {
+class Character : public Entity {
   public:
     Character();
     ~Character();
-    void init(Ground *ground);
+    void init();
     // Record keyboard input for the frame.
     void setInput(bool left_down, bool right_down, bool space_pressed);
-    // Update without character movement
-    void update(float delta_time, GameState *state);
+    void update(float delta_time);
     // Get the character position.
     glm::vec2 position() { return position_; }
     glm::vec2 groundPosition();
-    void getTargets(vector<Target> *targets);
-    void colorTarget(Target target);
 
   private:
     // Helper functions.
@@ -37,7 +33,6 @@ class Character : public GameEntity {
     // Updates Y coord based up jumping state and ground height.
     void updateY(float delta_time);
     // Member data.
-    Ground *ground_;
     bool left_down_, right_down_, space_pressed_;
     glm::vec2 position_;
     bool is_jumping_;
