@@ -25,6 +25,10 @@ add_executable(tgc-demo
   src/game_state/state.cpp
   src/game_state/updater.h
   src/game_state/updater.cpp
+  src/game_state/ground.h
+  src/game_state/ground.cpp
+  src/game_state/background.h
+  src/game_state/background.cpp
   src/render/animator.h
   src/render/animator.cpp
   src/render/circles.cpp

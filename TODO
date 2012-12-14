@@ -17,11 +17,6 @@ code wish list:
 
   bound the springs!
 
-  fix up game state code
-    ground poorly named
-    theres two todos for that i think
-    go through all our constants figure out which ones need to be there
-
 features wish list:
   self occluding smoke
 

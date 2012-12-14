@@ -2,6 +2,8 @@
 #define STATE_H_
 
 #include "game_state/updater.h"
+#include "game_state/background.h"
+#include "game_state/ground.h"
 #include "game_state/clouds.h"
 
 class State;
@@ -15,6 +17,8 @@ class State {
     Updater updater;
     //Character character;
     //EventManager event_manager;
+    Ground ground;
+    Background background;
     CloudManager cloud_manager;
     //ParticleManager particle_manager;
     //TreeManager tree_manager;

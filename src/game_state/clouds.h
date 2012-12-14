@@ -55,6 +55,7 @@ class CloudManager : public Entity {
   private:
     // Helper methods
     void addRandomCloud(float x_position);
+    float randomDistance();
 
     // Member data.
     list<Cloud *> clouds_;

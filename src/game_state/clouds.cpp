@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <stdlib.h>
 
+#include "game_state/state.h"
 #include "render/renderer.h"
 #include "util/transform2D.h"
 #include "util/random.h"
@@ -81,11 +82,11 @@ CloudManager::~CloudManager() {
 void CloudManager::init() {
   Entity::init();
   float x_position = randomFloat(0.0f, getSetting("cloud_max_x_distance").getFloat());
-  while (x_position < theRenderer().windowWidth()) {
+  while (x_position < theState().ground.width()) {
     addRandomCloud(x_position);
-    x_position += randomFloat(getSetting("cloud_min_x_distance").getFloat(), getSetting("cloud_max_x_distance").getFloat());
+    x_position += randomDistance();
   }
-  dist_to_next_cloud_ = randomFloat(getSetting("cloud_min_x_distance").getFloat(), getSetting("cloud_max_x_distance").getFloat());
+  dist_to_next_cloud_ = randomDistance();
 }
 
 // Keeps clouds wrapping around viewable area.
@@ -97,7 +98,6 @@ void CloudManager::update(float delta_time) {
     float x_begin, x_end;
     cloud->xExtent(&x_begin, &x_end);
     if (x_begin > last_cloud_x) last_cloud_x = x_begin;
-    float left_of_window = theRenderer().getLeftOfWindow();
     if (x_end < 0.0f) {
       delete *it;
       it = clouds_.erase(it);
@@ -106,9 +106,9 @@ void CloudManager::update(float delta_time) {
       ++it;
     }
   }
-  if (theRenderer().windowWidth() - last_cloud_x > dist_to_next_cloud_) {
+  if (theState().ground.width() - last_cloud_x > dist_to_next_cloud_) {
     addRandomCloud(last_cloud_x + dist_to_next_cloud_);
-    dist_to_next_cloud_ = randomFloat(getSetting("cloud_min_x_distance").getFloat(), getSetting("cloud_max_x_distance").getFloat());
+    dist_to_next_cloud_ = randomDistance();
   }
 }
 
@@ -127,4 +127,8 @@ void CloudManager::addRandomCloud(float x_position) {
     }
     cloud->init(type);
     clouds_.push_back(cloud);
+}
+
+float CloudManager::randomDistance() {
+  return randomFloat(getSetting("cloud_min_x_distance").getFloat(), getSetting("cloud_max_x_distance").getFloat());
 }
