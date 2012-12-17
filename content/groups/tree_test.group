@@ -1,4 +1,0 @@
-[
- {"path_file":"tree_test0.path", "texture_file":"bark.dds", "texture_scale":{"x":0.2, "y":0.2}},
- {"path_file":"tree_test1.path", "texture_file":"leaves.dds", "texture_scale":{"x":0.2, "y":0.2}},
-]

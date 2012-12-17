@@ -1,17 +1,17 @@
 {
   "fills":{
-    "body":{"file":"bark.dds", "scale":{"x":0.2, "y":0.2}},
-    "head":{"file":"leaves.dds", "scale":{"x":0.2, "y":0.2}},
-    "wings":{"file":"leaves.dds", "scale":{"x":0.2, "y":0.2}}
+    "body":{"file":"bark.dds", "scale":[0.2, 0.2]},
+    "head":{"file":"leaves.dds", "scale":[0.2, 0.2]},
+    "wings":{"file":"leaves.dds", "scale":[0.2, 0.2]}
   },
   "frames":{
     "frame1":{"body":"bird1_shape0.path", "head":"bird1_shape1.path", "wings":"bird1_shape2.path"},
     "frame2":{"body":"bird2_shape0.path", "head":"bird2_shape1.path", "wings":"bird2_shape2.path"}
   },
   "colors":{
-    "body":{"r":1.2, "g":0.6, "b":0.3, "a":1.0},
-    "head":{"r":1.0, "g":2.0, "b":1.0, "a":1.0},
-    "wings":{"r":1.0, "g":2.0, "b":1.0, "a":1.0}
+    "body":[1.2, 0.6, 0.3, 1.0],
+    "head":[1.0, 2.0, 1.0, 1.0],
+    "wings":[1.0, 2.0, 1.0, 1.0]
   },
   "animations":{
     "fly":{

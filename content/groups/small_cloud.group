@@ -1,6 +1,6 @@
 {
   "fills":{
-    "cloud":{"file":"paper3.dds", "scale":{"x":0.25, "y":0.25}}
+    "cloud":{"file":"paper3.dds", "scale":[0.25, 0.25]}
   },
   "frames":{
     "frame1":{"cloud":"small_cloud1.path"},
@@ -16,6 +16,6 @@
     }
   },
   "colors":{
-    "cloud":{"r":1.0, "g":0.0, "b":1.0, "a":1.0}
+    "cloud":[1.0, 0.0, 1.0, 1.0]
   }
 }

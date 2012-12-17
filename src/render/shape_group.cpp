@@ -34,9 +34,7 @@ void ShapeGroup::init(string filename) {
     string fill_name = json_fills.getNameAt(fill_index);
     const json_value &json_fill = json_fills.getValueAt(fill_index);
     string texture_file = json_fill["file"].getString();
-    glm::vec2 texture_scale;
-    texture_scale.x = json_fill["scale"]["x"].getFloat();
-    texture_scale.y = json_fill["scale"]["y"].getFloat();
+    glm::vec2 texture_scale = json_fill["scale"].getVec2();
     fill.init("content/textures/" + texture_file, texture_scale);
     // Parse shape.
     if (multiple_frames) {
@@ -59,15 +57,11 @@ void ShapeGroup::init(string filename) {
     shape.setParent(this);
     shape.setDisplayPriority(priority);
     // Parse color.
-    const json_value &json_color = json_colors[fill_name];
-    glm::vec4 color;
     if (has_colors) {
-      color.r = json_color["r"].getFloat();
-      color.g = json_color["g"].getFloat();
-      color.b = json_color["b"].getFloat();
-      color.a = json_color["a"].getFloat();
+      colors_[fill_name] = json_colors[fill_name].getVec4();
+    } else {
+      colors_[fill_name] = glm::vec4(0.0f);
     }
-    colors_[fill_name] = color;
     // Add to group.
     shapes_[fill_name] = shape_and_fill;
     priority++;

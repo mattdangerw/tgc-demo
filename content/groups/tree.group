@@ -1,24 +1,22 @@
 {
   "fills":{
-    "body":{"file":"bark.dds", "scale":{"x":0.2, "y":0.2}},
-    "head":{"file":"leaves.dds", "scale":{"x":0.2, "y":0.2}}
-    "wings":{"file":"leaves.dds", "scale":{"x":0.2, "y":0.2}}
+    "trunk":{"file":"bark.dds", "scale":[0.2, 0.2]},
+    "leaves":{"file":"leaves.dds", "scale":[0.2, 0.2]}
   },
   "frames":{
-    "frame1":{"body":"bird1_shape0.path", "head":"bird1_shape1.path", "wings":"bird1_shape2.path"},
-    "frame2":{"body":"bird2_shape0.path", "head":"bird2_shape1.path", "wings":"bird2_shape2.path"},
+    "frame1":{"trunk":"tree_frame1_shape0.path", "leaves":"tree_frame1_shape1.path"},
+    "frame2":{"trunk":"tree_frame2_shape0.path", "leaves":"tree_frame2_shape1.path"}
   },
   "colors":{
-    "body":{"r":1.2, "g":0.6, "b":0.3, "a":1.0},
-    "head":{"r":1.0, "g":2.0, "b":1.0, "a":1.0}
-    "wings":{"r":1.0, "g":2.0, "b":1.0, "a":1.0}
+    "trunk":[1.2, 0.6, 0.3, 1.0],
+    "leaves":[1.0, 2.0, 1.0, 1.0]
   },
   "animations":{
-    "fly":{
-      "repeats":true,
+    "wind":{
+      "repeats":false,
       "keyframes":[
-        {"name":"frame2", "time":0.3},
-        {"name":"frame1", "time":0.3}
+        {"name":"frame2", "time":0.5},
+        {"name":"frame1", "time":0.5}
       ]
     }
   }

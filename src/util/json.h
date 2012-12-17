@@ -39,6 +39,7 @@
 
    #include <string>
    #include <cassert>
+   #include <glm/glm.hpp>
    using std::string;
 
    extern "C"
@@ -184,6 +185,23 @@ typedef struct _json_value
          inline int getInteger() const {
            assert(type == json_integer);
            return u.integer;
+         }
+
+         inline glm::vec2 getVec2() const {
+           assert(type == json_array);
+           return glm::vec2(u.array.values[0]->getFloat(), u.array.values[1]->getFloat());
+         }
+
+         inline glm::vec3 getVec3() const {
+           assert(type == json_array);
+           return glm::vec3(u.array.values[0]->getFloat(), u.array.values[1]->getFloat(),
+                            u.array.values[2]->getFloat());
+         }
+
+         inline glm::vec4 getVec4() const {
+           assert(type == json_array);
+           return glm::vec4(u.array.values[0]->getFloat(), u.array.values[1]->getFloat(),
+                            u.array.values[2]->getFloat(), u.array.values[3]->getFloat());
          }
    #endif
 
