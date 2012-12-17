@@ -32,7 +32,7 @@ class OutputPath:
     for (vertex_type, x, y) in self.path:
       x *= scale
       y = 1 - y * scale
-      to_json.append({"type":vertex_type, "x":x, "y":y})
+      to_json.append({"type":vertex_type, "pos":[x, y]})
     # to_json.reverse()
     out.write(json.dumps(to_json, sort_keys=True))
     out.close()

@@ -86,8 +86,7 @@ void PathShapeData::readVertices(string filename, vector<PathVertex> *vertices) 
     int type = elem["type"].getInteger();
     if (type == 0) continue;
     vertex.type = (PathVertexType)type;
-    vertex.position.x = elem["x"].getFloat();
-    vertex.position.y = elem["y"].getFloat();
+    vertex.position = elem["pos"].getVec2();
     vertices->push_back(vertex);
   }
   json_value_free(&path_json);
