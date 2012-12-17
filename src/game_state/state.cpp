@@ -7,6 +7,7 @@ State &theState() {
 }
 
 void State::init() {
+  // Someday do all this positioning from a file, but for now we'll just keep all the level set up here.
   vector<glm::vec2> ground_points;
   ground_points.push_back(glm::vec2(0.0f, 0.2f));
   ground_points.push_back(glm::vec2(0.3f, 0.19f));
@@ -71,9 +72,11 @@ void State::init() {
 
   theRenderer().setLightPosition(glm::vec2(5.0f, 10.0f));
 
+  event_manager.init();
   ground.init(ground_points);
   background.init();
   scroller.init();
   cloud_manager.init();
+  bird_manager.init();
   character.init();
 }

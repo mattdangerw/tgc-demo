@@ -33,6 +33,10 @@ add_executable(tgc-demo
   src/game_state/character.cpp
   src/game_state/scroller.h
   src/game_state/scroller.cpp
+  src/game_state/event_manager.h
+  src/game_state/event_manager.cpp
+  src/game_state/birds.h
+  src/game_state/birds.cpp
   src/render/animator.h
   src/render/animator.cpp
   src/render/circles.cpp

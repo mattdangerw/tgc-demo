@@ -1,13 +1,16 @@
 TODO:
-  bring some code back in
-  
   art dawg. prototype some shit!
+
+  trees up first!
+  then birds ruins and frogs...
+  then rain and friend
+  then particles
 
 story:
 trees->birds->ruins->frogs->rainy valley->mountain->friend
 
 code wish list:
-  alpha functions: this should be pretty simple to give a few easing functions
+  tweening functions: this should be pretty simple to give a few easing functions
   thought kill lock children instead shade group recursively set the attrs is wants on all children
 
   modernize circle drawer to group of circles
