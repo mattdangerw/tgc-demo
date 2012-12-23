@@ -11,7 +11,7 @@ Scroller::Scroller() {}
 Scroller::~Scroller() {}
 
 void Scroller::init() {
-  Entity::init();
+  setIsActive(true);
 }
 
 void Scroller::update(float delta_time) {

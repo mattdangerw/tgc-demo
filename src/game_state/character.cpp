@@ -19,7 +19,7 @@ Character::Character()
 Character::~Character() {}
 
 void Character::init() {
-  Entity::init();
+  setIsActive(true);
   circle_vector_.push_back(Circle());
   circle_ = &circle_vector_[0];
   circle_->radius = 0.001f;

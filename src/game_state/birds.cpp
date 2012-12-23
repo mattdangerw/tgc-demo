@@ -7,7 +7,7 @@ BirdManager::BirdManager() {}
 BirdManager::~BirdManager() {}
 
 void BirdManager::init() {
-  Entity::init();
+  setIsActive(true);
   bird_.init("bird.group");
   bird_.animator().queueAnimation("fly");
   bird_.setParent(theRenderer().rootNode());
@@ -17,7 +17,6 @@ void BirdManager::init() {
 }
 
 void BirdManager::update(float delta_time) {
-  bird_.animator().update(delta_time);
   x -= delta_time;
   glm::mat3 shape_transform = scale2D(translate2D(glm::mat3(1.0f), glm::vec2(x, 0.5f)), glm::vec2(0.2f));
   bird_.setRelativeTransform(shape_transform);

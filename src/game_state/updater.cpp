@@ -14,6 +14,6 @@ void Updater::remove(Entity *entity) {
 
 void Updater::updateAll(float delta_time) {
   for(set<Entity *>::iterator it = entities_.begin(); it != entities_.end(); ++it) {
-    if ((*it)->initialized()) (*it)->update(delta_time);
+    if ((*it)->isActive()) (*it)->update(delta_time);
   }
 }

@@ -27,7 +27,7 @@ Cloud::~Cloud() {
 }
 
 void Cloud::init(CloudType type) {
-  Entity::init();
+  setIsActive(true);
   switch (type) {
     case BIG_CLOUD:
       shape_.init("big_cloud.group");
@@ -51,7 +51,6 @@ glm::vec2 Cloud::center() {
 }
 
 void Cloud::update(float delta_time) {
-  shape_.animator().update(delta_time);
   position_.x -= velocity_ * delta_time;
   updateShapeTransform();
 }
@@ -80,7 +79,7 @@ CloudManager::~CloudManager() {
 }
 
 void CloudManager::init() {
-  Entity::init();
+  setIsActive(true);
   float x_position = randomFloat(0.0f, getSetting("cloud_max_x_distance").getFloat());
   while (x_position < theState().ground.width()) {
     addRandomCloud(x_position);

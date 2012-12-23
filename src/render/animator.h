@@ -7,6 +7,7 @@
 #include <map>
 #include <queue>
 
+#include "game_state/entity.h"
 #include "util/json.h"
 
 using std::string;
@@ -57,7 +58,7 @@ class Animation {
     float time_, lerp_t_;
 };
 
-class Animator {
+class Animator : Entity {
   public:
     Animator();
     ~Animator();

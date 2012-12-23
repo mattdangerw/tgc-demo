@@ -88,6 +88,7 @@ Animator::Animator() {}
 Animator::~Animator() {}
 
 void Animator::init(const json_value &json_animations, string start_frame) {
+  setIsActive(true);
   init(start_frame);
   for (int i = 0; i < json_animations.getLength(); i++) {
     string name = json_animations.getNameAt(i);
