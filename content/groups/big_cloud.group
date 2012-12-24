@@ -1,6 +1,6 @@
 {
   "fills":{
-    "cloud":{"file":"paper3.dds", "scale":[0.2, 0.2]}
+    "cloud":{"file":"seamlesstexture1.dds", "scale":[0.2, 0.2]}
   },
   "frames":{
     "frame1":{"cloud":"big_cloud1.path"},

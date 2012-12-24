@@ -29,7 +29,7 @@ void Ground::initPathShape() {
   end.position = glm::vec2(points_[points_.size() - 1].x, 0.0f);
   end.type = ON_PATH;
   path.push_back(end);
-  quad_.init("content/textures/ground.dds", glm::vec2(1.0f));
+  quad_.init("content/textures/bookcover2.dds", glm::vec2(1.0f));
   shape_.init(path, &quad_);
   shape_.setParent(theRenderer().rootNode());
   //shape_.setOccluder(false);
