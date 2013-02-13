@@ -25,7 +25,8 @@ class ShapeGroup : public SceneNode {
     void init(string filename);
     Animator &animator() { return animator_; }
     void colorize();
-    void setColorMasks(glm::vec4 color);
+    void setColorMultipliers(glm::vec4 color);
+    void setColorAdditions(glm::vec4 color);
   private:
     map<string, ShapeAndFill *> shapes_;
     map<string, glm::vec4> colors_;

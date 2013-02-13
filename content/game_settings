@@ -1,6 +1,6 @@
 {
   "debug_mode":true,
-  "fullscreen":false,
+  "fullscreen":true,
   "cloud_min_scale":0.18,
   "cloud_max_scale":0.3,
   "cloud_min_y":0.7,
@@ -9,8 +9,8 @@
   "cloud_max_x_distance":0.5,
   "cloud_min_velocity":0.03,
   "cloud_max_velocity":0.035,
-  "cloud_min_shade":0.95,
-  "cloud_max_shade":1.15,
+  "cloud_min_shade":0.45,
+  "cloud_max_shade":0.55,
   "player_width":0.008,
   "player_growth_rate":0.004,
   "player_speed":0.5,

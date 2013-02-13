@@ -1,3 +1,21 @@
+art workflow:
+    everything in one document
+    use groups to do different frame relative transforms, which we will animate one day
+
+let try it:
+    make texture colored how we want them, or different color versions...
+    can relative path inkscape project?
+    name your shit! keep the xml nice with IDS!
+    make the grid of texture. turn to patterns name the patterns all by filename
+    we can straight up text edit if makes easier!!!! use the power of sublime
+    bring in the content we have make a test level
+    try making some tree and frog animations
+    try bringing it into the game!!! figure out how ids gonna work with getting the right stuff to the right places in the game
+    python? keep what we can in python
+    
+    you did it good job!! you have an art content pipeline now to make a crazy world!!
+    think about which game companies to get in touch with and how...
+
 TODO:
   last tweeks to content pipeline:
     read in transform

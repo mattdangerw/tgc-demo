@@ -43,7 +43,8 @@ void Cloud::init(CloudType type) {
   width_ = 0.5f;
   updateShapeTransform();
   shape_.animator().queueAnimation("slow_change");
-  shape_.setColorMasks(glm::vec4(shade_, shade_, shade_, 1.0f));
+  shape_.setColorMultipliers(glm::vec4(glm::vec3(0.5f), 1.0f));
+  shape_.setColorAdditions(glm::vec4(shade_, shade_, shade_, 1.0f));
 }
 
 glm::vec2 Cloud::center() {
@@ -67,7 +68,7 @@ void Cloud::xExtent(float *x_begin, float *x_end) {
 }
 
 void Cloud::setColorMask(glm::vec4 color_mask) {
-  shape_.setColorMasks(color_mask);
+  shape_.setColorMultipliers(color_mask);
 }
 
 CloudManager::CloudManager() {}

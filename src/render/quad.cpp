@@ -6,7 +6,8 @@
 
 Quad::Quad() :
     color_(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)),
-    color_mask_(glm::vec4(1.0f)),
+    color_multiplier_(glm::vec4(1.0f)),
+    color_addition_(glm::vec4(0.0f)),
     texture_scale_(1.0f),
     shadowed_(false),
     textured_(false) {
@@ -89,7 +90,8 @@ void Quad::draw() {
   if (textured_) {
     string program = shadowed_ ? "textured_with_shadows" : "textured";
     theRenderer().useProgram(program);
-    glUniform4fv(theRenderer().uniformHandle("color_mask"), 1, glm::value_ptr(color_mask_));
+    glUniform4fv(theRenderer().uniformHandle("color_mul"), 1, glm::value_ptr(color_multiplier_));
+    glUniform4fv(theRenderer().uniformHandle("color_add"), 1, glm::value_ptr(color_addition_));
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture_handle_);
   } else {

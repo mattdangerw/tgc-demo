@@ -30,6 +30,7 @@ void Ground::initPathShape() {
   end.type = ON_PATH;
   path.push_back(end);
   quad_.init("content/textures/bookcover2.dds", glm::vec2(1.0f));
+  quad_.setColorAddition(glm::vec4(glm::vec3(-0.25f), 1.0f));
   shape_.init(path, &quad_);
   shape_.setParent(theRenderer().rootNode());
   //shape_.setOccluder(false);

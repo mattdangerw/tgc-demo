@@ -77,12 +77,18 @@ void ShapeGroup::init(string filename) {
 
 void ShapeGroup::colorize() {
   for (map<string, ShapeAndFill *>::iterator it = shapes_.begin(); it != shapes_.end(); ++it) {
-    it->second->fill.setColorMask(colors_[it->first]);
+    it->second->fill.setColorMultiplier(colors_[it->first]);
   }
 }
 
-void ShapeGroup::setColorMasks(glm::vec4 color) {
+void ShapeGroup::setColorMultipliers(glm::vec4 color) {
   for (map<string, ShapeAndFill *>::iterator it = shapes_.begin(); it != shapes_.end(); ++it) {
-    it->second->fill.setColorMask(color);
+    it->second->fill.setColorMultiplier(color);
+  }
+}
+
+void ShapeGroup::setColorAdditions(glm::vec4 color) {
+  for (map<string, ShapeAndFill *>::iterator it = shapes_.begin(); it != shapes_.end(); ++it) {
+    it->second->fill.setColorAddition(color);
   }
 }

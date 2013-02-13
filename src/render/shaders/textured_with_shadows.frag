@@ -2,7 +2,8 @@
 
 uniform sampler2D color_texture;
 uniform sampler2D shadow_texture;
-uniform vec4 color_mask = vec4(1.0, 1.0, 1.0, 1.0);
+uniform vec4 color_mul = vec4(1.0, 1.0, 1.0, 1.0);
+uniform vec4 color_add = vec4(0.0, 0.0, 0.0, 0.0);
 
 in vec2 frag_tex_coord;
 in vec2 screen_tex_coord;
@@ -13,6 +14,6 @@ void main()
 {
   float exposure = texture(shadow_texture, screen_tex_coord).r;
   vec4 exposure_mask = vec4(exposure, exposure, exposure, 1.0);
-  out_color = color_mask * texture(color_texture, frag_tex_coord)
+  out_color = (color_mul * texture(color_texture, frag_tex_coord) + color_add)
     * exposure_mask;
 }
