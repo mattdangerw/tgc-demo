@@ -34,10 +34,11 @@
        height="1024"
        id="bookcover1">
       <image
-         id="image2993"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/bookcover1.jpg"
          xlink:href="../textures/bookcover1.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image2993" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -45,10 +46,11 @@
        height="1024"
        id="bookcover2">
       <image
-         id="image4038"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/bookcover2.jpg"
          xlink:href="../textures/bookcover2.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4038" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -56,10 +58,11 @@
        height="1024"
        id="bookcover2_dark">
       <image
-         id="image4041"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/bookcover2_dark.jpg"
          xlink:href="../textures/bookcover2_dark.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4041" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -67,10 +70,11 @@
        height="1024"
        id="seamlesspaper1">
       <image
-         id="image4044"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesspaper1.jpg"
          xlink:href="../textures/seamlesspaper1.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4044" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -78,10 +82,11 @@
        height="1024"
        id="seamlesspaper2">
       <image
-         id="image4047"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesspaper2.jpg"
          xlink:href="../textures/seamlesspaper2.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4047" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -89,10 +94,11 @@
        height="1024"
        id="seamlesspaper2_dark">
       <image
-         id="image4050"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesspaper2_dark.jpg"
          xlink:href="../textures/seamlesspaper2_dark.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4050" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -100,10 +106,11 @@
        height="1024"
        id="seamlesspaper3">
       <image
-         id="image4053"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesspaper3.jpg"
          xlink:href="../textures/seamlesspaper3.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4053" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -111,10 +118,11 @@
        height="1024"
        id="seamlesspaper4">
       <image
-         id="image4056"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesspaper4.jpg"
          xlink:href="../textures/seamlesspaper4.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4056" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -122,10 +130,11 @@
        height="1024"
        id="seamlesspaper5">
       <image
-         id="image4059"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesspaper5.jpg"
          xlink:href="../textures/seamlesspaper5.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4059" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -133,10 +142,11 @@
        height="1024"
        id="seamlesspaper5_dark">
       <image
-         id="image4062"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesspaper5_dark.jpg"
          xlink:href="../textures/seamlesspaper5_dark.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4062" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -144,10 +154,11 @@
        height="1024"
        id="seamlesspaper6">
       <image
-         id="image4065"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesspaper6.jpg"
          xlink:href="../textures/seamlesspaper6.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4065" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -155,10 +166,11 @@
        height="1024"
        id="seamlesspaper6_light">
       <image
-         id="image4068"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesspaper6_light.jpg"
          xlink:href="../textures/seamlesspaper6_light.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4068" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -166,10 +178,11 @@
        height="1024"
        id="seamlesstexture1">
       <image
-         id="image4071"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture1.jpg"
          xlink:href="../textures/seamlesstexture1.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4071" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -177,10 +190,11 @@
        height="1024"
        id="seamlesstexture1_light">
       <image
-         id="image4074"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture1_light.jpg"
          xlink:href="../textures/seamlesstexture1_light.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4074" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -188,10 +202,11 @@
        height="1024"
        id="seamlesstexture5">
       <image
-         id="image4077"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture5.jpg"
          xlink:href="../textures/seamlesstexture5.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4077" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -199,10 +214,11 @@
        height="1024"
        id="seamlesstexture6">
       <image
-         id="image4080"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture6.jpg"
          xlink:href="../textures/seamlesstexture6.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4080" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -210,10 +226,11 @@
        height="1024"
        id="seamlesstexture7">
       <image
-         id="image4083"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture7.jpg"
          xlink:href="../textures/seamlesstexture7.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4083" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -221,10 +238,11 @@
        height="1024"
        id="seamlesstexture8">
       <image
-         id="image4086"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture8.jpg"
          xlink:href="../textures/seamlesstexture8.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4086" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -232,10 +250,11 @@
        height="1024"
        id="seamlesstexture17">
       <image
-         id="image4089"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture17.jpg"
          xlink:href="../textures/seamlesstexture17.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4089" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -243,10 +262,11 @@
        height="1024"
        id="seamlesstexture18">
       <image
-         id="image4092"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture18.jpg"
          xlink:href="../textures/seamlesstexture18.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4092" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -254,10 +274,11 @@
        height="1024"
        id="seamlesstexture19">
       <image
-         id="image4095"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture19.jpg"
          xlink:href="../textures/seamlesstexture19.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4095" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -265,10 +286,11 @@
        height="1024"
        id="seamlesstexture21">
       <image
-         id="image4098"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture21.jpg"
          xlink:href="../textures/seamlesstexture21.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4098" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -276,10 +298,11 @@
        height="1024"
        id="seamlesstexture21_dark">
       <image
-         id="image4101"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture21_dark.jpg"
          xlink:href="../textures/seamlesstexture21_dark.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4101" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -287,10 +310,11 @@
        height="1024"
        id="seamlesstexture22">
       <image
-         id="image4104"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture22.jpg"
          xlink:href="../textures/seamlesstexture22.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4104" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -298,10 +322,11 @@
        height="1024"
        id="seamlesstexture22_light">
       <image
-         id="image4107"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture22_light.jpg"
          xlink:href="../textures/seamlesstexture22_light.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4107" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -309,10 +334,11 @@
        height="1024"
        id="seamlesstexture24">
       <image
-         id="image4110"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture24.jpg"
          xlink:href="../textures/seamlesstexture24.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4110" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -320,10 +346,11 @@
        height="1024"
        id="seamlesstexture26">
       <image
-         id="image4113"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture26.jpg"
          xlink:href="../textures/seamlesstexture26.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4113" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -331,10 +358,11 @@
        height="1024"
        id="seamlesstexture27">
       <image
-         id="image4116"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture27.jpg"
          xlink:href="../textures/seamlesstexture27.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4116" />
     </pattern>
     <pattern
        patternUnits="userSpaceOnUse"
@@ -342,10 +370,22 @@
        height="1024"
        id="seamlesstexture28">
       <image
-         id="image4119"
+         sodipodi:absref="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture28.jpg"
          xlink:href="../textures/seamlesstexture28.jpg"
+         width="1024"
          height="1024"
-         width="1024" />
+         id="image4119" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="1024"
+       height="1024"
+       id="seamlesstexture1_light-1">
+      <image
+         width="1024"
+         height="1024"
+         id="image4074-7"
+         xlink:href="C:\Users\Matt\GitHub\tgc-demo\content\paths\../textures/seamlesstexture1_light.jpg" />
     </pattern>
   </defs>
   <sodipodi:namedview
@@ -355,9 +395,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.031250001"
-     inkscape:cx="15250.949"
-     inkscape:cy="6349.1685"
+     inkscape:zoom="0.08838835"
+     inkscape:cx="5843.5011"
+     inkscape:cy="2692.5822"
      inkscape:document-units="px"
      inkscape:current-layer="svg2"
      showgrid="false"
@@ -379,334 +419,55 @@
     </rdf:RDF>
   </metadata>
   <g
-     id="frog_attach"
-     transform="translate(0,-1000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="frog"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="frog_leap_attach"
-     transform="translate(1000,-1000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="frog_leap"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="frog_sit_attach"
-     transform="translate(2000,-1000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="frog_sit"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="tree_attach"
+     id="big_cloud1_attach"
      transform="translate(0,-2000)">
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none"
+       id="big_cloud1_guide"
+       width="1000"
+       height="1000"
+       x="0"
+       y="0" />
     <path
        inkscape:connector-curvature="0"
-       id="tree"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
+       id="big_cloud1"
+       d="M 423.05214,504.48247 C 408.00167,504.88882 392.5744,504.04818 378.1263,499.81336 362.89315,495.34825 348.21624,488.01667 335.59654,478.3875 328.96844,473.32985 321.4787,468.08398 318.84484,459.81405 307.29311,470.39635 292.12101,479.71507 276.73704,485.53097 256.91012,493.02664 235.25258,498.15129 214.11448,496.57824 193.72589,495.06146 173.78277,487.10804 155.95462,477.10029 142.55106,469.57603 129.74337,459.81405 120.68118,447.39895 112.97911,436.8466 107.22646,420.02034 105.77732,411.1512 97.09281,412.90166 72.877007,416.84104 57.124352,412.93938 42.700311,409.36709 27.685589,402.37116 18.488725,390.69932 6.0417654,374.90267 2.2023905,352.9174 1.4550333,332.82009 0.7722601,314.46019 3.2470124,294.47618 13.045984,278.93487 22.485437,263.96378 39.291769,251.37468 55.070157,246.48325 41.801789,228.38878 33.899272,205.30111 34.345335,183.06645 34.802858,160.26048 43.599869,136.45569 58.194371,118.92511 78.608396,94.4042 109.31752,77.15125 140.37835,69.8552 160.05837,65.23247 176.71228,67.45391 200.84642,74.5107 202.80761,59.62792 228.35069,35.978063 248.92671,26.528413 288.77525,8.227728 337.85158,4.674306 380.09022,16.45228 406.00414,23.67824 426.58478,39.698581 445.75086,63.38189 451.24047,53.23549 465.25878,39.910633 477.7348,31.47809 495.46694,19.492946 515.72375,10.1528 536.75876,6.20318 571.76433,-0.36962 609.90136,-1.904399 643.55112,9.769651 672.09127,19.671024 699.35987,38.64176 716.53967,63.48991 722.93955,72.74637 725.63978,80.95252 725.65984,95.99508 737.53045,88.63023 776.63534,83.55263 802.51964,84.53714 824.81914,85.38531 848.29642,88.55304 867.79292,99.40923 886.7227,109.94965 906.65395,125.10341 913.44433,145.67803 919.35451,163.58385 913.68795,189.17137 905.4898,201.68358 924.9504,200.0746 939.64842,204.8058 954.84842,211.97683 969.76047,219.01191 985.82774,228.29795 993.43403,242.92693 1003.0895,261.4969 1003.05,285.4178 997.46104,305.58784 992.06619,325.05761 983.0939,340.02361 962.99852,355.4468 969.03588,381.99876 968.31941,393.28154 963.02957,411.04252 956.0425,434.50205 943.32199,459.11908 922.817,472.4873 903.49681,485.0836 877.36112,487.24845 854.55738,483.79785 828.06383,479.78899 794.30966,464.3376 782.69155,447.78265 779.75587,460.47099 770.27303,471.3549 760.13876,479.41779 746.171,490.53056 728.1814,496.46992 710.66615,499.90613 686.73122,504.60162 661.50913,503.79012 637.49366,499.52576 620.11953,496.44033 602.53573,491.10952 587.6982,481.55832 573.23122,472.24555 558.05473,457.60449 551.64884,444.61703 547.577,453.56938 534.56131,466.32059 523.48034,474.25732 509.39814,484.34386 492.86845,490.99192 476.29439,496.02596 459.10012,501.2485 441.01552,503.99788 423.05214,504.48247 z"
+       style="fill:url(#seamlesstexture1_light);fill-opacity:1.0;stroke:none"
+       sodipodi:nodetypes="aaacaaaacaaaacaaacaacaaaacaaacaaacaaacaaaacaaa" />
   </g>
   <g
-     id="tree_leap_attach"
-     transform="translate(1000,-2000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="tree_leap"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="tree_sit_attach"
+     id="big_cloud2_attach"
      transform="translate(2000,-2000)">
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none"
+       id="big_cloud2_guide"
+       width="1000"
+       height="1000"
+       x="0"
+       y="0" />
     <path
        inkscape:connector-curvature="0"
-       id="tree_sit"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
+       id="big_cloud2"
+       d="M 440.22239,547.9983 C 422.01016,547.21505 403.09517,546.34115 386.20017,539.49588 369.43045,532.70134 354.1595,521.47063 341.8267,508.23084 332.21748,497.91482 324.35514,486.46065 319.97684,472.01776 312.24418,489.5819 298.18672,498.83152 283.41509,506.95034 264.75348,517.20721 242.69399,522.49943 221.40048,522.2901 200.73858,522.0869 179.59583,516.25352 161.52966,506.22513 145.53856,497.34859 130.41547,484.70267 121.43291,468.77091 113.9753,455.54383 107.58542,437.47322 112.05645,424.19261 97.76716,422.46872 84.513128,419.16338 72.89019,411.95238 57.518753,402.41579 42.254661,389.46613 35.381238,372.73342 27.544834,353.65642 27.775358,330.41275 34.365959,310.87035 40.992377,291.22176 55.943479,274.00329 72.846965,261.99293 89.888004,249.88482 111.34354,238.42822 132.1431,241.57242 127.38075,219.462 138.63637,202.53602 148.9343,186.24464 159.71303,169.19264 175.8001,154.8176 193.70497,145.5242 219.77834,131.99101 250.41014,124.36067 279.7199,126.33709 304.26586,127.99229 328.72942,133.36516 348.94519,151.93115 347.45063,124.84857 361.00993,107.39841 377.31924,92.87214 400.04073,72.63473 433.25375,65.22754 463.60582,63.08974 493.02347,61.01775 529.59906,62.64174 550.45643,79.94769 554.01124,58.01944 568.51849,46.346681 582.84355,34.463654 599.22964,20.870969 620.14157,12.73147 640.82041,7.666961 663.88298,2.018676 688.56047,0.3347 711.97281,4.290502 730.76871,7.466293 749.86858,14.068817 765.03383,25.618069 776.7308,34.525986 791.74995,44.328145 791.77179,60.69812 808.3187,45.425704 831.75428,42.68874 853.05405,42.596105 883.65341,42.463044 917.25113,48.933677 941.31527,67.83485 958.56925,81.38694 973.37363,103.09535 973.88868,125.02917 974.30371,142.70121 967.22524,158.67537 949.83641,172.29171 968.59514,174.16956 982.37934,187.1894 993.28678,200.59973 1006.686,217.07365 1014.8048,238.77023 1016.4602,259.94068 1018.0014,279.64968 1013.7062,300.79619 1003.7361,317.86715 995.6627,331.69068 987.3926,342.78014 967.94312,349.88748 984.19013,367.89599 988.67362,384.39276 988.50472,403.54659 988.28189,428.8109 976.38976,454.48896 960.13942,473.83478 946.12964,490.51315 926.19905,505.05172 904.67344,508.38181 879.82834,512.22549 845.45078,502.28884 831.59781,489.71626 826.28621,504.43151 813.61296,522.08668 800.2123,534.40695 786.85979,546.68301 770.54023,556.4611 753.2166,561.83516 732.71167,568.19631 710.09929,570.42763 688.98285,566.55319 663.19235,561.82106 638.91523,548.70654 617.68685,533.31498 602.19456,522.08241 586.63707,506.74637 578.45634,491.40323 570.39631,504.7744 555.50516,517.80268 540.95953,527.08046 528.03397,535.32494 513.11578,540.54314 498.16294,543.92744 479.27943,548.20141 459.56564,548.83025 440.22239,547.9983 z"
+       style="fill:url(#seamlesstexture1_light);fill-opacity:1.0;stroke:none"
+       sodipodi:nodetypes="aaacaaaacaaaacaaacaacaaaacaaacaaacaaacaaaacaaa" />
   </g>
   <g
-     id="cloud_attach"
-     transform="translate(0,-3000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="cloud"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="cloud_leap_attach"
-     transform="translate(1000,-3000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="cloud_leap"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="cloud_sit_attach"
-     transform="translate(2000,-3000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="cloud_sit"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="blah_attach"
-     transform="translate(0,-4000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="blah"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="blah_leap_attach"
-     transform="translate(1000,-4000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="blah_leap"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="blah_sit_attach"
-     transform="translate(2000,-4000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="blah_sit"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="blar_attach"
-     transform="translate(0,-5000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="blar"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="blar_leap_attach"
-     transform="translate(1000,-5000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="blar_leap"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="blar_sit_attach"
-     transform="translate(2000,-5000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="blar_sit"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="piss_attach"
-     transform="translate(3000,-1000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="piss"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="piss_leap_attach"
-     transform="translate(4000,-1000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="piss_leap"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="piss_sit_attach"
-     transform="translate(5000,-1000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="piss_sit"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="red_attach"
-     transform="translate(3000,-2000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="red"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="red_leap_attach"
+     id="big_cloud3_attach"
      transform="translate(4000,-2000)">
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#000000;stroke-opacity:1;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none"
+       id="big_cloud3_guide"
+       width="1000"
+       height="1000"
+       x="0"
+       y="0" />
     <path
        inkscape:connector-curvature="0"
-       id="red_leap"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="red_sit_attach"
-     transform="translate(5000,-2000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="red_sit"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="ant_attach"
-     transform="translate(3000,-2000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="ant"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="ant_leap_attach"
-     transform="translate(4000,-2000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="ant_leap"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="ant_sit_attach"
-     transform="translate(5000,-2000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="ant_sit"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="merf_attach"
-     transform="translate(3000,-3000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="merf"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="merf_leap_attach"
-     transform="translate(4000,-3000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="merf_leap"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="merf_sit_attach"
-     transform="translate(5000,-3000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="merf_sit"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="murph_attach"
-     transform="translate(3000,-4000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="murph"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="murph_leap_attach"
-     transform="translate(4000,-4000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="murph_leap"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="murph_sit_attach"
-     transform="translate(5000,-4000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="murph_sit"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="mac_attach"
-     transform="translate(3000,-5000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="mac"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="mac_leap_attach"
-     transform="translate(4000,-5000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="mac_leap"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
-  </g>
-  <g
-     id="mac_sit_attach"
-     transform="translate(5000,-5000)">
-    <path
-       inkscape:connector-curvature="0"
-       id="mac_sit"
-       d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
-       style="fill:#ff0000;fill-opacity:1;stroke:none"
-       sodipodi:nodetypes="aaaaa" />
+       id="big_cloud3"
+       d="M 429.82084,561.89277 C 406.29872,561.75446 382.72576,555.56481 360.8728,546.861 337.90394,537.71257 314.90174,525.959 297.3861,508.51021 283.6056,494.78219 271.99945,475.51735 267.02287,458.67735 253.86425,468.0643 224.26429,478.44312 201.46619,478.18847 180.97508,477.95963 161.31457,468.43232 142.9497,459.34001 127.40804,451.64545 112.10053,442.28243 100.2414,429.62895 87.09854,415.60574 76.028107,398.65641 70.447634,380.26501 65.141012,362.77615 64.961952,339.66396 67.917086,325.49474 51.532485,321.35706 28.83331,307.72917 16.843346,291.06131 4.448572,273.83072 0.777861,250.89128 -0.11559,229.68454 -0.948789,209.90792 1.607625,188.83423 10.829284,171.31938 20.409407,153.12369 36.166437,137.16772 54.385049,127.63125 74.203138,117.25755 98.15475,113.84747 120.43707,115.77952 115.68096,93.6981 117.64103,79.69159 126.95583,65.6495 143.05959,41.37306 174.24167,28.962292 202.41907,21.565633 230.66889,14.149973 261.67624,15.895201 290.02962,22.904519 309.53557,27.726645 323.29725,34.34982 343.78853,50.17343 357.09421,32.790539 371.13289,21.360626 389.20941,15.109488 415.28103,6.093526 444.94129,8.87017 471.96606,14.408994 496.79627,19.498021 522.29878,31.55488 541.61876,44.91206 552.71907,31.77073 568.06276,20.420845 584.21386,13.154889 603.78216,4.3516 625.80381,1.014894 647.23995,0.06055 667.05336,-0.821554 687.29322,1.410555 706.34017,6.938937 724.56423,12.22847 742.91965,19.659592 757.62325,31.655348 769.00067,40.93746 776.75421,50.94491 784.32619,66.68941 800.85141,55.6651 829.75122,45.82508 854.07008,45.19432 881.42658,44.48477 912.3768,48.08963 933.67361,65.27477 952.68258,80.61381 966.33574,106.51048 966.20432,130.93612 966.1093,148.5896 958.03959,166.04823 942.18357,178.13669 956.68957,181.52211 974.68382,193.01485 985.5769,206.4076 998.9586,222.85992 1007.0667,244.52806 1008.72,265.67075 1010.2592,285.35391 1007.7836,307.67072 996.0126,323.52127 984.3749,339.19239 965.52289,346.79683 944.8909,352.08281 951.15039,366.44365 955.04934,391.36883 951.75828,410.79678 948.36548,430.82534 939.66857,451.42093 925.13857,465.6172 909.27303,481.11843 886.68716,491.03912 864.62013,493.28535 849.6698,494.80723 831.4979,489.70225 820.68316,483.18633 815.37855,497.88224 803.86594,514.36339 791.04718,526.10999 774.88054,540.92437 755.14134,553.33149 733.8627,558.62747 710.33947,564.48209 684.84351,561.72467 661.1712,556.50565 640.79566,552.01355 620.67801,543.89072 603.63582,531.85306 590.6558,522.68476 578.25238,509.43488 571.29038,496.82987 563.24091,510.18351 548.36928,523.19471 533.84273,532.46034 520.93411,540.6939 505.7784,544.92221 491.10225,549.28525 471.11194,555.22793 450.67543,562.01533 429.82084,561.89277 z"
+       style="fill:url(#seamlesstexture1_light);fill-opacity:1.0;stroke:none"
+       sodipodi:nodetypes="aaacaaaacaaaacaaacaacaaaacaaacaaacaaacaaaacaaa" />
   </g>
   <rect
      style="fill:url(#pattern4133);fill-opacity:1;stroke:none"
@@ -721,4 +482,20 @@
      id="path5653"
      inkscape:connector-curvature="0"
      sodipodi:nodetypes="ccccccccccccccccccccc" />
+  <use
+     transform="translate(528.2413,2693.7138)"
+     x="0"
+     y="0"
+     xlink:href="#big_cloud1"
+     id="use4233"
+     width="1"
+     height="1" />
+  <use
+     transform="translate(2202.6701,2354.3024)"
+     x="0"
+     y="0"
+     xlink:href="#big_cloud1"
+     id="use4233-4"
+     width="1"
+     height="1" />
 </svg>
