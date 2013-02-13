@@ -368,6 +368,36 @@
       </cc:Work>
     </rdf:RDF>
   </metadata>
+  <g
+    id="frog_attach"
+    transform="translate(0,-1000)">
+    <path
+      inkscape:connector-curvature="0"
+      id="frog"
+      d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
+      style="fill:#ff0000;fill-opacity:1;stroke:none"
+      sodipodi:nodetypes="aaaaa" />
+  </g>
+  <g
+    id="frog_leap_attach"
+    transform="translate(1000,-1000)">
+    <path
+      inkscape:connector-curvature="0"
+      id="frog_leap"
+      d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
+      style="fill:#ff0000;fill-opacity:1;stroke:none"
+      sodipodi:nodetypes="aaaaa" />
+  </g>
+  <g
+    id="frog_sit_attach"
+    transform="translate(2000,-1000)">
+    <path
+      inkscape:connector-curvature="0"
+      id="frog_sit"
+      d="M 200,400 C 294.26857,398.47475 401.43919,294.26992 400,200 398.54293,104.55892 286.78921,-0.38927271 191.42858,3.7907529 97.084464,7.9262207 -1.364469,120.87902 2.8571329,215.21932 6.8834984,305.19667 109.9444,401.45709 200,400 z"
+      style="fill:#ff0000;fill-opacity:1;stroke:none"
+      sodipodi:nodetypes="aaaaa" />
+  </g>
   <rect
      style="fill:url(#seamlesstexture22_light);fill-opacity:1;stroke:none"
      id="rect5617"
