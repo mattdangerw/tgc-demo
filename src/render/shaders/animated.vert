@@ -18,9 +18,9 @@ void main()
 {
   frag_tex_coord = tex_coord;
   frag_bezier_coord = bezier_coord;
-  position = mix(position, lerp_position1, lerp_t1);
-  position = mix(position, lerp_position2, lerp_t2);
-  vec2 screen_pos = (modelview * vec3(position, 1.0)).xy;
+  vec2 animated_position = mix(position, lerp_position1, lerp_t1);
+  animated_position = mix(animated_position, lerp_position2, lerp_t2);
+  vec2 screen_pos = (modelview * vec3(animated_position, 1.0)).xy;
   screen_tex_coord = (screen_pos + vec2(1.0))/2.0;
   gl_Position = vec4(screen_pos, 0.0, 1.0);
 }

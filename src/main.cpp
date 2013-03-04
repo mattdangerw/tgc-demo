@@ -15,6 +15,7 @@ static bool fullscreen = true;
 void cleanupAndExit(int exit_code) {
   glfwTerminate();
   if (game != NULL) delete game;
+  if (exit_code != 0) std::getchar();
   exit(exit_code);
 }
 
@@ -37,8 +38,7 @@ int main(int argc, char *argv[]) {
   printf("Press enter to continue...");
   std::getchar();
 
-  // Demand a core profile. This appears to work on AMD but not nvidia cards.
-  // Possibly because glew does not play nice with core profiles.
+  // Demand a core profile.
   glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
   glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 3);
   glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
