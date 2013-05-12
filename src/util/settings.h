@@ -13,4 +13,4 @@ void loadSettings(string filename);
 
 const json_value &getSetting(string name);
 
-#endif  // UPDATER_H_
+#endif  // SETTINGS_H_

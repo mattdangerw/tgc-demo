@@ -6,8 +6,8 @@
 #include <GL/glfw.h>
 #include <glm/glm.hpp>
 
-#include "render/renderer.h"
-#include "game_state/state.h"
+#include "engine/engine.h"
+#include "game/state.h"
 #include "util/error.h"
 
 Game::Game()
@@ -21,7 +21,7 @@ Game::~Game() {}
 void Game::init(int width, int height) {
   srand((unsigned)time(0));
 
-  theRenderer().init(width, height);
+  theEngine().init(width, height);
   theState().init();
   
   // Check for any bad GL calls. For debugging.
@@ -44,7 +44,7 @@ void Game::update() {
 }
 
 void Game::draw() {
-  theRenderer().draw();
+  theEngine().draw();
   // Check for any bad GL calls. For debugging.
   checkForGLError();
 }

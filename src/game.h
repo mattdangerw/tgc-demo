@@ -3,14 +3,14 @@
 
 #include <vector>
 
-#include "game_state/ground.h"
-#include "game_state/character.h"
-#include "game_state/thought_bubble.h"
-#include "game_state/ideas.h"
-#include "game_state/triggerables.h"
-#include "game_state/clouds.h"
-#include "game_state/game_entity.h"
-#include "game_state/jumping_crowd.h"
+#include "game/ground.h"
+#include "game/character.h"
+#include "game/thought_bubble.h"
+#include "game/ideas.h"
+#include "game/triggerables.h"
+#include "game/clouds.h"
+#include "game/game_entity.h"
+#include "game/jumping_crowd.h"
 
 using std::vector;
 
