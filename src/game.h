@@ -3,15 +3,6 @@
 
 #include <vector>
 
-#include "game/ground.h"
-#include "game/character.h"
-#include "game/thought_bubble.h"
-#include "game/ideas.h"
-#include "game/triggerables.h"
-#include "game/clouds.h"
-#include "game/game_entity.h"
-#include "game/jumping_crowd.h"
-
 using std::vector;
 
 class Game {

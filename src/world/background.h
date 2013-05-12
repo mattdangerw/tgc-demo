@@ -5,9 +5,10 @@
 
 #include "engine/path_shape.h"
 #include "engine/shape_group.h"
+#include "engine/entity.h"
 #include "engine/quad.h"
 
-class Background {
+class Background : public Entity {
   public:
     Background();
     ~Background();

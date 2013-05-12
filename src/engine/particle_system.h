@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <list>
 
-#include "engine/scene_node.h"
+#include "engine/entity.h"
 #include "engine/engine.h"
 
 using std::list;

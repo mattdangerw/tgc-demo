@@ -1,24 +1,22 @@
-#ifndef STATE_H_
-#define STATE_H_
+#ifndef WORLD_H_
+#define WORLD_H_
 
-#include "engine/updater.h"
-#include "game/event_manager.h"
-#include "game/background.h"
-#include "game/ground.h"
-#include "game/clouds.h"
-#include "game/birds.h"
-#include "game/character.h"
-#include "game/scroller.h"
+#include "world/event_manager.h"
+#include "world/background.h"
+#include "world/ground.h"
+#include "world/clouds.h"
+#include "world/birds.h"
+#include "world/character.h"
+#include "world/scroller.h"
 
-class State;
+class World;
 
 // A big fat global handle into everything game state! 
-State &theState();
+World &theWorld();
 
-class State {
+class World {
   public:
     void init();
-    Updater updater;
     EventManager event_manager;
     Ground ground;
     Background background;
@@ -32,4 +30,4 @@ class State {
     //StaticStuff static_stuff;
 };
 
-#endif  // STATE_H_
+#endif  // WORLD_H_

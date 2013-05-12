@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 
 #include "engine/engine.h"
-#include "game/state.h"
+#include "world/world.h"
 #include "util/error.h"
 
 Game::Game()
@@ -22,7 +22,7 @@ void Game::init(int width, int height) {
   srand((unsigned)time(0));
 
   theEngine().init(width, height);
-  theState().init();
+  theWorld().init();
   
   // Check for any bad GL calls. For debugging.
   checkForGLError();
@@ -32,12 +32,12 @@ void Game::init(int width, int height) {
 void Game::update() {
   float now = static_cast<float>(glfwGetTime());
   float delta_time = now - last_frame_time_;
-
-  theState().updater.updateAll(delta_time);
-  theState().character.setInput(left_down_, right_down_, space_pressed_);
-
-  space_pressed_ = false;
   last_frame_time_ = now;
+
+  theEngine().update(delta_time);
+
+  theWorld().character.setInput(left_down_, right_down_, space_pressed_);
+  space_pressed_ = false;
 
   // Check for any bad GL calls. For debugging.
   checkForGLError();

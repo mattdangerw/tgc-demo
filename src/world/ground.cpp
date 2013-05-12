@@ -1,4 +1,4 @@
-#include "game/ground.h"
+#include "world/ground.h"
 
 #include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
@@ -32,7 +32,7 @@ void Ground::initPathShape() {
   quad_.init("content/textures/bookcover2.dds", glm::vec2(1.0f));
   quad_.setColorAddition(glm::vec4(glm::vec3(-0.25f), 1.0f));
   shape_.init(path, &quad_);
-  shape_.setParent(theEngine().rootNode());
+  shape_.setParent(this);
   //shape_.setOccluder(false);
 }
 

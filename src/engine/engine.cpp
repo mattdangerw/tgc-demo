@@ -234,10 +234,10 @@ void Engine::draw() {
   view = translate2D(view, glm::vec2(-1.0f, -1.0f));
   view = scale2D(view, glm::vec2(2.0f/aspect_, 2.0f));
   view = translate2D(view, glm::vec2(-left_of_window_, 0.0f));
-  root_node_.setRelativeTransform(view);
+  root_entity_.setRelativeTransform(view);
 
-  vector<SceneNode *> draw2D;
-  root_node_.getSortedVisibleDescendants(&draw2D);
+  vector<Entity *> draw2D;
+  root_entity_.getSortedVisibleDescendants(&draw2D);
 
   // Draw occluders to texture.
   //glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -247,7 +247,7 @@ void Engine::draw() {
   glDepthMask(GL_TRUE);
   glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glDepthMask(GL_FALSE);
-  for (vector<SceneNode *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
+  for (vector<Entity *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
     if ((*it)->isOccluder()) (*it)->drawOccluder();
   }
   //return;
@@ -282,7 +282,7 @@ void Engine::draw() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  for (vector<SceneNode *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
+  for (vector<Entity *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
     if ((*it)->isVisible()) (*it)->draw();
   }
 
@@ -291,7 +291,7 @@ void Engine::draw() {
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     glStencilFunc(GL_ALWAYS, 0, 0xFF);
     glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-    for (vector<SceneNode *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
+    for (vector<Entity *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
       if ((*it)->is3DStencil()) (*it)->draw();
     }
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);

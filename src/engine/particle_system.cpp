@@ -124,7 +124,7 @@ void ParticleSystem::draw() {
   glUniformMatrix4fv(theEngine().uniformHandle("transform3D"), 1, GL_FALSE, 
     glm::value_ptr(projection_ * transform3D_));
   glUniformMatrix3fv(theEngine().uniformHandle("transform2D"), 1, GL_FALSE, 
-    glm::value_ptr(theEngine().rootNode()->fullTransform() * transform2D_));
+    glm::value_ptr(theEngine().rootEntity()->fullTransform() * transform2D_));
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture_handle_);
   for (vector<int>::iterator it = emitters_by_depth_.begin(); it != emitters_by_depth_.end(); ++it) {

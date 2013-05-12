@@ -7,8 +7,8 @@
 #include <map>
 #include <glm/glm.hpp>
 
-#include "game/thought_bubble.h"
-#include "game/game_entity.h"
+#include "world/thought_bubble.h"
+#include "world/game_entity.h"
 #include "engine/particle_system.h"
 
 using std::string;

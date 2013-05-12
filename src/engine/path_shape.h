@@ -61,7 +61,7 @@ struct NamedFile {
   string file;
 };
 
-class PathShape : public SceneNode {
+class PathShape : public Entity {
   public:
     PathShape();
     ~PathShape();

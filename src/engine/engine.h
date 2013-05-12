@@ -8,7 +8,7 @@
 #include <list>
 #include <map>
 
-#include "engine/scene_node.h"
+#include "engine/entity.h"
 #include "engine/shader_program.h"
 
 using std::string;
@@ -28,11 +28,12 @@ class Engine {
     ~Engine();
     void init(int width, int height);
     // Get the root of the 2D scene graph.
-    SceneNode *rootNode() { return &root_node_; }
+    Entity *rootEntity() { return &root_entity_; }
     // draw everything
     void draw();
     // update everything
-    void update();
+    void update(float delta_time) { root_entity_.updateAll(delta_time); }
+
     // Gets the length in x axis of the area the camera will render.
     float windowWidth() { return aspect_; }
     // Sets where the left side of the camera should be.
@@ -40,6 +41,7 @@ class Engine {
     float getLeftOfWindow() { return left_of_window_; }
     // Sets location of our light source for the god rays.
     void setLightPosition(glm::vec2 position) { light_position_ = position; }
+
     // GL stuff....
     void useProgram(string program);
     // Get handle for uniform shader variable for currently in use program.
@@ -61,7 +63,7 @@ class Engine {
     float aspect_, left_of_window_;
     bool do_stencil_;
     glm::vec2 light_position_;
-    SceneNode root_node_;
+    Entity root_entity_;
     vector<Drawable *> draw3D_;
     Program *current_program_;
     map<string, Program> programs_;

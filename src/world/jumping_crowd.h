@@ -4,9 +4,9 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-#include "game/game_entity.h"
-#include "game/character.h"
-#include "game/ground.h"
+#include "world/game_entity.h"
+#include "world/character.h"
+#include "world/ground.h"
 #include "engine/circles.h"
 
 using std::vector;

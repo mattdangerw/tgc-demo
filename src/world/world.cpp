@@ -1,12 +1,15 @@
-#include "game/state.h"
+#include "world/world.h"
 
-State the_state;
+#include "engine/engine.h"
+#include "engine/entity.h"
 
-State &theState() {
-  return the_state;
+World the_world;
+
+World &theWorld() {
+  return the_world;
 }
 
-void State::init() {
+void World::init() {
   // Someday do all this positioning from a file, but for now we'll just keep all the level set up here.
   vector<glm::vec2> ground_points;
   ground_points.push_back(glm::vec2(0.0f, 0.2f));
@@ -72,11 +75,19 @@ void State::init() {
 
   theEngine().setLightPosition(glm::vec2(5.0f, 10.0f));
 
+  Entity *root = theEngine().rootEntity();
   event_manager.init();
+  event_manager.setParent(root);
   ground.init(ground_points);
+  ground.setParent(root);
   background.init();
+  background.setParent(root);
   scroller.init();
+  scroller.setParent(root);
   cloud_manager.init();
+  cloud_manager.setParent(root);
   bird_manager.init();
+  bird_manager.setParent(root);
   character.init();
+  character.setParent(root);
 }

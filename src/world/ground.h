@@ -10,7 +10,7 @@
 
 using std::vector;
 
-class Ground {
+class Ground : public Entity {
   public:
     Ground();
     ~Ground();

@@ -10,7 +10,7 @@ class Scroller : public Entity {
   public:
     Scroller();
     ~Scroller();
-    void init();
+    void init() {}
     void update(float delta_time);
 };
 

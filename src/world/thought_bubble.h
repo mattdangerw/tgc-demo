@@ -5,16 +5,16 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "game/character.h"
-#include "game/point_mass.h"
-#include "game/game_entity.h"
-#include "engine/scene_node.h"
+#include "world/character.h"
+#include "world/point_mass.h"
+#include "world/game_entity.h"
+#include "engine/entity.h"
 #include "engine/circles.h"
 #include "engine/quad.h"
 
 using std::vector;
 
-class SubBubble: public SceneNode  {
+class SubBubble: public Entity  {
   public:
     SubBubble() {}
     ~SubBubble() {}

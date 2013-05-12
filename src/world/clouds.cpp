@@ -1,9 +1,9 @@
-#include "game/clouds.h"
+#include "world/clouds.h"
 
 #include <GL/glew.h>
 #include <stdlib.h>
 
-#include "game/state.h"
+#include "world/world.h"
 #include "engine/engine.h"
 #include "util/transform2D.h"
 #include "util/random.h"
@@ -27,7 +27,6 @@ Cloud::~Cloud() {
 }
 
 void Cloud::init(CloudType type) {
-  setDoUpdate(true);
   switch (type) {
     case BIG_CLOUD:
       shape_.init("big_cloud.group");
@@ -39,9 +38,9 @@ void Cloud::init(CloudType type) {
       shape_.init("small_cloud.group");
       break;
   }
-  shape_.setParent(theEngine().rootNode());
   width_ = 0.5f;
   updateShapeTransform();
+  shape_.setParent(this);
   shape_.animator().queueAnimation("slow_change");
   shape_.setColorMultipliers(glm::vec4(glm::vec3(0.5f), 1.0f));
   shape_.setColorAdditions(glm::vec4(shade_, shade_, shade_, 1.0f));
@@ -80,9 +79,8 @@ CloudManager::~CloudManager() {
 }
 
 void CloudManager::init() {
-  setDoUpdate(true);
   float x_position = randomFloat(0.0f, getSetting("cloud_max_x_distance").getFloat());
-  while (x_position < theState().ground.width()) {
+  while (x_position < theWorld().ground.width()) {
     addRandomCloud(x_position);
     x_position += randomDistance();
   }
@@ -106,7 +104,7 @@ void CloudManager::update(float delta_time) {
       ++it;
     }
   }
-  if (theState().ground.width() - last_cloud_x > dist_to_next_cloud_) {
+  if (theWorld().ground.width() - last_cloud_x > dist_to_next_cloud_) {
     addRandomCloud(last_cloud_x + dist_to_next_cloud_);
     dist_to_next_cloud_ = randomDistance();
   }
@@ -126,6 +124,7 @@ void CloudManager::addRandomCloud(float x_position) {
       type = MEDIUM_CLOUD;
     }
     cloud->init(type);
+    cloud->setParent(this);
     clouds_.push_back(cloud);
 }
 

@@ -5,7 +5,7 @@
 #include <map>
 #include <string>
 
-#include "engine/scene_node.h"
+#include "engine/entity.h"
 #include "engine/quad.h"
 #include "engine/path_shape.h"
 #include "engine/animator.h"
@@ -18,7 +18,7 @@ struct ShapeAndFill{
   Quad fill;
 };
 
-class ShapeGroup : public SceneNode { 
+class ShapeGroup : public Entity { 
   public:
     ShapeGroup();
     ~ShapeGroup();

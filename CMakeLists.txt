@@ -17,28 +17,28 @@ add_executable(tgc-demo
   src/main.cpp
   src/game.h
   src/game.cpp
-  src/game/clouds.cpp
-  src/game/clouds.h
-  src/game/state.h
-  src/game/state.cpp
-  src/game/ground.h
-  src/game/ground.cpp
-  src/game/background.h
-  src/game/background.cpp
-  src/game/character.h
-  src/game/character.cpp
-  src/game/scroller.h
-  src/game/scroller.cpp
-  src/game/event_manager.h
-  src/game/event_manager.cpp
-  src/game/birds.h
-  src/game/birds.cpp
+  src/world/world.h
+  src/world/world.cpp
+  src/world/clouds.cpp
+  src/world/clouds.h
+  src/world/ground.h
+  src/world/ground.cpp
+  src/world/background.h
+  src/world/background.cpp
+  src/world/character.h
+  src/world/character.cpp
+  src/world/scroller.h
+  src/world/scroller.cpp
+  src/world/event_manager.h
+  src/world/event_manager.cpp
+  src/world/birds.h
+  src/world/birds.cpp
+  src/engine/engine.h
+  src/engine/engine.cpp
   src/engine/animator.h
   src/engine/animator.cpp
   src/engine/circles.cpp
   src/engine/circles.h
-  src/engine/entity.h
-  src/engine/entity.cpp
   src/engine/particle_system.cpp
   src/engine/particle_system.h
   src/engine/path_shape.cpp
@@ -47,14 +47,10 @@ add_executable(tgc-demo
   src/engine/shape_group.h
   src/engine/quad.cpp
   src/engine/quad.h
-  src/engine/scene_node.cpp
-  src/engine/scene_node.h
-  src/engine/engine.cpp
-  src/engine/engine.h
+  src/engine/entity.cpp
+  src/engine/entity.h
   src/engine/shader_program.cpp
   src/engine/shader_program.h
-  src/engine/updater.h
-  src/engine/updater.cpp
   src/util/settings.h
   src/util/settings.cpp
   src/util/error.h

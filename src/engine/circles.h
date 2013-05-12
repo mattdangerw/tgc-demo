@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "engine/shader_program.h"
-#include "engine/scene_node.h"
+#include "engine/entity.h"
 #include "engine/engine.h"
 #include "engine/quad.h"
 
@@ -16,7 +16,7 @@ struct Circle {
   float radius;
 };
 
-class CircleDrawer : public SceneNode {
+class CircleDrawer : public Entity {
   public:
     CircleDrawer();
     ~CircleDrawer();

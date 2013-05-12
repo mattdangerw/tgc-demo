@@ -1,8 +1,8 @@
-#include "game/character.h"
+#include "world/character.h"
 
 #include <GL/glew.h>
 
-#include "game/state.h"
+#include "world/world.h"
 #include "util/settings.h"
 #include "util/transform2D.h"
 #include "util/random.h"
@@ -19,12 +19,11 @@ Character::Character()
 Character::~Character() {}
 
 void Character::init() {
-  setDoUpdate(true);
   circle_vector_.push_back(Circle());
   circle_ = &circle_vector_[0];
   circle_->radius = 0.001f;
   drawer_.init(&circle_vector_);
-  drawer_.setParent(theEngine().rootNode());
+  drawer_.setParent(this);
   drawer_.setDisplayPriority(5.0f);
   drawer_.setIsVisible(true);
   position_.x = getSetting("player_width").getFloat();
@@ -66,7 +65,7 @@ void Character::moveLeft(float delta_time) {
 
 void Character::moveRight(float delta_time) {
   position_.x += getSetting("player_speed").getFloat() * delta_time;
-  float level_width = theState().ground.width();
+  float level_width = theWorld().ground.width();
   if (position_.x + circle_->radius > level_width) {
     position_.x = level_width - circle_->radius;
   }
@@ -80,7 +79,7 @@ void Character::jump() {
 }
 
 void Character::updateY(float delta_time) {
-  float minimum_height = theState().ground.heightAt(position_.x) + kHeightAboveGround;
+  float minimum_height = theWorld().ground.heightAt(position_.x) + kHeightAboveGround;
   if (is_jumping_) {
     position_.y += jump_velocity_ * delta_time;
     jump_velocity_ += kGravity * delta_time;
@@ -95,5 +94,5 @@ void Character::updateY(float delta_time) {
 }
 
 glm::vec2 Character::groundPosition() { 
-  return glm::vec2(position_.x, theState().ground.heightAt(position_.x) + kHeightAboveGround);
+  return glm::vec2(position_.x, theWorld().ground.heightAt(position_.x) + kHeightAboveGround);
 }

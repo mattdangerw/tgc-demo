@@ -6,10 +6,10 @@
 #include <string>
 
 #include "engine/shader_program.h"
-#include "engine/scene_node.h"
+#include "engine/entity.h"
 #include "engine/engine.h"
 
-class Quad : public SceneNode {
+class Quad : public Entity {
   public:
     Quad();
     ~Quad();
