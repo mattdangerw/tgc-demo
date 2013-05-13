@@ -75,19 +75,29 @@ void World::init() {
 
   theEngine().setLightPosition(glm::vec2(5.0f, 10.0f));
 
-  Entity *root = theEngine().rootEntity();
+  // Init
   event_manager.init();
-  event_manager.setParent(root);
   ground.init(ground_points);
-  ground.setParent(root);
   background.init();
-  background.setParent(root);
   scroller.init();
-  scroller.setParent(root);
   cloud_manager.init();
-  cloud_manager.setParent(root);
   bird_manager.init();
-  bird_manager.setParent(root);
   character.init();
+
+  // Add to scene graph
+  Entity *root = theEngine().rootEntity();
+  event_manager.setParent(root);
+  ground.setParent(root);
+  background.setParent(root);
+  scroller.setParent(root);
+  cloud_manager.setParent(root);
+  bird_manager.setParent(root);
   character.setParent(root);
+
+  // Draw order
+  background.setDisplayPriority(-1);
+  ground.setDisplayPriority(0);
+  cloud_manager.setDisplayPriority(1);
+  bird_manager.setDisplayPriority(1);
+  character.setDisplayPriority(2);
 }

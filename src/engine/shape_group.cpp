@@ -72,7 +72,6 @@ void ShapeGroup::init(string filename) {
     animator_.init(start_frame);
   }
   json_value_free(&group_json);
-  lockChildren();
 }
 
 void ShapeGroup::colorize() {

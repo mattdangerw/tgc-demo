@@ -61,10 +61,8 @@ class Engine {
     // Memeber data.
     int width_, height_;
     float aspect_, left_of_window_;
-    bool do_stencil_;
     glm::vec2 light_position_;
     Entity root_entity_;
-    vector<Drawable *> draw3D_;
     Program *current_program_;
     map<string, Program> programs_;
     map<string, GLuint> attribute_handles_;

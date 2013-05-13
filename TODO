@@ -1,6 +1,14 @@
-art workflow:
+TODO:
+  restructure:
+    world an entity. scroller uses world
+    clean up rest of the damn engine API
+    review our diff from origin
+
+    inkscape time!
+
+  art workflow:
     everything in one document
-    use groups to do different frame relative transforms, which we will animate one day
+    export with plugin
 
 let try it:
     make texture colored how we want them, or different color versions...
@@ -16,24 +24,10 @@ let try it:
     you did it good job!! you have an art content pipeline now to make a crazy world!!
     think about which game companies to get in touch with and how...
 
-TODO:
-  last tweeks to content pipeline:
-    read in transform
-    read in fill? try it it might be easy to add all textures to inkscape
-    give some sort of python script to autogen a basic group file
-    done! move on to art
-
-  art dawg. prototype some shit!
-
-  trees up first!
-  then birds ruins and frogs...
-  then rain and friend
-  then particles
-
-story:
-trees->birds->ruins->frogs->rainy valley->mountain->friend
 
 code wish list:
+  stop sorting the same damn tree structure every frame!!
+
   tweening functions: this should be pretty simple to give a few easing functions
 
   thought kill lock children instead shade group recursively set the attrs is wants on all children

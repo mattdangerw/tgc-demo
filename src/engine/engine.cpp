@@ -15,7 +15,6 @@ Engine &theEngine() {
 
 Engine::Engine()
   : left_of_window_(0.0f),
-    do_stencil_(true),
     light_position_(0.0f),
     current_program_(NULL) {}
 
@@ -236,9 +235,6 @@ void Engine::draw() {
   view = translate2D(view, glm::vec2(-left_of_window_, 0.0f));
   root_entity_.setRelativeTransform(view);
 
-  vector<Entity *> draw2D;
-  root_entity_.getSortedVisibleDescendants(&draw2D);
-
   // Draw occluders to texture.
   //glBindFramebuffer(GL_FRAMEBUFFER, 0);
   //glViewport(0,0,width_, height_);
@@ -247,9 +243,7 @@ void Engine::draw() {
   glDepthMask(GL_TRUE);
   glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glDepthMask(GL_FALSE);
-  for (vector<Entity *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
-    if ((*it)->isOccluder()) (*it)->drawOccluder();
-  }
+  root_entity_.drawAllOccluders();
   //return;
   
   //glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -281,48 +275,30 @@ void Engine::draw() {
   glBindTexture(GL_TEXTURE_2D, shadow_texture_);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  root_entity_.drawAll();
 
-  for (vector<Entity *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
-    if ((*it)->isVisible()) (*it)->draw();
-  }
-
-  if (do_stencil_) {
-    glEnable(GL_STENCIL_TEST);
-    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-    glStencilFunc(GL_ALWAYS, 0, 0xFF);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
-    for (vector<Entity *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
-      if ((*it)->is3DStencil()) (*it)->draw();
-    }
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-    glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-  }
-  glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
-  glEnable(GL_BLEND);
-  for (vector<Drawable *>::iterator it = draw3D_.begin(); it != draw3D_.end(); ++it) {
-    (*it)->draw();
-  }
-  glDisable(GL_BLEND);
-  if (do_stencil_) {
-    glDisable(GL_STENCIL_TEST);
-  }
+  //if (do_stencil_) {
+  //  glEnable(GL_STENCIL_TEST);
+  //  glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+  //  glStencilFunc(GL_ALWAYS, 0, 0xFF);
+  //  glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+  //  for (vector<Entity *>::iterator it = draw2D.begin(); it != draw2D.end(); ++it) {
+  //    if ((*it)->is3DStencil()) (*it)->draw();
+  //  }
+  //  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+  //  glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
+  //  glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+  //}
+  //glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+  //glEnable(GL_BLEND);
+  //for (vector<Drawable *>::iterator it = draw3D_.begin(); it != draw3D_.end(); ++it) {
+  //  (*it)->draw();
+  //}
+  //glDisable(GL_BLEND);
+  //if (do_stencil_) {
+  //  glDisable(GL_STENCIL_TEST);
+  //}
 }
-
-// TODO !!!!
-// void Engine::addDrawable3D(Drawable *object) {
-//   draw3D_.push_back(object);
-// }
-
-// void Engine::removeDrawable3D(Drawable *object) {
-//   vector<Drawable *>::iterator it;
-//   for (it = draw3D_.begin(); it != draw3D_.end(); ++it) {
-//     if (*it == object) {
-//       draw3D_.erase(it);
-//       return;
-//     }
-//   }
-// }
 
 void Engine::useProgram(string program) {
   if (programs_.count(program) == 0) error("No such program %s. Set it up in engine.\n", program.c_str());

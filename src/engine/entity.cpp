@@ -7,10 +7,7 @@ Entity::Entity()
     priority_(0.0f),
     is_occluder_(true),
     occluder_color_(0.0f),
-    is_3D_stencil_(false),
     is_visible_(true),
-    is_locking_(false),
-    is_locked_(false),
     do_update_(true),
     parent_(NULL) {}
 
@@ -50,29 +47,11 @@ void Entity::setParent(Entity *parent) {
 }
 
 void Entity::updateAll(float delta_time) {
-  if (doUpdate()) {
-    update(delta_time);
-    vector<Entity *>::iterator it;
-    for (it = children_.begin(); it != children_.end(); ++it) {
-      (*it)->updateAll(delta_time);
-    }
-  }
-}
-
-void Entity::lockChildren() {
-  is_locking_ = true;
+  if (!doUpdate()) return;
+  update(delta_time);
   vector<Entity *>::iterator it;
   for (it = children_.begin(); it != children_.end(); ++it) {
-    (*it)->lock(this);
-  }
-}
-
-void Entity::lock(Entity *locking_ancestor) {
-  locking_ancestor_ = locking_ancestor;
-  is_locked_ = true;
-  vector<Entity *>::iterator it;
-  for (it = children_.begin(); it != children_.end(); ++it) {
-    (*it)->lock(locking_ancestor);
+    (*it)->updateAll(delta_time);
   }
 }
 
@@ -82,65 +61,33 @@ struct PrioritySortFunctor {
   }
 };
 
-void Entity::getSortedVisibleDescendants(vector<Entity *> *drawables) {
-  // Get and sort all descendants.
-  vector<Entity *> sorted_drawables;
-  vector<Entity *> non_locked;
-  getNonLockedDescendants(&non_locked);
-  std::stable_sort(non_locked.begin(), non_locked.end(), PrioritySortFunctor());
+void Entity::drawAll() {
+  if (!isVisible()) return;
+  if (onScreen()) this->draw();
+  // Get and sort the children by priority.
+  vector<Entity *> sorted_drawables = children_;
+  std::stable_sort(sorted_drawables.begin(), sorted_drawables.end(), PrioritySortFunctor());
   vector<Entity *>::iterator it;
-  for (it = non_locked.begin(); it != non_locked.end(); ++it) {
-    if ((*it)->isLocking()) { 
-      vector<Entity *> sub_tree;
-      (*it)->getDescendants(&sub_tree);
-      std::stable_sort(sub_tree.begin(), sub_tree.end(), PrioritySortFunctor());
-      sorted_drawables.insert(sorted_drawables.end(), sub_tree.begin(), sub_tree.end());
-    } else {
-      sorted_drawables.push_back(*it);
-    }
-  }
-  // Cull out offsceen nodes.
   for (it = sorted_drawables.begin(); it != sorted_drawables.end(); ++it) {
-    if ((*it)->onScreen()) drawables->push_back(*it);
+    (*it)->drawAll();
   }
 }
 
-void Entity::getDescendants(vector<Entity *> *drawables) {
-  drawables->push_back(this);
+void Entity::drawAllOccluders() {
+  if (!isVisible() || !isOccluder()) return;
+  if (onScreen()) this->drawOccluder();
+  // Get and sort the children by priority.
+  vector<Entity *> sorted_drawables = children_;
+  std::stable_sort(sorted_drawables.begin(), sorted_drawables.end(), PrioritySortFunctor());
   vector<Entity *>::iterator it;
-  for (it = children_.begin(); it != children_.end(); ++it) {
-    (*it)->getDescendants(drawables);
-  }
-}
-
-void Entity::getNonLockedDescendants(vector<Entity *> *drawables) {
-  drawables->push_back(this);
-  if (this->isLocking()) return;
-  vector<Entity *>::iterator it;
-  for (it = children_.begin(); it != children_.end(); ++it) {
-    (*it)->getNonLockedDescendants(drawables);
+  for (it = sorted_drawables.begin(); it != sorted_drawables.end(); ++it) {
+    (*it)->drawAll();
   }
 }
 
 glm::mat3 Entity::fullTransform() {
   if (parent_ == NULL) return relative_transform_;
   return parent_->fullTransform() * relative_transform_;
-}
-
-// These conditions for visible, occluding etc. seem kinda stupid. Change them?
-bool Entity::isVisible() const {
-  if (isLocked()) return is_visible_ && locking_ancestor_->isVisible();
-  return is_visible_;
-}
-
-bool Entity::isOccluder() const {
-  if (isLocked()) return is_occluder_ && is_visible_ && locking_ancestor_->isOccluder();
-  return is_occluder_ && is_visible_;
-}
-
-bool Entity::is3DStencil() const {
-  if (isLocked()) return is_3D_stencil_ && locking_ancestor_->isVisible();
-  return is_3D_stencil_;
 }
 
 void Entity::addChild(Entity *child) {
