@@ -14,7 +14,7 @@ class World;
 // A big fat global handle into everything game state! 
 World &theWorld();
 
-class World {
+class World : public Entity {
   public:
     void init();
     EventManager event_manager;

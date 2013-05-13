@@ -36,13 +36,10 @@ class Engine {
 
     // Gets the length in x axis of the area the camera will render.
     float windowWidth() { return aspect_; }
-    // Sets where the left side of the camera should be.
-    void setLeftOfWindow(float x) { left_of_window_ = x; }
-    float getLeftOfWindow() { return left_of_window_; }
     // Sets location of our light source for the god rays.
     void setLightPosition(glm::vec2 position) { light_position_ = position; }
 
-    // GL stuff....
+    // =====GL stuff=====
     void useProgram(string program);
     // Get handle for uniform shader variable for currently in use program.
     GLuint uniformHandle(string uniform);

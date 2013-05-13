@@ -85,14 +85,14 @@ void World::init() {
   character.init();
 
   // Add to scene graph
-  Entity *root = theEngine().rootEntity();
-  event_manager.setParent(root);
-  ground.setParent(root);
-  background.setParent(root);
-  scroller.setParent(root);
-  cloud_manager.setParent(root);
-  bird_manager.setParent(root);
-  character.setParent(root);
+  this->setParent(theEngine().rootEntity());
+  event_manager.setParent(this);
+  ground.setParent(this);
+  background.setParent(this);
+  scroller.setParent(this);
+  cloud_manager.setParent(this);
+  bird_manager.setParent(this);
+  character.setParent(this);
 
   // Draw order
   background.setDisplayPriority(-1);

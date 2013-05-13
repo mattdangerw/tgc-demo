@@ -1,6 +1,5 @@
 TODO:
   restructure:
-    world an entity. scroller uses world
     clean up rest of the damn engine API
     review our diff from origin
 

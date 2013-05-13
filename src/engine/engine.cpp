@@ -232,7 +232,6 @@ void Engine::draw() {
   glm::mat3 view(1.0f);
   view = translate2D(view, glm::vec2(-1.0f, -1.0f));
   view = scale2D(view, glm::vec2(2.0f/aspect_, 2.0f));
-  view = translate2D(view, glm::vec2(-left_of_window_, 0.0f));
   root_entity_.setRelativeTransform(view);
 
   // Draw occluders to texture.
