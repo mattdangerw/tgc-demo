@@ -38,6 +38,7 @@
 #ifdef __cplusplus
 
    #include <string>
+   #include <cstring>
    #include <cassert>
    #include <glm/glm.hpp>
    using std::string;
