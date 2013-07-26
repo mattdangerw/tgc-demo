@@ -41,7 +41,7 @@ void checkForGLError() {
       message = "GL_INVALID_FRAMEBUFFER_OPERATION error.";
       break;
     case GL_OUT_OF_MEMORY:
-      message = "GL_OUT_OF_MEMORYN error.";
+      message = "GL_OUT_OF_MEMORY error.";
       break;
     default:
       message = "Unknown GL error.";

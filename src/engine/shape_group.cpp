@@ -29,7 +29,7 @@ void ShapeGroup::init(string filename) {
   for (int fill_index = 0; fill_index < num_fills; fill_index++) {
     ShapeAndFill *shape_and_fill = new ShapeAndFill();
     Quad &fill = shape_and_fill->fill;
-    PathShape &shape = shape_and_fill->shape;
+    Shape &shape = shape_and_fill->shape;
     // Parse fill.
     string fill_name = json_fills.getNameAt(fill_index);
     const json_value &json_fill = json_fills.getValueAt(fill_index);

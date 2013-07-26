@@ -11,10 +11,10 @@ Ground::~Ground() {}
 
 void Ground::init(vector<glm::vec2> points) {
   points_ = points;
-  initPathShape();
+  initShape();
 }
 
-void Ground::initPathShape() {
+void Ground::initShape() {
   vector<PathVertex> path;
   PathVertex start, end;
   start.position = glm::vec2(0.0f, 0.0f);

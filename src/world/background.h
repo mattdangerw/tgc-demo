@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 
-#include "engine/path_shape.h"
+#include "engine/shape.h"
 #include "engine/shape_group.h"
 #include "engine/entity.h"
 #include "engine/quad.h"

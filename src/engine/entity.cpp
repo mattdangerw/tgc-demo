@@ -94,7 +94,7 @@ void Entity::addChild(Entity *child) {
   children_.push_back(child);
 }
 
-// Ineffecient, but unless we build a large and dynamic scene graph shouldn't matter.
+// Inefficient, but unless we build a large and dynamic scene graph shouldn't matter.
 void Entity::removeChild(Entity *child) {
   vector<Entity *>::iterator it;
   for (it = children_.begin(); it != children_.end(); ++it) {

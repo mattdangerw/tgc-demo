@@ -41,8 +41,8 @@ add_executable(tgc-demo
   src/engine/circles.h
   src/engine/particle_system.cpp
   src/engine/particle_system.h
-  src/engine/path_shape.cpp
-  src/engine/path_shape.h
+  src/engine/shape.cpp
+  src/engine/shape.h
   src/engine/shape_group.cpp
   src/engine/shape_group.h
   src/engine/quad.cpp

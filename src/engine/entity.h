@@ -14,7 +14,6 @@ class Drawable {
 
 // The Entity class provides some very minimal scene graph functionality.
 // All nodes that are decendents of Renderer::rootEntity() are drawn.
-// Parent transform are multiplied in to children but the other attrs are independent of parents.
 // Not memory managed. All Entitys must be created and destroyed by client.
 class Entity : public Drawable {
   public:
@@ -42,15 +41,16 @@ class Entity : public Drawable {
     bool onScreen();
     
     // =====Toggles=====
-    // Controls visibility.
+    // Set visibility of entity and children
     bool isVisible() const { return is_visible_; }
     void setIsVisible(bool visible) { is_visible_ = visible; }
-    // Controls whether or not to consider this shape an occluder while shading.
+    // Whether or not this shape and its children cast shadows
     bool isOccluder() const { return is_occluder_; }
     void setIsOccluder(bool occluder) { is_occluder_ = occluder; }
+    // How "dark" the occluder is when casting shadows
     float occluderColor() { return occluder_color_; }
     void setOccluderColor(float color) { occluder_color_ = color; }
-    // Control whether or not to call the update function on this entity.
+    // Whether or not to call the update function on this entity and children
     bool doUpdate() const { return do_update_; }
     void setDoUpdate(bool update) { do_update_ = update; }
 
@@ -58,21 +58,20 @@ class Entity : public Drawable {
     void drawAll();
     void drawAllOccluders();
     void updateAll(float delta_time);
+
   private:
-    // This would either make our links madness or we would need to mem manage the scene graph.
+    // Copy would either make our links madness or we would need to mem manage the scene graph.
     // So no copy!
     Entity(const Entity &other);
     Entity& operator=(Entity other);
     // Helpers
     void addChild(Entity *child);
     void removeChild(Entity *child);
-    void lock(Entity *locking_ancestor);
     // Member data.
     Entity *parent_;
     vector<Entity *> children_;
     glm::mat3 relative_transform_;
     float priority_;
-    Entity *locking_ancestor_;
     bool is_occluder_, is_visible_, do_update_;
     float occluder_color_;
 };

@@ -6,7 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "engine/entity.h"
-#include "engine/path_shape.h"
+#include "engine/shape.h"
 #include "engine/quad.h"
 #include "engine/circles.h"
 

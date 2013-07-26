@@ -7,14 +7,14 @@
 
 #include "engine/entity.h"
 #include "engine/quad.h"
-#include "engine/path_shape.h"
+#include "engine/shape.h"
 #include "engine/animator.h"
 
 using std::string;
 using std::map;
 
 struct ShapeAndFill{
-  PathShape shape;
+  Shape shape;
   Quad fill;
 };
 

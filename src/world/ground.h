@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-#include "engine/path_shape.h"
+#include "engine/shape.h"
 #include "engine/shape_group.h"
 #include "engine/quad.h"
 
@@ -18,10 +18,10 @@ class Ground : public Entity {
     float width();
     float heightAt(float x);
   private:
-    void initPathShape();
+    void initShape();
     vector<glm::vec2> points_;
     // Drawables.
-    PathShape shape_;
+    Shape shape_;
     Quad quad_;
 };
 

@@ -69,7 +69,6 @@ class Animator : Entity {
 
     void addAnimation(string name, Animation animation) { animations_[name] = animation; }
 
-    // Functions for during use.
     // Queue up an animation. This will cause any repeating animations ahead in queue to stop.
     void queueAnimation(string name);
     // Force start an animation. This will delete the queue and move this to front.

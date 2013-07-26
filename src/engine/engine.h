@@ -21,7 +21,7 @@ Engine &theEngine();
 
 // Does all the setting up of OpenGL and draws all the shapes in the scene.
 // Also manages textures and shader loading.
-// A singleton class, mainly because I only ever want one and I'm too lazy to pass it around everywhere.
+// A singleton class, only because I only ever want one and I'm too lazy to pass it around everywhere.
 class Engine {
   public:
     Engine();

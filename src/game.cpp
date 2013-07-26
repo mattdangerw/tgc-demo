@@ -24,8 +24,10 @@ void Game::init(int width, int height) {
   theEngine().init(width, height);
   theWorld().init();
   
+#ifdef _DEBUG
   // Check for any bad GL calls. For debugging.
   checkForGLError();
+#endif
   last_frame_time_ = static_cast<float>(glfwGetTime());
 }
 
@@ -39,14 +41,18 @@ void Game::update() {
   theWorld().character.setInput(left_down_, right_down_, space_pressed_);
   space_pressed_ = false;
 
+#ifdef _DEBUG
   // Check for any bad GL calls. For debugging.
   checkForGLError();
+#endif
 }
 
 void Game::draw() {
   theEngine().draw();
+#ifdef _DEBUG
   // Check for any bad GL calls. For debugging.
   checkForGLError();
+#endif
 }
 
 bool Game::stillRunning() {
