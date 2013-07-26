@@ -1,5 +1,8 @@
 *.pyc
 
+#Sublime
+*.sublime-workspace
+
 #CMake
 CMakeCache.txt
 CMakeFiles

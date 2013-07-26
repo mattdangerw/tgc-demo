@@ -1,0 +1,31 @@
+{
+	"build_systems":
+	[
+		{
+			"name": "default",
+			"cmd": ["make"],
+			"file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
+			"working_dir": "${project_path}/build",
+			"variants": [
+        {
+        	"cmd": ["./build/tgc-demo"],
+          "name": "Run",
+					"working_dir": "${project_path}",
+        }
+    	]
+		}
+	],
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": "/home/matt/tgc-demo"
+		}
+	],
+  "settings":
+  {
+       "sublimegdb_workingdir": "/home/matt/tgc-demo",
+       // NOTE: You MUST provide --interpreter=mi for the plugin to work
+       "sublimegdb_commandline": "gdb --interpreter=mi ./build/tgc-demo"
+  }
+}
