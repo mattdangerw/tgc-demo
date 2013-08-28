@@ -6,9 +6,7 @@
 #include "util/transform2D.h"
 
 CircleDrawer::CircleDrawer()
-  : delta_radius_(0.0f),
-    use_texture_(false),
-    use_quad_(false) {}
+  : delta_radius_(0.0f) {}
 
 CircleDrawer::~CircleDrawer() {}
 
@@ -42,74 +40,43 @@ void CircleDrawer::extent(glm::vec2 *min, glm::vec2 *max) {
   }
 }
 
-void CircleDrawer::useScreenSpaceTexture(string texture_filename) {
-  use_texture_ = true;
-  texture_handle_ = theEngine().getTexture(texture_filename);
-}
-
-void CircleDrawer::useQuad(Quad *quad) {
-  use_quad_ = true;
-  fill_ = quad;
-  fill_->setParent(this);
-  fill_->setIsVisible(false);
-}
+// void CircleDrawer::useScreenSpaceTexture(string texture_filename) {
+//   use_texture_ = true;
+//   texture_handle_ = theEngine().getTexture(texture_filename);
+// }
 
 void CircleDrawer::draw() {
-  if (use_texture_) {
-    drawWithScreenTexture();
-  } else if (use_quad_) {
-    drawWithQuad();
-  } else {
-    drawColored();
-  }
+  drawHelper(false);
 }
 
 void CircleDrawer::drawOccluder() {
-  theEngine().useProgram("circles");
-  glm::vec4 occluder_vec(1.0f);
-  occluder_vec.r = occluderColor();
-  glUniform4fv(theEngine().uniformHandle("color"), 1, glm::value_ptr(glm::vec4(occluder_vec)));
-  makeDrawCalls(false);
+  drawHelper(true);
 }
 
-void CircleDrawer::drawColored() {
-  theEngine().useProgram("circles");
-  makeDrawCalls(true);
-}
-
-void CircleDrawer::drawWithScreenTexture() {
-  theEngine().useProgram("circles_screen_textured");
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, texture_handle_);
-  makeDrawCalls(false);
-}
-
-void CircleDrawer::drawWithQuad() {
+void CircleDrawer::drawHelper(bool occluder) {
   glEnable(GL_STENCIL_TEST);
   glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
   glStencilFunc(GL_ALWAYS, 0, 0xFF);
   glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
   theEngine().useProgram("circles");
-  makeDrawCalls(false);
-  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-  glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-  glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO);
-  fill_->draw();
-  glDisable(GL_STENCIL_TEST);
-}
-
-void CircleDrawer::makeDrawCalls(bool sendColors) {
   glEnable(GL_DEPTH_TEST);
   for (vector<Circle>::iterator it = circles_->begin(); it != circles_->end(); ++it) {
     glm::mat3 circle_transform(1.0f);
     circle_transform = translate2D(circle_transform, it->center);
     circle_transform = scale2D(circle_transform, glm::vec2(it->radius + delta_radius_));
     glUniformMatrix3fv(theEngine().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform() * circle_transform));
-    if (sendColors) {
-      glUniform4fv(theEngine().uniformHandle("color"), 1, glm::value_ptr(it->color));
-    }
     glBindVertexArray(array_object_);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
   }
   glDisable(GL_DEPTH_TEST);
+  // Fill in
+  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+  glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
+  glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO);
+  if (occluder) {
+    fill()->fillInOccluder(this);
+  } else {
+    fill()->fillIn(this);
+  }
+  glDisable(GL_STENCIL_TEST);
 }

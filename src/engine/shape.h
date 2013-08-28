@@ -7,7 +7,7 @@
 #include <vector>
 #include <map>
 
-#include "engine/quad.h"
+#include "engine/fill.h"
 #include "engine/shader_program.h"
 #include "engine/animator.h"
 
@@ -65,24 +65,23 @@ class Shape : public Entity {
   public:
     Shape();
     ~Shape();
-    void init(const vector<PathVertex> &vertices, Quad *fill);
-    void init(string filename, Quad *fill);
-    void init(const vector<NamedFile> &frames, Quad *fill, Animator *animator);
-    void setOccluderColor(float color);
-    void extent(glm::vec2 *min, glm::vec2 *max) { fill_->extent(min, max); }
+    void init(const vector<PathVertex> &vertices);
+    void init(string filename);
+    void init(const vector<NamedFile> &frames, Animator *animator);
+    void extent(glm::vec2 *min, glm::vec2 *max) { *min = min_; *max = max_; }
     void draw() { drawHelper(false); }
     void drawOccluder() { drawHelper(true); }
 
   private:
     // Helper methods.
-    void initHelper(Quad *fill, glm::vec2 min, glm::vec2 max);
+    void initHelper(Fill *fill, glm::vec2 min, glm::vec2 max);
     void createVAOs();
     void drawHelper(bool asOccluder);
     void bindKeyframeBuffers();
     // Member data.
     bool animated_, from_file_;
-    Quad *fill_;
     ShapeData *data_;
+    glm::vec2 min_, max_;
     // Animation stuff.
     map<string, ShapeData *> frames_;
     Animator *animator_;

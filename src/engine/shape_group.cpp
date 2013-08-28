@@ -28,14 +28,15 @@ void ShapeGroup::init(string filename) {
   string start_frame;
   for (int fill_index = 0; fill_index < num_fills; fill_index++) {
     ShapeAndFill *shape_and_fill = new ShapeAndFill();
-    Quad &fill = shape_and_fill->fill;
+    TexturedFill &fill = shape_and_fill->fill;
     Shape &shape = shape_and_fill->shape;
     // Parse fill.
     string fill_name = json_fills.getNameAt(fill_index);
     const json_value &json_fill = json_fills.getValueAt(fill_index);
     string texture_file = json_fill["file"].getString();
     glm::vec2 texture_scale = json_fill["scale"].getVec2();
-    fill.init("content/textures/" + texture_file, texture_scale);
+    fill.init("content/textures/" + texture_file);
+    fill.setTextureScale(texture_scale);
     // Parse shape.
     if (multiple_frames) {
       vector<NamedFile> frames;
@@ -48,14 +49,15 @@ void ShapeGroup::init(string filename) {
         frame.file = "content/paths/" + json_files[fill_name].getString();
         frames.push_back(frame);
       }
-      shape.init(frames, &fill, &animator_);
+      shape.init(frames, &animator_);
     } else {
       const json_value &json_files = json_frames.getValueAt(0);
       string filename = "content/paths/" + json_files[fill_name].getString();
-      shape.init(filename, &fill);
+      shape.init(filename);
     }
     shape.setParent(this);
     shape.setDisplayPriority(priority);
+    shape.setFill(&fill);
     // Parse color.
     if (has_colors) {
       colors_[fill_name] = json_colors[fill_name].getVec4();

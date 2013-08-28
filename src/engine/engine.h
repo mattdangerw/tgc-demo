@@ -40,6 +40,8 @@ class Engine {
     void setLightPosition(glm::vec2 position) { light_position_ = position; }
 
     // =====GL stuff=====
+    // Draws a quad with vertices and tex coords from (0, 0) to (1, 1)
+    void drawUnitQuad();
     void useProgram(string program);
     // Get handle for uniform shader variable for currently in use program.
     GLuint uniformHandle(string uniform);
@@ -50,7 +52,7 @@ class Engine {
 
   private:
     // Helper methods.
-    void setupScreenQuad();
+    void setupUnitQuad();
     void setupFBOs();
     void loadShaders();
     void setAttributesAndLink();

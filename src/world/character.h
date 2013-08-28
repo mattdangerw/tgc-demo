@@ -7,7 +7,7 @@
 
 #include "engine/entity.h"
 #include "engine/shape.h"
-#include "engine/quad.h"
+#include "engine/fill.h"
 #include "engine/circles.h"
 
 using std::string;
@@ -40,6 +40,7 @@ class Character : public Entity {
     vector<Circle> circle_vector_;
     Circle *circle_;
     CircleDrawer drawer_;
+    ColoredFill fill_;
 };
 
 #endif  // SRC_CHARACTER_H_

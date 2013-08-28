@@ -10,7 +10,7 @@
 #include "world/game_entity.h"
 #include "engine/entity.h"
 #include "engine/circles.h"
-#include "engine/quad.h"
+#include "engine/fill.h"
 
 using std::vector;
 
@@ -21,7 +21,7 @@ class SubBubble: public Entity  {
     void init(vector<Circle> *circles, float texture_scale, float darkness);
   private:
     CircleDrawer outer_drawer_;
-    Quad outer_fill_;
+    Fill outer_fill_;
 };
 
 class ThoughtBubble : public GameEntity {
@@ -50,7 +50,7 @@ class ThoughtBubble : public GameEntity {
     vector<float> rest_radii_;
     vector<PointMass> stretch_masses_;
     CircleDrawer circle_drawer_, circle_inside_drawer_;
-    Quad fill_;
+    Fill fill_;
     SubBubble sub_bubble_, sub_bubble2_, sub_bubble3_;
 
     // For pre explosion animation

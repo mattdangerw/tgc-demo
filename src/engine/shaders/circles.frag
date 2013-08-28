@@ -8,8 +8,6 @@ out vec4 out_color;
 
 void main()
 {
-  vec2 dx = dFdx(frag_tex_coord);
-  vec2 dy = dFdy(frag_tex_coord);
   if(dot(frag_tex_coord, frag_tex_coord) > 1.0f) discard;
-  out_color = color;
+  out_color = vec4(1.0, 0.0, 0.0, 1.0);
 }

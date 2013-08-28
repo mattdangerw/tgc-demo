@@ -26,6 +26,6 @@
   {
        "sublimegdb_workingdir": "/home/matt/tgc-demo",
        // NOTE: You MUST provide --interpreter=mi for the plugin to work
-       "sublimegdb_commandline": "gdb --interpreter=mi ./build/tgc-demo"
+       "sublimegdb_commandline": "_DEBUG=1 gdb --interpreter=mi ./build/tgc-demo"
   }
 }

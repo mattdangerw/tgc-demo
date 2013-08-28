@@ -1,7 +1,5 @@
 #version 330
 
-uniform vec4 color;
-
 in vec2 frag_bezier_coord;
 
 out vec4 out_color;
@@ -22,7 +20,7 @@ void main()
   float alpha = 0.5 - sd;
   if (alpha > 1) {  // Inside
     gl_FragDepth = 0.0;
-    out_color = color;
+    out_color = vec4(1.0, 0.0, 0.0, 1.0);
   }
   else if (alpha < 0) {  // Outside
     gl_FragDepth = 1.0;
@@ -30,6 +28,6 @@ void main()
   }
   else {  // Near boundary
     gl_FragDepth = 0.0;
-    out_color = vec4(color.rgb, color.a * alpha);
+    out_color = vec4(1.0, 0.0, 0.0, alpha);
   }
 }

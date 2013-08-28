@@ -12,6 +12,9 @@ class Drawable {
     virtual void draw() = 0;
 };
 
+// Forward declaration of fill
+class Fill;
+
 // The Entity class provides some very minimal scene graph functionality.
 // All nodes that are decendents of Renderer::rootEntity() are drawn.
 // Not memory managed. All Entitys must be created and destroyed by client.
@@ -25,7 +28,8 @@ class Entity : public Drawable {
     virtual void drawOccluder() {}
     virtual void extent(glm::vec2 *min, glm::vec2 *max) { *min = glm::vec2(0.0f); *max = glm::vec2(0.0f); }
 
-    // Sets the drawable parent. Setting parent to NULL removes this drawable and all children from the scene graph.
+    // Sets the drawable parent. Setting parent to NULL removes this entity
+    // and all children from the scene graph.
     Entity *parent() { return parent_; }
     void setParent(Entity *parent);
 
@@ -40,6 +44,13 @@ class Entity : public Drawable {
     // Checks if shape extent is onscreen.
     bool onScreen();
     
+    // =====Appearance=====
+    // How "dark" the occluder is when casting shadows
+    float occluderColor() { return occluder_color_; }
+    void setOccluderColor(float color) { occluder_color_ = color; }
+    Fill *fill() { return fill_; }
+    void setFill(Fill * fill) { fill_ = fill; }
+
     // =====Toggles=====
     // Set visibility of entity and children
     bool isVisible() const { return is_visible_; }
@@ -47,9 +58,6 @@ class Entity : public Drawable {
     // Whether or not this shape and its children cast shadows
     bool isOccluder() const { return is_occluder_; }
     void setIsOccluder(bool occluder) { is_occluder_ = occluder; }
-    // How "dark" the occluder is when casting shadows
-    float occluderColor() { return occluder_color_; }
-    void setOccluderColor(float color) { occluder_color_ = color; }
     // Whether or not to call the update function on this entity and children
     bool doUpdate() const { return do_update_; }
     void setDoUpdate(bool update) { do_update_ = update; }
@@ -60,8 +68,8 @@ class Entity : public Drawable {
     void updateAll(float delta_time);
 
   private:
-    // Copy would either make our links madness or we would need to mem manage the scene graph.
-    // So no copy!
+    // Copy would either make our links madness or we would need to mem manage
+    // the scene graph. So no copy!
     Entity(const Entity &other);
     Entity& operator=(Entity other);
     // Helpers
@@ -71,6 +79,7 @@ class Entity : public Drawable {
     Entity *parent_;
     vector<Entity *> children_;
     glm::mat3 relative_transform_;
+    Fill *fill_;
     float priority_;
     bool is_occluder_, is_visible_, do_update_;
     float occluder_color_;

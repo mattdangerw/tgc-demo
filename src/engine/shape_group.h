@@ -6,7 +6,7 @@
 #include <string>
 
 #include "engine/entity.h"
-#include "engine/quad.h"
+#include "engine/fill.h"
 #include "engine/shape.h"
 #include "engine/animator.h"
 
@@ -15,7 +15,7 @@ using std::map;
 
 struct ShapeAndFill{
   Shape shape;
-  Quad fill;
+  TexturedFill fill;
 };
 
 class ShapeGroup : public Entity { 

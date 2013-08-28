@@ -20,7 +20,7 @@ void SubBubble::init(vector<Circle> *circles, float texture_scale, float darknes
   outer_fill_.setColorMask(glm::vec4(darkness, darkness, darkness, 1.0f));
   outer_drawer_.init(circles);
   //outer_drawer_.changeRadii(border_width);
-  outer_drawer_.useQuad(&outer_fill_);
+  outer_drawer_.useFill(&outer_fill_);
   outer_drawer_.setParent(this);
   outer_drawer_.setIsOccluder(false);
   lockChildren();
@@ -106,7 +106,7 @@ void ThoughtBubble::init(Character *character) {
   fill_.setExtent(glm::vec2(-0.3f, -0.2f), glm::vec2(0.3f, 0.2f));
   circle_drawer_.init(&bubble_circles_);
   circle_drawer_.setParent(theRenderer().rootNode());
-  circle_drawer_.useQuad(&fill_);
+  circle_drawer_.useFill(&fill_);
   circle_drawer_.changeRadii(0.01f);
   circle_drawer_.setDisplayPriority(100.0f);
   circle_drawer_.setIsOccluder(false);

@@ -9,6 +9,7 @@ Entity::Entity()
     occluder_color_(0.0f),
     is_visible_(true),
     do_update_(true),
+    fill_(NULL),
     parent_(NULL) {}
 
 Entity::~Entity() {
@@ -81,7 +82,7 @@ void Entity::drawAllOccluders() {
   std::stable_sort(sorted_drawables.begin(), sorted_drawables.end(), PrioritySortFunctor());
   vector<Entity *>::iterator it;
   for (it = sorted_drawables.begin(); it != sorted_drawables.end(); ++it) {
-    (*it)->drawAll();
+    (*it)->drawAllOccluders();
   }
 }
 

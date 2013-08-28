@@ -32,7 +32,7 @@ void Engine::init(int width, int height) {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   loadShaders();
-  setupScreenQuad();
+  setupUnitQuad();
   setupFBOs();
 
   useProgram("shadows");
@@ -42,12 +42,12 @@ void Engine::init(int width, int height) {
   glUniform1f(uniformHandle("scale_factor"), 1.0f/160.0f);
 }
 
-void Engine::setupScreenQuad() {
+void Engine::setupUnitQuad() {
   glm::vec2 vertices[4];
-  vertices[0] = glm::vec2(-1.0f, -1.0f);
-  vertices[1] = glm::vec2(1.0f, -1.0f);
+  vertices[0] = glm::vec2(0.0f, 0.0f);
+  vertices[1] = glm::vec2(1.0f, 0.0f);
   vertices[2] = glm::vec2(1.0f, 1.0f);
-  vertices[3] = glm::vec2(-1.0f, 1.0f);
+  vertices[3] = glm::vec2(0.0f, 1.0f);
   glm::vec2 tex_coords[4];
   tex_coords[0] = glm::vec2(0.0f, 0.0f);
   tex_coords[1] = glm::vec2(1.0f, 0.0f);
@@ -62,13 +62,13 @@ void Engine::setupScreenQuad() {
   
   glBindBuffer(GL_ARRAY_BUFFER, buffer_objects[0]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-  GLuint handle = programs_["shadows"].attributeHandle("position");
+  GLuint handle = attributeHandle("position");
   glEnableVertexAttribArray(handle);
   glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
   glBindBuffer(GL_ARRAY_BUFFER, buffer_objects[1]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(tex_coords), tex_coords, GL_STATIC_DRAW);
-  handle = programs_["shadows"].attributeHandle("tex_coord");
+  handle = attributeHandle("tex_coord");
   glEnableVertexAttribArray(handle);
   glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 }
@@ -136,7 +136,6 @@ void Engine::loadShaders() {
   quadric_frag.load("src/engine/shaders/quadric_anti_aliased.frag", GL_FRAGMENT_SHADER);
   circles_frag.load("src/engine/shaders/circles_anti_aliased.frag", GL_FRAGMENT_SHADER);
   circles_screen_textured_frag.load("src/engine/shaders/circles_screen_textured.frag", GL_FRAGMENT_SHADER);
-  shadows_vert.load("src/engine/shaders/shadows.vert", GL_VERTEX_SHADER);
   shadows_frag.load("src/engine/shaders/shadows.frag", GL_FRAGMENT_SHADER);
   particle_feedback_vert.load("src/engine/shaders/particle_feedback.vert", GL_VERTEX_SHADER);
   particle_draw_vert.load("src/engine/shaders/particle_draw.vert", GL_VERTEX_SHADER);
@@ -176,7 +175,7 @@ void Engine::loadShaders() {
   programs_["circles_screen_textured"].addShader(&circles_screen_textured_frag);
 
   programs_["shadows"].init();
-  programs_["shadows"].addShader(&shadows_vert);
+  programs_["shadows"].addShader(&general_vert);
   programs_["shadows"].addShader(&shadows_frag);
 
   programs_["particle_feedback"].init();
@@ -259,8 +258,11 @@ void Engine::draw() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, occluder_texture_);
-  glBindVertexArray(quad_array_object_);
-  glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+  glm::mat3 screen_transform = glm::mat3(1.0f);
+  screen_transform = translate2D(screen_transform, glm::vec2(-1.0));
+  screen_transform = scale2D(screen_transform, glm::vec2(2.0));
+  glUniformMatrix3fv(theEngine().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(screen_transform));
+  drawUnitQuad();
   //return;
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -297,6 +299,11 @@ void Engine::draw() {
   //if (do_stencil_) {
   //  glDisable(GL_STENCIL_TEST);
   //}
+}
+
+void Engine::drawUnitQuad() {
+  glBindVertexArray(quad_array_object_);
+  glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }
 
 void Engine::useProgram(string program) {

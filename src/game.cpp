@@ -25,7 +25,8 @@ void Game::init(int width, int height) {
   theWorld().init();
   
 #ifdef _DEBUG
-  // Check for any bad GL calls. For debugging.
+  // Check for any bad GL calls. I think this needs GL to flush all it's
+  // commands, so only do it when debugging.
   checkForGLError();
 #endif
   last_frame_time_ = static_cast<float>(glfwGetTime());
@@ -42,7 +43,7 @@ void Game::update() {
   space_pressed_ = false;
 
 #ifdef _DEBUG
-  // Check for any bad GL calls. For debugging.
+  // Check for any bad GL calls.
   checkForGLError();
 #endif
 }
@@ -50,7 +51,7 @@ void Game::update() {
 void Game::draw() {
   theEngine().draw();
 #ifdef _DEBUG
-  // Check for any bad GL calls. For debugging.
+  // Check for any bad GL calls.
   checkForGLError();
 #endif
 }

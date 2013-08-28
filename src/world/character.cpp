@@ -22,10 +22,12 @@ void Character::init() {
   circle_vector_.push_back(Circle());
   circle_ = &circle_vector_[0];
   circle_->radius = 0.001f;
+  fill_.init(glm::vec4(glm::vec3(0.0f), 1.0f));
   drawer_.init(&circle_vector_);
   drawer_.setParent(this);
   drawer_.setDisplayPriority(5.0f);
   drawer_.setIsVisible(true);
+  drawer_.setFill(&fill_);
   position_.x = getSetting("player_width").getFloat();
   updateY(0.0f);
   updateCircle();

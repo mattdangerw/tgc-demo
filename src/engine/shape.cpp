@@ -170,46 +170,37 @@ Shape::~Shape() {
   if (!from_file_) delete data_;
 }
 
-void Shape::init(const vector<PathVertex> &vertices, Quad *fill) {
+void Shape::init(const vector<PathVertex> &vertices) {
   from_file_ = false;
   data_ = new ShapeData();
   data_->init(vertices);
-  glm::vec2 min, max;
-  data_->extent(&min, &max);
-  initHelper(fill, min, max);
+  data_->extent(&min_, &max_);
+  createVAOs();
 }
 
-void Shape::init(string filename, Quad *fill) {
+void Shape::init(string filename) {
   from_file_ = true;
   data_ = loadIfNeeded(filename);
-  glm::vec2 min, max;
-  data_->extent(&min, &max);
-  initHelper(fill, min, max);
+  data_->extent(&min_, &max_);
+  createVAOs();
 }
 
-void Shape::init(const vector<NamedFile> &frames, Quad *fill, Animator *animator) {
+void Shape::init(const vector<NamedFile> &frames, Animator *animator) {
   from_file_ = true;
   animated_ = true;
 
-  glm::vec2 min(std::numeric_limits<float>::max()), max(-std::numeric_limits<float>::max());
+  min_ = glm::vec2(std::numeric_limits<float>::max());
+  max_ = glm::vec2(-std::numeric_limits<float>::max());
   for (vector<NamedFile>::const_iterator it = frames.begin(); it != frames.end(); ++it) {
     ShapeData *data = loadIfNeeded(it->file);
     glm::vec2 frame_min, frame_max;
     data->extent(&frame_min, &frame_max);
-    min = glm::min(frame_min, min);
-    max = glm::max(frame_max, max);
+    min_ = glm::min(frame_min, min_);
+    max_ = glm::max(frame_max, max_);
     frames_[it->name] = data;
   }
   data_ = frames_.begin()->second;
   animator_ = animator;
-  initHelper(fill, min, max);
-}
-
-void Shape::initHelper(Quad *fill, glm::vec2 min, glm::vec2 max) {
-  fill_ = fill;
-  fill_->setParent(this);
-  fill_->setExtent(min, max);
-  fill_->setIsVisible(false);
   createVAOs();
 }
 
@@ -290,10 +281,6 @@ void Shape::bindKeyframeBuffers() {
   }
 }
 
-void Shape::setOccluderColor(float color) {
-  fill_->setOccluderColor(color);
-}
-
 void Shape::drawHelper(bool asOccluder) {
   if (animated_) bindKeyframeBuffers();
 
@@ -312,6 +299,7 @@ void Shape::drawHelper(bool asOccluder) {
     } else {
       theEngine().useProgram("minimal");
     }
+    glUniform4fv(theEngine().uniformHandle("color"), 1, glm::value_ptr(glm::vec4(1.0f)));
     glUniformMatrix3fv(theEngine().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
     glBindVertexArray(solid_array_object_);
     glDrawArrays(GL_TRIANGLE_FAN, 0, data_->solidVerticesSize());
@@ -337,9 +325,9 @@ void Shape::drawHelper(bool asOccluder) {
   glStencilFunc(GL_EQUAL, 1, 1);
   glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO);
   if (asOccluder) {
-    fill_->drawOccluder();
+    fill()->fillInOccluder(this);
   } else {
-    fill_->draw();
+    fill()->fillIn(this);
   }
   glDisable(GL_STENCIL_TEST);
 }

@@ -6,6 +6,7 @@
 #include "engine/shape.h"
 #include "engine/shape_group.h"
 #include "engine/entity.h"
+#include "engine/fill.h"
 #include "engine/quad.h"
 
 class Background : public Entity {
@@ -16,6 +17,7 @@ class Background : public Entity {
   private:
     // Drawables.
     Quad quad_;
+    TexturedFill fill_;
 };
 
 #endif  // SRC_BACKGROUND_H_

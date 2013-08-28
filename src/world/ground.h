@@ -6,7 +6,7 @@
 
 #include "engine/shape.h"
 #include "engine/shape_group.h"
-#include "engine/quad.h"
+#include "engine/fill.h"
 
 using std::vector;
 
@@ -22,7 +22,7 @@ class Ground : public Entity {
     vector<glm::vec2> points_;
     // Drawables.
     Shape shape_;
-    Quad quad_;
+    TexturedFill fill_;
 };
 
 #endif  // SRC_GROUND_H_

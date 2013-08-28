@@ -29,11 +29,12 @@ void Ground::initShape() {
   end.position = glm::vec2(points_[points_.size() - 1].x, 0.0f);
   end.type = ON_PATH;
   path.push_back(end);
-  quad_.init("content/textures/bookcover2.dds", glm::vec2(1.0f));
-  quad_.setColorAddition(glm::vec4(glm::vec3(-0.25f), 1.0f));
-  shape_.init(path, &quad_);
+  fill_.init("content/textures/bookcover2.dds");
+  fill_.setColorAddition(glm::vec4(glm::vec3(-0.25f), 1.0f));
+  // fill_.setShadowed(flase);
+  shape_.init(path);
   shape_.setParent(this);
-  //shape_.setOccluder(false);
+  shape_.setFill(&fill_);
 }
 
 float Ground::width() {
@@ -41,6 +42,7 @@ float Ground::width() {
 }
 
 float Ground::heightAt(float x) {
+  // TODO: this could be way more efficient if we ever need it
   if (x < 0.0f || x > width()) return 0.0f;
   size_t index;
   for (index = 0; index < points_.size() - 1; index++) {
