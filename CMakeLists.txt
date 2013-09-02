@@ -45,6 +45,7 @@ add_executable(tgc-demo
   src/engine/shape.h
   src/engine/shape_group.cpp
   src/engine/shape_group.h
+  src/engine/quad.h
   src/engine/fill.cpp
   src/engine/fill.h
   src/engine/entity.cpp

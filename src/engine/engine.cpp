@@ -126,7 +126,7 @@ void Engine::loadShaders() {
   attribute_handles_["visible"] = 9;
 
   Shader general_vert, animated_vert, textured_frag, textured_with_shadows_frag, minimal_frag,
-    quadric_frag, circles_frag, circles_screen_textured_frag, shadows_vert, shadows_frag,
+    quadric_frag, circles_frag, shadows_vert, shadows_frag,
     particle_feedback_vert, particle_draw_vert, particle_draw_geom, particle_draw_frag;
   general_vert.load("src/engine/shaders/general.vert", GL_VERTEX_SHADER);
   animated_vert.load("src/engine/shaders/animated.vert", GL_VERTEX_SHADER);
@@ -135,7 +135,6 @@ void Engine::loadShaders() {
   minimal_frag.load("src/engine/shaders/minimal.frag", GL_FRAGMENT_SHADER);
   quadric_frag.load("src/engine/shaders/quadric_anti_aliased.frag", GL_FRAGMENT_SHADER);
   circles_frag.load("src/engine/shaders/circles_anti_aliased.frag", GL_FRAGMENT_SHADER);
-  circles_screen_textured_frag.load("src/engine/shaders/circles_screen_textured.frag", GL_FRAGMENT_SHADER);
   shadows_frag.load("src/engine/shaders/shadows.frag", GL_FRAGMENT_SHADER);
   particle_feedback_vert.load("src/engine/shaders/particle_feedback.vert", GL_VERTEX_SHADER);
   particle_draw_vert.load("src/engine/shaders/particle_draw.vert", GL_VERTEX_SHADER);
@@ -170,10 +169,6 @@ void Engine::loadShaders() {
   programs_["circles"].addShader(&general_vert);
   programs_["circles"].addShader(&circles_frag);
   
-  programs_["circles_screen_textured"].init();
-  programs_["circles_screen_textured"].addShader(&general_vert);
-  programs_["circles_screen_textured"].addShader(&circles_screen_textured_frag);
-
   programs_["shadows"].init();
   programs_["shadows"].addShader(&general_vert);
   programs_["shadows"].addShader(&shadows_frag);
@@ -210,9 +205,6 @@ void Engine::setAttributesAndLink() {
 
 void Engine::setTextureUnits() {
   useProgram("textured");
-  glUniform1i(uniformHandle("color_texture"), 0);
-
-  useProgram("circles_screen_textured");
   glUniform1i(uniformHandle("color_texture"), 0);
 
   useProgram("textured_with_shadows");
