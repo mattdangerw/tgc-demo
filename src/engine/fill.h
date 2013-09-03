@@ -32,6 +32,8 @@ class TexturedFill : public Fill {
     TexturedFill();
     ~TexturedFill() {}
     void init(string texture_file) { setTexture(texture_file); }
+    bool stretched() { return stretched_; }
+    void setStretched(bool stretched) { stretched_ = stretched; }
     void setTexture(string texture_file) { texture_handle_ = theEngine().getTexture(texture_file); }
     glm::vec2 textureScale() { return texture_scale_; }
     void setTextureScale(glm::vec2 scale) { texture_scale_ = scale; }
@@ -44,6 +46,7 @@ class TexturedFill : public Fill {
     void fillIn(Entity *entity);
   private:
     bool shadowed_;
+    bool stretched_;
     GLuint texture_handle_;
     glm::vec2 texture_scale_;
     glm::vec4 color_multiplier_, color_addition_;

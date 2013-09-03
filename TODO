@@ -1,8 +1,5 @@
 TODO:
   restructure:
-    check if cpp only functions should be static
-    remove screen_textured circle shade?
-    circle drawer just draws one damn circle, use the scene graph for the rest
     make tile vs. stetch fill option
     why set up vaos per shape and not shape_data, probably a reason
     fix the walking jitter if possible

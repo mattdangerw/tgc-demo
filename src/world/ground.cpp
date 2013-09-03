@@ -31,7 +31,6 @@ void Ground::initShape() {
   path.push_back(end);
   fill_.init("content/textures/bookcover2.dds");
   fill_.setColorAddition(glm::vec4(glm::vec3(-0.25f), 1.0f));
-  // fill_.setShadowed(flase);
   shape_.init(path);
   shape_.setParent(this);
   shape_.setFill(&fill_);

@@ -33,6 +33,7 @@ void ColoredFill::fillIn(Entity *entity) {
 
 TexturedFill::TexturedFill()
   : shadowed_(false),
+    stretched_(false),
     texture_handle_(0),
     texture_scale_(1.0f),
     color_multiplier_(1.0f),
@@ -48,7 +49,12 @@ void TexturedFill::fillIn(Entity *entity) {
   glUniformMatrix3fv(theEngine().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(calcModelview(entity)));
   glUniform4fv(theEngine().uniformHandle("color_mul"), 1, glm::value_ptr(color_multiplier_));
   glUniform4fv(theEngine().uniformHandle("color_add"), 1, glm::value_ptr(color_addition_));
-  glUniform2fv(theEngine().uniformHandle("tex_scale"), 1, glm::value_ptr(scale * texture_scale_));
+  if (stretched_) {
+    glUniform2fv(theEngine().uniformHandle("tex_scale"), 1, glm::value_ptr(glm::vec2(1.0f)));
+  } else {
+    glUniform2fv(theEngine().uniformHandle("tex_scale"), 1, glm::value_ptr(scale * texture_scale_));
+  }
+
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texture_handle_);
   theEngine().drawUnitQuad();
