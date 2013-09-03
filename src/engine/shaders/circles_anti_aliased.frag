@@ -1,16 +1,18 @@
 #version 330
 
-in vec2 frag_bezier_coord;
+in vec2 frag_tex_coord;
 
 out vec4 out_color;
 
 void main()
 {
-  float x = frag_bezier_coord.x;
-  float y = frag_bezier_coord.y;
+  vec2 normalized = -1.0 + 2.0 * frag_tex_coord;
 
-  vec2 dx = dFdx(frag_bezier_coord);
-  vec2 dy = dFdy(frag_bezier_coord);
+  float x = normalized.x;
+  float y = normalized.y;
+
+  vec2 dx = dFdx(normalized);
+  vec2 dy = dFdy(normalized);
   // Chain rule
   float fx = 2*x*dx.x + 2*y*dx.y;
   float fy = 2*x*dy.x + 2*y*dy.y;

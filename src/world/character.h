@@ -37,9 +37,7 @@ class Character : public Entity {
     glm::vec2 position_;
     bool is_jumping_;
     float jump_velocity_, time_on_ground_, time_till_next_jump_;
-    vector<Circle> circle_vector_;
-    Circle *circle_;
-    CircleDrawer drawer_;
+    Circle circle_;
     ColoredFill fill_;
 };
 

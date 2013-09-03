@@ -9,29 +9,25 @@
 #include "engine/engine.h"
 #include "engine/fill.h"
 
-struct Circle {
-  Circle() : color(0.0f, 0.0f, 0.0f, 1.0f), center(), radius(1.0f) {}
-  glm::vec4 color;
-  glm::vec2 center;
-  float radius;
-};
-
-class CircleDrawer : public Entity {
+class Circle : public Entity {
   public:
-    CircleDrawer();
-    ~CircleDrawer();
+    Circle();
+    ~Circle();
     // Set up the VAOs and VBOs and what not.
-    void init(vector<Circle> *circles);
-    void extent(glm::vec2 *min, glm::vec2 *max);  
-    void changeRadii(float delta_radius) { delta_radius_ = delta_radius; }
+    void init() {}
+    void extent(glm::vec2 *min, glm::vec2 *max);
+    glm::vec2 center() { return center_; }
+    void setCenter(glm::vec2 center) { center_ = center; }
+    float radius() { return radius_; }
+    void setRadius(float radius) { radius_ = radius; }
     void draw();
     void drawOccluder();
 
   private:
     void drawHelper(bool occluder);
     // Member data.
-    vector<Circle> *circles_;
-    float delta_radius_;
+    glm::vec2 center_;
+    float radius_;
     // GL stuff
     GLuint array_object_, buffer_object_;
     GLuint texture_handle_;

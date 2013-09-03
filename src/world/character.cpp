@@ -19,15 +19,14 @@ Character::Character()
 Character::~Character() {}
 
 void Character::init() {
-  circle_vector_.push_back(Circle());
-  circle_ = &circle_vector_[0];
-  circle_->radius = 0.001f;
   fill_.init(glm::vec4(glm::vec3(0.0f), 1.0f));
-  drawer_.init(&circle_vector_);
-  drawer_.setParent(this);
-  drawer_.setDisplayPriority(5.0f);
-  drawer_.setIsVisible(true);
-  drawer_.setFill(&fill_);
+  circle_.init();
+  circle_.setRadius(0.0f);
+  circle_.setParent(this);
+  circle_.setDisplayPriority(5.0f);
+  circle_.setIsVisible(true);
+  circle_.setFill(&fill_);
+
   position_.x = getSetting("player_width").getFloat();
   updateY(0.0f);
   updateCircle();
@@ -51,11 +50,12 @@ void Character::update(float delta_time) {
 
 void Character::updateCircle() {
   float newRadius = (getSetting("player_width").getFloat() + getSetting("player_growth_rate").getFloat() * position_.x);
-  if (circle_->radius < newRadius) {
-    circle_->radius = newRadius;
+  if (circle_.radius() < newRadius) {
+    circle_.setRadius(newRadius);
   }
-  circle_->center = position_;
-  circle_->center.y += circle_->radius;
+  glm::vec2 center = position_;
+  center.y += circle_.radius();
+  circle_.setCenter(center);
 }
 
 void Character::moveLeft(float delta_time) {
@@ -68,8 +68,8 @@ void Character::moveLeft(float delta_time) {
 void Character::moveRight(float delta_time) {
   position_.x += getSetting("player_speed").getFloat() * delta_time;
   float level_width = theWorld().ground.width();
-  if (position_.x + circle_->radius > level_width) {
-    position_.x = level_width - circle_->radius;
+  if (position_.x + circle_.radius() > level_width) {
+    position_.x = level_width - circle_.radius();
   }
 }
 
