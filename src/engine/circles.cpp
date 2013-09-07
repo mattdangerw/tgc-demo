@@ -25,6 +25,7 @@ void Circle::drawOccluder() {
 }
 
 void Circle::drawHelper(bool occluder) {
+  // Draw a circle to stencil  buffer
   glEnable(GL_STENCIL_TEST);
   glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
   glStencilFunc(GL_ALWAYS, 0, 0xFF);
@@ -38,7 +39,7 @@ void Circle::drawHelper(bool occluder) {
   glUniformMatrix3fv(theEngine().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform() * circle_transform));
   theEngine().drawUnitQuad();
 
-  // Fill in
+  // Enable stencil test and fill in
   glDisable(GL_DEPTH_TEST);
   glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
   glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
