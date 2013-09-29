@@ -1,8 +1,13 @@
 TODO:
-  restructure:
-    make tile vs. stetch fill option
-    why set up vaos per shape and not shape_data, probably a reason
-    fix the walking jitter if possible
+  Do we need to think about texturing more? Thinking about weather everthing
+  should have height 1 and a relative transform, or setters for position and
+  size like the circle. I think the relative transform might cause our fill to
+  stretch, like get more pixelated if it was huge. Think about this more,
+  right maybe things show up perfectly textured (and font antialiased) if
+  relative transform not set, but then things scale when relative transform set?
+  Take time to think this one through...
+
+  default to black color fill
 
   art workflow:
     everything in one document
@@ -18,23 +23,16 @@ let try it:
     try making some tree and frog animations
     try bringing it into the game!!! figure out how ids gonna work with getting the right stuff to the right places in the game
     python? keep what we can in python
-    
-    you did it good job!! you have an art content pipeline now to make a crazy world!!
-    think about which game companies to get in touch with and how...
-
 
 code wish list:
+  fix the walking jitter if possible
+ 
   stop sorting the same damn tree structure every frame!!
 
   tweening functions: this should be pretty simple to give a few easing functions
 
-  thought kill lock children instead shade group recursively set the attrs is wants on all children
-  
   make a simple time struct in updateable with delta_time and global_time and pass ref to that in update
-
-  modernize circle drawer to group of circles
-  or at least make screen space texture quad then we can set circle extent to be fill and clean header
-
+c
   bezier class
 
   bound the springs!

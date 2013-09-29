@@ -40,6 +40,8 @@ add_executable(tgc-demo
   src/engine/animator.cpp
   src/engine/circles.cpp
   src/engine/circles.h
+  src/engine/text.cpp
+  src/engine/text.h
   src/engine/particle_system.cpp
   src/engine/particle_system.h
   src/engine/shape.cpp
