@@ -12,6 +12,7 @@ include_directories(src)
 include_directories(libs)
 include_directories(libs/glew/include)
 include_directories(libs/glfw/include)
+include_directories(libs/freetype/include)
 
 add_executable(tgc-demo
   src/main.cpp
@@ -64,4 +65,4 @@ add_executable(tgc-demo
   src/util/json.c
   )
 
-target_link_libraries(tgc-demo glew glfw ${OPENGL_LIBRARIES})
+target_link_libraries(tgc-demo glew glfw freetype ${OPENGL_LIBRARIES})
