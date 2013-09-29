@@ -31,7 +31,7 @@ class Settings{
     map<string, const json_value *> settings_;
 };
 
-Settings the_settings;
+static Settings the_settings;
 
 void loadSettings(string filename) {
   the_settings.load(filename);

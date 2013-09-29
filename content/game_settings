@@ -6,7 +6,7 @@
   "cloud_min_y":0.7,
   "cloud_max_y":1.0,
   "cloud_min_x_distance":0.4,
-  "cloud_max_x_distance":0.5,
+  "cloud_max_x_distance":0.9,
   "cloud_min_velocity":0.03,
   "cloud_max_velocity":0.035,
   "cloud_min_shade":0.45,

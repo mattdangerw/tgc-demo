@@ -38,6 +38,7 @@ class Engine {
     float windowWidth() { return aspect_; }
     // Sets location of our light source for the god rays.
     void setLightPosition(glm::vec2 position) { light_position_ = position; }
+    float getPixelHeight(float height) { return height_ * height; }
 
     // =====GL stuff=====
     // Draws a quad with vertices and tex coords from (0, 0) to (1, 1)

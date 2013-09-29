@@ -2,8 +2,9 @@
 
 #include "engine/engine.h"
 #include "engine/entity.h"
+#include "util/transform2D.h"
 
-World the_world;
+static World the_world;
 
 World &theWorld() {
   return the_world;
@@ -83,6 +84,13 @@ void World::init() {
   cloud_manager.init();
   bird_manager.init();
   character.init();
+  test_text.init();
+  glm::mat3 transform = translate2D(glm::mat3(1.0f), glm::vec2(0.2f, 0.6f));
+  test_text.setRelativeTransform(transform);
+  test_text.setText("stringy string bean?");
+  test_fill.init("content/textures/bookcover1.dds");
+  test_text.setFill(&test_fill);
+  test_text.setOccluderColor(0.7f);
 
   // Add to scene graph
   this->setParent(theEngine().rootEntity());
@@ -93,6 +101,7 @@ void World::init() {
   cloud_manager.setParent(this);
   bird_manager.setParent(this);
   character.setParent(this);
+  test_text.setParent(this);
 
   // Draw order
   background.setDisplayPriority(-1);
@@ -100,4 +109,5 @@ void World::init() {
   cloud_manager.setDisplayPriority(1);
   bird_manager.setDisplayPriority(1);
   character.setDisplayPriority(2);
+  test_text.setDisplayPriority(0);
 }
