@@ -29,8 +29,9 @@ void Ground::initShape() {
   end.position = glm::vec2(points_[points_.size() - 1].x, 0.0f);
   end.type = ON_PATH;
   path.push_back(end);
-  fill_.init("content/textures/bookcover2.dds");
-  fill_.setColorAddition(glm::vec4(glm::vec3(-0.25f), 1.0f));
+  fill_.init("content/textures/seamlesstexture26.dds");
+  fill_.setColorAddition(glm::vec4(glm::vec3(-0.05f), 1.0f));
+  fill_.setColorMultiplier(glm::vec4(glm::vec3(0.3f), 1.0f));
   shape_.init(path);
   shape_.setParent(this);
   shape_.setFill(&fill_);

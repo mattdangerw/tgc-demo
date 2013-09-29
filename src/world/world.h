@@ -8,6 +8,7 @@
 #include "world/birds.h"
 #include "world/character.h"
 #include "world/scroller.h"
+#include "engine/text.h"
 
 class World;
 
@@ -24,6 +25,8 @@ class World : public Entity {
     Character character;
     CloudManager cloud_manager;
     BirdManager bird_manager;
+    Text test_text;
+    TexturedFill test_fill;
     //IdeaManager idea_manager;
     //TreeManager tree_manager;
     //FrogManager frog_manager;
