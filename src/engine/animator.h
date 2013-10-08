@@ -58,7 +58,7 @@ class Animation {
     float time_, lerp_t_;
 };
 
-class Animator : Entity {
+class Animator : public Entity {
   public:
     Animator();
     ~Animator();

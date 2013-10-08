@@ -68,6 +68,7 @@ void ShapeGroup::init(string filename) {
     shapes_[fill_name] = shape_and_fill;
     priority++;
   }
+  animator_.setParent(this);
   if (has_animations) {
     animator_.init(json_animations, start_frame);
   } else {
