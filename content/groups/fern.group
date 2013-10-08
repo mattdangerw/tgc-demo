@@ -1,17 +1,17 @@
 {
   "fills":{
-    "body":{"file":"bark.dds", "scale":[0.2, 0.2]},
+    "fern":{"file":"bark.dds", "scale":[0.2, 0.2]},
   },
   "frames":{
-    "frame1":{"fern":"fern1_shape0.path"},
-    "frame2":{"fern":"fern2_shape0.path"}
+    "frame1":{"fern":"fern1.path"},
+    "frame2":{"fern":"fern2.path"}
   },
   "animations":{
     "shake":{
       "repeats":true,
       "keyframes":[
-        {"name":"frame1", "time":0.2},
-        {"name":"frame2", "time":0.2}
+        {"name":"frame1", "time":0.5},
+        {"name":"frame2", "time":0.5}
       ]
     }
   }

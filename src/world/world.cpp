@@ -92,10 +92,10 @@ void World::init() {
   test_text.setFill(&test_fill);
   test_text.setOccluderColor(0.7f);
 
-  fern.init("bird.group");
+  fern.init("fern.group");
   fern.animator().queueAnimation("shake");
   fern.setParent(this);
-  glm::mat3 fern_transform = scale2D(translate2D(glm::mat3(1.0f), glm::vec2(0.5f, 0.5f)), glm::vec2(0.2f));
+  glm::mat3 fern_transform = scale2D(translate2D(glm::mat3(1.0f), glm::vec2(0.5f, 0.08f)), glm::vec2(0.2f));
   fern.setRelativeTransform(fern_transform);
 
   // Add to scene graph
@@ -117,5 +117,5 @@ void World::init() {
   bird_manager.setDisplayPriority(1);
   character.setDisplayPriority(2);
   test_text.setDisplayPriority(0);
-  fern.setDisplayPriority(0);
+  fern.setDisplayPriority(-1);
 }
