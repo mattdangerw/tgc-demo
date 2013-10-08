@@ -85,12 +85,18 @@ void World::init() {
   bird_manager.init();
   character.init();
   test_text.init();
-  glm::mat3 transform = translate2D(glm::mat3(1.0f), glm::vec2(0.2f, 0.6f));
-  test_text.setRelativeTransform(transform);
+  glm::mat3 text_transform = translate2D(glm::mat3(1.0f), glm::vec2(0.2f, 0.6f));
+  test_text.setRelativeTransform(text_transform);
   test_text.setText("stringy string bean?");
   test_fill.init("content/textures/bookcover1.dds");
   test_text.setFill(&test_fill);
   test_text.setOccluderColor(0.7f);
+
+  fern.init("bird.group");
+  fern.animator().queueAnimation("shake");
+  fern.setParent(this);
+  glm::mat3 fern_transform = scale2D(translate2D(glm::mat3(1.0f), glm::vec2(0.5f, 0.5f)), glm::vec2(0.2f));
+  fern.setRelativeTransform(fern_transform);
 
   // Add to scene graph
   this->setParent(theEngine().rootEntity());
@@ -102,6 +108,7 @@ void World::init() {
   bird_manager.setParent(this);
   character.setParent(this);
   test_text.setParent(this);
+  fern.setParent(this);
 
   // Draw order
   background.setDisplayPriority(-1);
@@ -110,4 +117,5 @@ void World::init() {
   bird_manager.setDisplayPriority(1);
   character.setDisplayPriority(2);
   test_text.setDisplayPriority(0);
+  fern.setDisplayPriority(0);
 }

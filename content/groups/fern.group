@@ -1,0 +1,18 @@
+{
+  "fills":{
+    "body":{"file":"bark.dds", "scale":[0.2, 0.2]},
+  },
+  "frames":{
+    "frame1":{"fern":"fern1_shape0.path"},
+    "frame2":{"fern":"fern2_shape0.path"}
+  },
+  "animations":{
+    "shake":{
+      "repeats":true,
+      "keyframes":[
+        {"name":"frame1", "time":0.2},
+        {"name":"frame2", "time":0.2}
+      ]
+    }
+  }
+}

@@ -27,6 +27,7 @@ class World : public Entity {
     BirdManager bird_manager;
     Text test_text;
     TexturedFill test_fill;
+    ShapeGroup fern;
     //IdeaManager idea_manager;
     //TreeManager tree_manager;
     //FrogManager frog_manager;
