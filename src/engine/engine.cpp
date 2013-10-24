@@ -118,15 +118,19 @@ void Engine::loadShaders() {
   attribute_handles_["color"] = 3;
   attribute_handles_["tex_coord"] = 4;
   attribute_handles_["bezier_coord"] = 5;
+  attribute_handles_["extra_point"] = 6;
+  attribute_handles_["lerp_extra_point1"] = 7;
+  attribute_handles_["lerp_extra_point2"] = 8;
   // Particle attributes. These are only used with particle programs so we could give them there own set of numbers.
-  attribute_handles_["velocity"] = 6;
-  attribute_handles_["color"] = 7;
-  attribute_handles_["age"] = 8;
-  attribute_handles_["visible"] = 9;
+  attribute_handles_["velocity"] = 9;
+  attribute_handles_["color"] = 10;
+  attribute_handles_["age"] = 11;
+  attribute_handles_["visible"] = 12;
 
   Shader general_vert, animated_vert, textured_frag, textured_with_shadows_frag, minimal_frag,
     quadric_frag, circles_frag, shadows_vert, shadows_frag, text_stencil_frag, text_to_texture_frag,
-    particle_feedback_vert, particle_draw_vert, particle_draw_geom, particle_draw_frag;
+    particle_feedback_vert, cubic_vert, cubic_animated_vert, cubic_geom, cubic_frag, particle_draw_vert, 
+    particle_draw_geom, particle_draw_frag;
   general_vert.load("src/engine/shaders/general.vert", GL_VERTEX_SHADER);
   animated_vert.load("src/engine/shaders/animated.vert", GL_VERTEX_SHADER);
   textured_frag.load("src/engine/shaders/textured.frag", GL_FRAGMENT_SHADER);
@@ -138,6 +142,10 @@ void Engine::loadShaders() {
   text_stencil_frag.load("src/engine/shaders/text_stencil.frag", GL_FRAGMENT_SHADER);
   text_to_texture_frag.load("src/engine/shaders/text_to_texture.frag", GL_FRAGMENT_SHADER);
   particle_feedback_vert.load("src/engine/shaders/particle_feedback.vert", GL_VERTEX_SHADER);
+  cubic_vert.load("src/engine/shaders/cubic.vert", GL_VERTEX_SHADER);
+  cubic_animated_vert.load("src/engine/shaders/cubic_animated.vert", GL_VERTEX_SHADER);
+  cubic_geom.load("src/engine/shaders/cubic.geom", GL_GEOMETRY_SHADER);
+  cubic_frag.load("src/engine/shaders/cubic.frag", GL_FRAGMENT_SHADER);
   particle_draw_vert.load("src/engine/shaders/particle_draw.vert", GL_VERTEX_SHADER);
   particle_draw_geom.load("src/engine/shaders/particle_draw.geom", GL_GEOMETRY_SHADER);
   particle_draw_frag.load("src/engine/shaders/particle_draw.frag", GL_FRAGMENT_SHADER);
@@ -165,6 +173,16 @@ void Engine::loadShaders() {
   programs_["quadric_animated"].init();
   programs_["quadric_animated"].addShader(&animated_vert);
   programs_["quadric_animated"].addShader(&quadric_frag);
+
+  programs_["cubic"].init();
+  programs_["cubic"].addShader(&cubic_vert);
+  programs_["cubic"].addShader(&cubic_geom);
+  programs_["cubic"].addShader(&cubic_frag);
+  
+  programs_["cubic_animated"].init();
+  programs_["cubic_animated"].addShader(&cubic_animated_vert);
+  programs_["cubic_animated"].addShader(&cubic_geom);
+  programs_["cubic_animated"].addShader(&cubic_frag);
 
   programs_["circles"].init();
   programs_["circles"].addShader(&general_vert);

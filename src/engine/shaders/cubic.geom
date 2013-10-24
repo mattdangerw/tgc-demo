@@ -1,16 +1,16 @@
 #version 330
 
 layout(triangles) in;
-in vec2 geom_extra_point[];
+in vec4 geom_extra_point[];
 
 layout(triangle_strip, max_vertices=11) out;
 out vec3 frag_bezier_coord;
 
 void main() {
-  vec2 p1 = gl_in[0].gl_Position.xyz;
-  vec2 p2 = gl_in[1].gl_Position.xyz;
-  vec2 p3 = gl_in[2].gl_Position.xyz;
-  vec2 p4 = geom_extra_point[0];
+  vec3 p1 = gl_in[0].gl_Position.xyz;
+  vec3 p2 = gl_in[1].gl_Position.xyz;
+  vec3 p3 = gl_in[2].gl_Position.xyz;
+  vec3 p4 = geom_extra_point[0].xyz;
 
   float a1 = dot(p1, cross(p4, p3));
   float a2 = dot(p2, cross(p1, p4));
@@ -22,7 +22,7 @@ void main() {
   float disc = d1 * d1 * (3 * d2 * d2 - 4 * d1 * d3);
 
   vec3 t1, t2, t3, t4;
-  if (d1 == d2 == 0) { // Quadratic
+  if (d1 == 0 && d2 == 0) { // Quadratic
     t1 = vec3(0, 0, 0);
     t2 = vec3(1.0/3, 0, 1.0/3);
     t3 = vec3(2.0/3, 1.0/3, 2.0/3);
@@ -33,7 +33,7 @@ void main() {
     float ms = 3 * d2 + rad;
     float lt = 6 * d1;
     float mt = lt;
-    t1 = vec3(ls * ms, pos(ls, 3), pow(ms, 3));
+    t1 = vec3(ls * ms, pow(ls, 3), pow(ms, 3));
     t2 = vec3((3 * ls * ms - ls * mt  - mt * ms) / 3,
               ls * ls * (ls - lt),
               ms * ms * (ms - mt));
@@ -41,7 +41,7 @@ void main() {
               pow(lt - ls, 2) * ls,
               pow(mt - ms, 2) * ms);
     t4 = vec3((lt - ls) * (mt - ms),
-              pos(lt - ls, 3),
+              pow(lt - ls, 3),
               pow(mt - ms, 3));
   } else { // Loop
     float rad = sqrt(4 * d1 * d3 - 3 * d2 * d2);
@@ -57,20 +57,20 @@ void main() {
               (lt - ls) * (ls * (2 * mt - 3 * ms) + lt * ms) / 3,
               (mt - ms) * (ls * (mt - 3 * ms) + 2 * lt * ms) / 3);
     t4 = vec3((lt - ls) * (mt - ms),
-              -pos(lt - ls, 2) * (mt - ms),
+              -pow(lt - ls, 2) * (mt - ms),
               -pow(mt - ms, 2) * (lt - ls));
   }
 
-  gl_Position = p2;
+  gl_Position = gl_in[0].gl_Position;
   frag_bezier_coord = t2;
   EmitVertex();
-  gl_Position = p1;
+  gl_Position = gl_in[1].gl_Position;
   frag_bezier_coord = t1;
   EmitVertex();
-  gl_Position = p3;
+  gl_Position = gl_in[2].gl_Position;
   frag_bezier_coord = t3;
   EmitVertex();
-  gl_Position = p4;
+  gl_Position = geom_extra_point[0];
   frag_bezier_coord = t4;
   EmitVertex();
   EndPrimitive();
