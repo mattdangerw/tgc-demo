@@ -61,10 +61,10 @@ void main() {
               -pow(mt - ms, 2) * (lt - ls));
   }
 
-  gl_Position = gl_in[0].gl_Position;
+  gl_Position = gl_in[1].gl_Position;
   frag_bezier_coord = t2;
   EmitVertex();
-  gl_Position = gl_in[1].gl_Position;
+  gl_Position = gl_in[0].gl_Position;
   frag_bezier_coord = t1;
   EmitVertex();
   gl_Position = gl_in[2].gl_Position;

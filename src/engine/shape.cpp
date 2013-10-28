@@ -57,8 +57,8 @@ void ShapeData::init(const vector<PathVertex> &vertices) {
   has_solids_ = solids_size_ > 0;
   quadrics_size_ = quadrics.size();
   has_quadrics_ = quadrics_size_ > 0;
-  cubics_size_ = quadrics.size();
-  has_cubics_ = quadrics_size_ > 0;
+  cubics_size_ = cubics.size();
+  has_cubics_ = cubics_size_ > 0;
   // Send buffer data.
   if (has_solids_) {
     glGenBuffers(1, &solid_buffer_object_);

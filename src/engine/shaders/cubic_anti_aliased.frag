@@ -9,8 +9,8 @@ void main()
   float x = frag_bezier_coord.x;
   float y = frag_bezier_coord.y;
   float z = frag_bezier_coord.z;
-  vec2 dx = dFdx(frag_bezier_coord);
-  vec2 dy = dFdy(frag_bezier_coord);
+  vec3 dx = dFdx(frag_bezier_coord);
+  vec3 dy = dFdy(frag_bezier_coord);
 
   // Chain rule
   float fx = 3*x*x*dx.x - y*dx.z - z*dx.y;

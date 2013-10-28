@@ -145,7 +145,7 @@ void Engine::loadShaders() {
   cubic_vert.load("src/engine/shaders/cubic.vert", GL_VERTEX_SHADER);
   cubic_animated_vert.load("src/engine/shaders/cubic_animated.vert", GL_VERTEX_SHADER);
   cubic_geom.load("src/engine/shaders/cubic.geom", GL_GEOMETRY_SHADER);
-  cubic_frag.load("src/engine/shaders/cubic.frag", GL_FRAGMENT_SHADER);
+  cubic_frag.load("src/engine/shaders/cubic_anti_aliased.frag", GL_FRAGMENT_SHADER);
   particle_draw_vert.load("src/engine/shaders/particle_draw.vert", GL_VERTEX_SHADER);
   particle_draw_geom.load("src/engine/shaders/particle_draw.geom", GL_GEOMETRY_SHADER);
   particle_draw_frag.load("src/engine/shaders/particle_draw.frag", GL_FRAGMENT_SHADER);
