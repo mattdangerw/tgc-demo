@@ -1,0 +1,30 @@
+{
+  "fills":{
+    "shape1":{"file":"seamless_texture21.dds", "scale":[0.2, 0.2]},
+    "shape2":{"file":"seamless_texture21.dds", "scale":[0.2, 0.2]},
+    "shape3":{"file":"seamless_texture21.dds", "scale":[0.2, 0.2]},
+    "shape4":{"file":"seamless_texture21.dds", "scale":[0.2, 0.2]},
+    "shape5":{"file":"seamless_texture21.dds", "scale":[0.2, 0.2]},
+    "shape6":{"file":"seamless_texture21.dds", "scale":[0.2, 0.2]},
+    "shape7":{"file":"seamless_texture21.dds", "scale":[0.2, 0.2]},
+    "shape8":{"file":"seamless_texture21.dds", "scale":[0.2, 0.2]},
+    "shape9":{"file":"seamless_texture21.dds", "scale":[0.2, 0.2]},
+    "shape10":{"file":"seamless_texture21.dds", "scale":[0.2, 0.2]},
+    "shape0":{"file":"bark.dds", "scale":[0.2, 0.2]},
+  },
+  "frames":{
+    "frame1":{
+      "shape1":"gnu_shape1.path",
+      "shape2":"gnu_shape2.path",
+      "shape3":"gnu_shape3.path",
+      "shape4":"gnu_shape4.path",
+      "shape5":"gnu_shape5.path",
+      "shape6":"gnu_shape6.path",
+      "shape7":"gnu_shape7.path",
+      "shape8":"gnu_shape8.path",
+      "shape9":"gnu_shape9.path",
+      "shape10":"gnu_shape10.path",
+      "shape0":"gnu_shape0.path",
+    }
+  }
+}

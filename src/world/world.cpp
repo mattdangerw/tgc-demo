@@ -1,3 +1,4 @@
+
 #include "world/world.h"
 
 #include "engine/engine.h"
@@ -91,6 +92,11 @@ void World::init() {
   test_fill.init("content/textures/bookcover1.dds");
   test_text.setFill(&test_fill);
   test_text.setOccluderColor(0.7f);
+  gnu.init("test.group");
+  //glm::mat3 transform2 = translate2D(glm::mat3(1.0f), glm::vec2(0.0f, -1.6f));
+  //transform2 = scale2D(transform2, glm::vec2(4.0f, 4.0f));
+  //gnu.setRelativeTransform(transform2);
+
 
   // Add to scene graph
   this->setParent(theEngine().rootEntity());
@@ -102,6 +108,7 @@ void World::init() {
   bird_manager.setParent(this);
   character.setParent(this);
   test_text.setParent(this);
+   gnu.setParent(this);
 
   // Draw order
   background.setDisplayPriority(-1);
@@ -110,4 +117,5 @@ void World::init() {
   bird_manager.setDisplayPriority(1);
   character.setDisplayPriority(2);
   test_text.setDisplayPriority(0);
+  gnu.setDisplayPriority(2);
 }

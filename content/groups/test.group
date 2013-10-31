@@ -1,0 +1,10 @@
+{
+  "fills":{
+    "shape0":{"file":"bark.dds", "scale":[0.2, 0.2]},
+  },
+  "frames":{
+    "frame1":{
+      "shape0":"test.path",
+    }
+  }
+}

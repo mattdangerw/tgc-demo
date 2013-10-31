@@ -7,20 +7,25 @@ layout(triangle_strip, max_vertices=11) out;
 out vec3 frag_bezier_coord;
 
 void main() {
-  vec3 p1 = gl_in[0].gl_Position.xyz;
-  vec3 p2 = gl_in[1].gl_Position.xyz;
-  vec3 p3 = gl_in[2].gl_Position.xyz;
-  vec3 p4 = geom_extra_point[0].xyz;
+  vec4 p1 = gl_in[0].gl_Position;
+  vec4 p2 = gl_in[1].gl_Position;
+  vec4 p3 = gl_in[2].gl_Position;
+  vec4 p4 = geom_extra_point[0];
 
-  float a1 = dot(p1, cross(p4, p3));
-  float a2 = dot(p2, cross(p1, p4));
-  float a3 = dot(p3, cross(p2, p2));
-
+  // Maths for cubic classification
+  float a1 = dot(p1.xyw, cross(p4.xyw, p3.xyw));
+  float a2 = dot(p2.xyw, cross(p1.xyw, p4.xyw));
+  float a3 = dot(p3.xyw, cross(p2.xyw, p1.xyw));
   float d1 = a1 - 2 * a2 + 3 * a3;
   float d2 = -a2 + 3 * a3;
   float d3 = 3 * a3;
   float disc = d1 * d1 * (3 * d2 * d2 - 4 * d1 * d3);
 
+  bool flip = false;
+  bool subdivide = false;
+  float subdivide_t = 0;
+
+  // Classify and determine implicit bezier coordinates
   vec3 t1, t2, t3, t4;
   if (d1 == 0 && d2 == 0) { // Quadratic
     t1 = vec3(0, 0, 0);
@@ -43,6 +48,7 @@ void main() {
     t4 = vec3((lt - ls) * (mt - ms),
               pow(lt - ls, 3),
               pow(mt - ms, 3));
+    if (d1 < 0) flip = true;
   } else { // Loop
     float rad = sqrt(4 * d1 * d3 - 3 * d2 * d2);
     float ls = d2 - rad;
@@ -50,7 +56,7 @@ void main() {
     float lt = 2 * d1;
     float mt = lt;
     t1 = vec3(ls * ms, ls * ls * ms, ms * ms * ls);
-    t2 = vec3((ls * ms - ls * mt - lt * ms) / 3,
+    t2 = vec3((3 * ls * ms - ls * mt - lt * ms) / 3,
               -ls * (ls * (mt - 3 * ms) + 2 * lt * ms) / 3,
               -ms * (ls * (2 * mt - 3 * ms) + lt * ms) / 3);
     t3 = vec3((lt * (mt - 2 * ms) + ls * (3 * ms - 2 * mt)) / 3,
@@ -59,19 +65,100 @@ void main() {
     t4 = vec3((lt - ls) * (mt - ms),
               -pow(lt - ls, 2) * (mt - ms),
               -pow(mt - ms, 2) * (lt - ls));
+    if (d1 * t2.x < 0) flip = true;
+    float double_point = ls / lt;
+    if (double_point >= 0.0 && double_point <= 1.0) {
+      subdivide = true;
+      subdivide_t = double_point;
+    }
+    double_point = ms / mt;
+    if (double_point >= 0.0 && double_point <= 1.0) {
+      subdivide = true;
+      subdivide_t = double_point;
+    }
   }
 
-  gl_Position = gl_in[1].gl_Position;
-  frag_bezier_coord = t2;
-  EmitVertex();
-  gl_Position = gl_in[0].gl_Position;
-  frag_bezier_coord = t1;
-  EmitVertex();
-  gl_Position = gl_in[2].gl_Position;
-  frag_bezier_coord = t3;
-  EmitVertex();
-  gl_Position = geom_extra_point[0];
-  frag_bezier_coord = t4;
-  EmitVertex();
-  EndPrimitive();
+  if (flip) {
+    t1.xy *= -1.0;
+    t2.xy *= -1.0;
+    t3.xy *= -1.0;
+    t4.xy *= -1.0;
+  }
+
+  if (!subdivide) {
+    gl_Position = p2;
+    frag_bezier_coord = t2;
+    EmitVertex();
+    gl_Position = p1;
+    frag_bezier_coord = t1;
+    EmitVertex();
+    gl_Position = p3;
+    frag_bezier_coord = t3;
+    EmitVertex();
+    gl_Position = p4;
+    frag_bezier_coord = t4;
+    EmitVertex();
+    EndPrimitive();
+  } else {
+    // subdivide the curve
+    vec4 p12, p23, p34, p13, p24, p14;
+    p12 = mix(p1, p2, subdivide_t);
+    p23 = mix(p2, p3, subdivide_t);
+    p34 = mix(p3, p4, subdivide_t);
+    p13 = mix(p12, p23, subdivide_t);
+    p24 = mix(p23, p34, subdivide_t);
+    p14 = mix(p13, p24, subdivide_t);
+    vec3 t12, t23, t34, t13, t24, t14;
+    t12 = mix(t1, t2, subdivide_t);
+    t23 = mix(t2, t3, subdivide_t);
+    t34 = mix(t3, t4, subdivide_t);
+    t13 = mix(t12, t23, subdivide_t);
+    t24 = mix(t23, t34, subdivide_t);
+    t14 = mix(t13, t24, subdivide_t);
+    
+    // First subdivision
+    gl_Position = p12;
+    frag_bezier_coord = t12;
+    EmitVertex();
+    gl_Position = p1;
+    frag_bezier_coord = t1;
+    EmitVertex();
+    gl_Position = p13;
+    frag_bezier_coord = t13;
+    EmitVertex();
+    gl_Position = p14;
+    frag_bezier_coord = t14;
+    EmitVertex();
+    EndPrimitive();
+
+    t14.xy *= -1.0;
+    t24.xy *= -1.0;
+    t34.xy *= -1.0;
+    t4.xy *= -1.0;
+    // Second subdivision
+    gl_Position = p24;
+    frag_bezier_coord = t24;
+    EmitVertex();
+    gl_Position = p14;
+    frag_bezier_coord = t14;
+    EmitVertex();
+    gl_Position = p34;
+    frag_bezier_coord = t34;
+    EmitVertex();
+    gl_Position = p4;
+    frag_bezier_coord = t4;
+    EmitVertex();
+    EndPrimitive();
+
+    // Middle triangle. This bezier coord will make our fragment shader fill
+    // in for every fragment
+    frag_bezier_coord = vec3(0.0, 1.0, 1.0);
+    gl_Position = p1;
+    EmitVertex();
+    gl_Position = p14;
+    EmitVertex();
+    gl_Position = p4;
+    EmitVertex();
+    EndPrimitive();
+  }
 }
