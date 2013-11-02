@@ -6,11 +6,41 @@ in vec4 geom_extra_point[];
 layout(triangle_strip, max_vertices=11) out;
 out vec3 frag_bezier_coord;
 
+void emit(vec4 p1, vec4 p2, vec4 p3, vec4 p4,
+          vec3 t1, vec3 t2, vec3 t3, vec3 t4,
+          bool flip) {
+  if (flip) {
+    t1.xy *= -1.0;
+    t2.xy *= -1.0;
+    t3.xy *= -1.0;
+    t4.xy *= -1.0;
+  }
+
+  gl_Position = p2;
+  frag_bezier_coord = t2;
+  EmitVertex();
+  gl_Position = p1;
+  frag_bezier_coord = t1;
+  EmitVertex();
+  gl_Position = p3;
+  frag_bezier_coord = t3;
+  EmitVertex();
+  gl_Position = p4;
+  frag_bezier_coord = t4;
+  EmitVertex();
+  EndPrimitive();
+}
+
+
 void main() {
   vec4 p1 = gl_in[0].gl_Position;
   vec4 p2 = gl_in[1].gl_Position;
   vec4 p3 = gl_in[2].gl_Position;
   vec4 p4 = geom_extra_point[0];
+
+  bool flip = false;
+  bool subdivide = false;
+  float subdivide_t = 0;
 
   // Maths for cubic classification
   float a1 = dot(p1.xyw, cross(p4.xyw, p3.xyw));
@@ -20,10 +50,6 @@ void main() {
   float d2 = -a2 + 3 * a3;
   float d3 = 3 * a3;
   float disc = d1 * d1 * (3 * d2 * d2 - 4 * d1 * d3);
-
-  bool flip = false;
-  bool subdivide = false;
-  float subdivide_t = 0;
 
   // Classify and determine implicit bezier coordinates
   vec3 t1, t2, t3, t4;
@@ -46,8 +72,8 @@ void main() {
               pow(lt - ls, 2) * ls,
               pow(mt - ms, 2) * ms);
     t4 = vec3((lt - ls) * (mt - ms),
-              pow(lt - ls, 3),
-              pow(mt - ms, 3));
+              -1 * pow(lt - ls, 3),
+              -1 * pow(mt - ms, 3));
     if (d1 < 0) flip = true;
   } else { // Loop
     float rad = sqrt(4 * d1 * d3 - 3 * d2 * d2);
@@ -78,27 +104,8 @@ void main() {
     }
   }
 
-  if (flip) {
-    t1.xy *= -1.0;
-    t2.xy *= -1.0;
-    t3.xy *= -1.0;
-    t4.xy *= -1.0;
-  }
-
   if (!subdivide) {
-    gl_Position = p2;
-    frag_bezier_coord = t2;
-    EmitVertex();
-    gl_Position = p1;
-    frag_bezier_coord = t1;
-    EmitVertex();
-    gl_Position = p3;
-    frag_bezier_coord = t3;
-    EmitVertex();
-    gl_Position = p4;
-    frag_bezier_coord = t4;
-    EmitVertex();
-    EndPrimitive();
+    emit(p1, p2, p3, p4, t1, t2, t3, t4, flip);
   } else {
     // subdivide the curve
     vec4 p12, p23, p34, p13, p24, p14;
@@ -117,38 +124,10 @@ void main() {
     t14 = mix(t13, t24, subdivide_t);
     
     // First subdivision
-    gl_Position = p12;
-    frag_bezier_coord = t12;
-    EmitVertex();
-    gl_Position = p1;
-    frag_bezier_coord = t1;
-    EmitVertex();
-    gl_Position = p13;
-    frag_bezier_coord = t13;
-    EmitVertex();
-    gl_Position = p14;
-    frag_bezier_coord = t14;
-    EmitVertex();
-    EndPrimitive();
+    emit(p1, p12, p13, p14, t1, t12, t13, t14, d1 * t12.x < 0);
 
-    t14.xy *= -1.0;
-    t24.xy *= -1.0;
-    t34.xy *= -1.0;
-    t4.xy *= -1.0;
     // Second subdivision
-    gl_Position = p24;
-    frag_bezier_coord = t24;
-    EmitVertex();
-    gl_Position = p14;
-    frag_bezier_coord = t14;
-    EmitVertex();
-    gl_Position = p34;
-    frag_bezier_coord = t34;
-    EmitVertex();
-    gl_Position = p4;
-    frag_bezier_coord = t4;
-    EmitVertex();
-    EndPrimitive();
+    emit(p14, p24, p34, p4, t14, t24, t34, t4, d1 * t24.x < 0);
 
     // Middle triangle. This bezier coord will make our fragment shader fill
     // in for every fragment

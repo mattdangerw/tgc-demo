@@ -1,6 +1,6 @@
 {
   "debug_mode":true,
-  "fullscreen":true,
+  "fullscreen":false,
   "cloud_min_scale":0.18,
   "cloud_max_scale":0.3,
   "cloud_min_y":0.7,
