@@ -108,7 +108,7 @@ void World::init() {
   bird_manager.setParent(this);
   character.setParent(this);
   test_text.setParent(this);
-   gnu.setParent(this);
+  gnu.setParent(this);
 
   // Draw order
   background.setDisplayPriority(-1);

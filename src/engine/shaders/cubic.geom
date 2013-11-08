@@ -6,25 +6,32 @@ in vec4 geom_extra_point[];
 layout(triangle_strip, max_vertices=11) out;
 out vec3 frag_bezier_coord;
 
+bool inside(vec3 t) {
+  return t.x * t.x * t.x - t.y * t.z <= 0;
+}
+
 void emit(vec4 p1, vec4 p2, vec4 p3, vec4 p4,
-          vec3 t1, vec3 t2, vec3 t3, vec3 t4,
-          bool flip) {
-  if (flip) {
+          vec3 t1, vec3 t2, vec3 t3, vec3 t4) {
+  if (!inside((t1 + t4) / 2.0)) {
     t1.xy *= -1.0;
     t2.xy *= -1.0;
     t3.xy *= -1.0;
     t4.xy *= -1.0;
   }
 
-  gl_Position = p2;
-  frag_bezier_coord = t2;
-  EmitVertex();
+  if (!inside(t2)) {
+    gl_Position = p2;
+    frag_bezier_coord = t2;
+    EmitVertex();
+  }
   gl_Position = p1;
   frag_bezier_coord = t1;
   EmitVertex();
-  gl_Position = p3;
-  frag_bezier_coord = t3;
-  EmitVertex();
+  if (!inside(t3)) {
+    gl_Position = p3;
+    frag_bezier_coord = t3;
+    EmitVertex();
+  }
   gl_Position = p4;
   frag_bezier_coord = t4;
   EmitVertex();
@@ -46,6 +53,7 @@ void main() {
   float a1 = dot(p1.xyw, cross(p4.xyw, p3.xyw));
   float a2 = dot(p2.xyw, cross(p1.xyw, p4.xyw));
   float a3 = dot(p3.xyw, cross(p2.xyw, p1.xyw));
+  float a4 = dot(p4.xyw, cross(p3.xyw, p2.xyw));
   float d1 = a1 - 2 * a2 + 3 * a3;
   float d2 = -a2 + 3 * a3;
   float d3 = 3 * a3;
@@ -74,7 +82,6 @@ void main() {
     t4 = vec3((lt - ls) * (mt - ms),
               -1 * pow(lt - ls, 3),
               -1 * pow(mt - ms, 3));
-    if (d1 < 0) flip = true;
   } else { // Loop
     float rad = sqrt(4 * d1 * d3 - 3 * d2 * d2);
     float ls = d2 - rad;
@@ -91,7 +98,6 @@ void main() {
     t4 = vec3((lt - ls) * (mt - ms),
               -pow(lt - ls, 2) * (mt - ms),
               -pow(mt - ms, 2) * (lt - ls));
-    if (d1 * t2.x < 0) flip = true;
     float double_point = ls / lt;
     if (double_point >= 0.0 && double_point <= 1.0) {
       subdivide = true;
@@ -104,8 +110,12 @@ void main() {
     }
   }
 
+  // if (crosses p1 p2 line) {
+  //   subdivide at crossing
+  // }
+
   if (!subdivide) {
-    emit(p1, p2, p3, p4, t1, t2, t3, t4, flip);
+    emit(p1, p2, p3, p4, t1, t2, t3, t4);
   } else {
     // subdivide the curve
     vec4 p12, p23, p34, p13, p24, p14;
@@ -124,10 +134,10 @@ void main() {
     t14 = mix(t13, t24, subdivide_t);
     
     // First subdivision
-    emit(p1, p12, p13, p14, t1, t12, t13, t14, d1 * t12.x < 0);
+    emit(p1, p12, p13, p14, t1, t12, t13, t14);
 
     // Second subdivision
-    emit(p14, p24, p34, p4, t14, t24, t34, t4, d1 * t24.x < 0);
+    emit(p14, p24, p34, p4, t14, t24, t34, t4);
 
     // Middle triangle. This bezier coord will make our fragment shader fill
     // in for every fragment
