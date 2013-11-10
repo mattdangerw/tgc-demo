@@ -6,6 +6,7 @@ in vec4 geom_extra_point[];
 layout(triangle_strip, max_vertices=11) out;
 out vec3 frag_bezier_coord;
 
+// If we have non zero ws ever, use the actual dot cross.
 float area(vec4 p1, vec4 p2, vec4 p3)
 {
   return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
@@ -16,11 +17,9 @@ bool inside_curve(vec3 b) {
 }
 
 bool inside_triangle(vec4 test, vec4 p1, vec4 p2, vec4 p3) {
-  bool s1, s2, s3;
-
-  s1 = area(test, p1, p2) < 0.0f;
-  s2 = area(test, p2, p3) < 0.0f;
-  s3 = area(test, p3, p1) < 0.0f;
+  bool s1 = area(test, p1, p2) < 0.0f;
+  bool s2 = area(test, p2, p3) < 0.0f;
+  bool s3 = area(test, p3, p1) < 0.0f;
 
   return (s1 == s2) && (s2 == s3);
 }
@@ -112,7 +111,8 @@ void main() {
   float a2 = area(p2, p1, p4);
   float a3 = area(p3, p2, p1);
   // Normalize the areas to sum to one. This keeps what follows numerically
-  // stable. Otherwise tiny tiny klm values by the time you hit fragment shader
+  // stable. Otherwise tiny tiny bezier coordinate values by the time you hit
+  // fragment shader
   float sum = a1 + a2 + a3;
   a1 /= sum;
   a2 /= sum;
@@ -145,6 +145,19 @@ void main() {
     b4 = vec3((lt - ls) * (mt - ms),
               -1 * pow(lt - ls, 3),
               -1 * pow(mt - ms, 3));
+    // Serpentine crossing p1 p4 segment needs to be subdivided
+    if (a1 * a2 < 0) {
+      float inflection_point = ls / lt;
+      if (inflection_point >= 0.0 && inflection_point <= 1.0) {
+        do_subdivide = true;
+        subdivide_t = inflection_point;
+      }
+      inflection_point = ms / mt;
+      if (inflection_point >= 0.0 && inflection_point <= 1.0) {
+        do_subdivide = true;
+        subdivide_t = inflection_point;
+      }
+    }
   } else { // Loop
     float rad = sqrt(4 * d1 * d3 - 3 * d2 * d2);
     float ls = d2 - rad;
@@ -161,6 +174,8 @@ void main() {
     b4 = vec3((lt - ls) * (mt - ms),
               -pow(lt - ls, 2) * (mt - ms),
               -pow(mt - ms, 2) * (lt - ls));
+    // If double point is withing the drawn part of the curve we need to
+    // subdivide
     float double_point = ls / lt;
     if (double_point >= 0.0 && double_point <= 1.0) {
       do_subdivide = true;
@@ -172,10 +187,6 @@ void main() {
       subdivide_t = double_point;
     }
   }
-
-  // if (a1 * a2 < 0) {
-  //   do_subdivide at crossing
-  // }
 
   if (do_subdivide) {
     subdivide_and_emit(p1, p2, p3, p4, b1, b2, b3, b4, subdivide_t);
