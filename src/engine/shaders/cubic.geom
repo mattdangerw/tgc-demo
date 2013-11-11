@@ -42,26 +42,27 @@ void emit(vec4 p1, vec4 p2, vec4 p3, vec4 p4,
   // If our convex hull is a triangle, emit only the triangle. Doubling up on
   // portions of the curve would actually cut off parts of the shape, because
   // of our stencil trick
-  bool emit2 = !(s2 == s4 && s4 != s3);
-  bool emit3 = !(s3 == s1 && s1 != s4);
-  if (s1 == s4) {
-    if (emit2) {
+  if (s2 == s4 && s4 != s3) {
+    gl_Position = p3;
+    frag_bezier_coord = b3;
+    EmitVertex();
+  }
+  else if (s3 == s1 && s1 != s4) {
+    gl_Position = p2;
+    frag_bezier_coord = b2;
+    EmitVertex();
+  } else {
+    if (s1 == s4) {
       gl_Position = p2;
       frag_bezier_coord = b2;
       EmitVertex();
-    }
-    if (emit3) {
       gl_Position = p3;
       frag_bezier_coord = b3;
       EmitVertex();
-    }
-  } else {
-    if (emit3) {
+    } else {
       gl_Position = p3;
       frag_bezier_coord = b3;
       EmitVertex();
-    }
-    if (emit2) {
       gl_Position = p2;
       frag_bezier_coord = b2;
       EmitVertex();
@@ -159,13 +160,13 @@ void main() {
               -1 * pow(mt - ms, 3));
     // Serpentine crossing p1 p4 segment needs to be subdivided
     if (a1 * a2 < 0) {
-      float inflection_point = ls / lt;
-      if (inflection_point >= 0.0 && inflection_point <= 1.0) {
+      float inflection_point = ms / mt;
+      if (inflection_point > 0 && inflection_point < 1) {
         do_subdivide = true;
         subdivide_t = inflection_point;
       }
-      inflection_point = ms / mt;
-      if (inflection_point >= 0.0 && inflection_point <= 1.0) {
+      inflection_point = ls / lt;
+      if (inflection_point > 0 && inflection_point < 1) {
         do_subdivide = true;
         subdivide_t = inflection_point;
       }
@@ -189,12 +190,12 @@ void main() {
     // If double point is withing the drawn part of the curve we need to
     // subdivide
     float double_point = ls / lt;
-    if (double_point >= 0.0 && double_point <= 1.0) {
+    if (double_point > 0 && double_point < 1) {
       do_subdivide = true;
       subdivide_t = double_point;
     }
     double_point = ms / mt;
-    if (double_point >= 0.0 && double_point <= 1.0) {
+    if (double_point > 0 && double_point < 1) {
       do_subdivide = true;
       subdivide_t = double_point;
     }
