@@ -51,9 +51,11 @@ def parsePath(path):
     elif command_type == "Q":
       output_path.add(2, command[1], command[2])
       output_path.add(1, command[4], command[5])
+    elif command_type == "z" or command_type == "Z":
+      output_paths.append(output_path)
+      output_path = OutputPath()
     elif command_type == "m" or command_type == "c" or command_type == "q":
       print "Relative coordinates not supported. Fix in Inkscape."
-  output_paths.append(output_path)
 
 
 def findPaths(elem):

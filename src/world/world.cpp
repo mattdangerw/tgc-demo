@@ -1,3 +1,4 @@
+
 #include "world/world.h"
 
 #include "engine/engine.h"
@@ -91,6 +92,7 @@ void World::init() {
   test_fill.init("content/textures/bookcover1.dds");
   test_text.setFill(&test_fill);
   test_text.setOccluderColor(0.7f);
+  test_shapes.init("test.group");
 
   // Add to scene graph
   this->setParent(theEngine().rootEntity());
@@ -102,6 +104,7 @@ void World::init() {
   bird_manager.setParent(this);
   character.setParent(this);
   test_text.setParent(this);
+  test_shapes.setParent(this);
 
   // Draw order
   background.setDisplayPriority(-1);
@@ -110,4 +113,5 @@ void World::init() {
   bird_manager.setDisplayPriority(1);
   character.setDisplayPriority(2);
   test_text.setDisplayPriority(0);
+  test_shapes.setDisplayPriority(2);
 }
