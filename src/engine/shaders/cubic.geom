@@ -16,14 +16,6 @@ bool inside_curve(vec3 b) {
   return b.x * b.x * b.x - b.y * b.z <= 0;
 }
 
-bool inside_triangle(vec4 test, vec4 p1, vec4 p2, vec4 p3) {
-  bool s1 = area(test, p1, p2) < 0.0f;
-  bool s2 = area(test, p2, p3) < 0.0f;
-  bool s3 = area(test, p3, p1) < 0.0f;
-
-  return (s1 == s2) && (s2 == s3);
-}
-
 // Emits the convex hull of a cubic curve. Handles flipping the curve so that
 // the p1-p4 line is always inside. Also makes sure no portion of the curve is
 // drawn twice.
@@ -42,18 +34,38 @@ void emit(vec4 p1, vec4 p2, vec4 p3, vec4 p4,
   gl_Position = p4;
   frag_bezier_coord = b4;
   EmitVertex();
+
+  bool s1 = area(p1, p4, p3) < 0.0f;
+  bool s2 = area(p2, p1, p4) < 0.0f;
+  bool s3 = area(p3, p2, p1) < 0.0f;
+  bool s4 = area(p4, p3, p2) < 0.0f;
   // If our convex hull is a triangle, emit only the triangle. Doubling up on
   // portions of the curve would actually cut off parts of the shape, because
   // of our stencil trick
-  if (!inside_triangle(p2, p1, p3, p4)) {
-    gl_Position = p2;
-    frag_bezier_coord = b2;
-    EmitVertex();
-  }
-  if (!inside_triangle(p3, p1, p2, p4)) {
-    gl_Position = p3;
-    frag_bezier_coord = b3;
-    EmitVertex();
+  bool emit2 = !(s2 == s4 && s4 != s3);
+  bool emit3 = !(s3 == s1 && s1 != s4);
+  if (s1 == s4) {
+    if (emit2) {
+      gl_Position = p2;
+      frag_bezier_coord = b2;
+      EmitVertex();
+    }
+    if (emit3) {
+      gl_Position = p3;
+      frag_bezier_coord = b3;
+      EmitVertex();
+    }
+  } else {
+    if (emit3) {
+      gl_Position = p3;
+      frag_bezier_coord = b3;
+      EmitVertex();
+    }
+    if (emit2) {
+      gl_Position = p2;
+      frag_bezier_coord = b2;
+      EmitVertex();
+    }
   }
   EndPrimitive();
 }
