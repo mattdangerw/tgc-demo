@@ -1,6 +1,6 @@
 #version 330
 
-in vec2 frag_bezier_coord;
+in vec3 frag_bezier_coord;
 
 out vec4 out_color;
 
@@ -8,14 +8,15 @@ void main()
 {
   float x = frag_bezier_coord.x;
   float y = frag_bezier_coord.y;
-  vec2 dx = dFdx(frag_bezier_coord);
-  vec2 dy = dFdy(frag_bezier_coord);
+  float z = frag_bezier_coord.z;
+  vec3 dx = dFdx(frag_bezier_coord);
+  vec3 dy = dFdy(frag_bezier_coord);
 
   // Chain rule
-  float fx = 2*x*dx.x - dx.y;
-  float fy = 2*x*dy.x - dy.y;
+  float fx = 3*x*x*dx.x - y*dx.z - z*dx.y;
+  float fy = 3*x*x*dy.x - y*dy.z - z*dy.y;
   // Signed distance
-  float sd = (x*x - y)/sqrt(fx*fx + fy*fy);
+  float sd = (x*x*x - y*z)/sqrt(fx*fx + fy*fy);
   // Linear alpha
   float alpha = 0.5 - sd;
   if (alpha > 1.0) {  // Inside

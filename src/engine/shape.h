@@ -42,18 +42,23 @@ class ShapeData {
     size_t quadricVerticesSize() { return quadrics_size_; }
     GLuint quadricBufferObject() { return quadric_buffer_object_; }
     GLuint bezierCoordsBufferObject() { return bezier_coords_buffer_object_; }
+    // Cubics.
+    bool hasCubicVertices() { return has_cubics_; }
+    size_t cubicVerticesSize() { return cubics_size_; }
+    GLuint cubicBufferObject() { return cubic_buffer_object_; }
+    GLuint cubicExtraBufferObject() { return cubic_extra_buffer_object_; }
   private:
     // Helpers.
     void readVertices(string filename, vector<PathVertex> *vertices);
-    void prepVertices(const vector<PathVertex> &vertices, vector<glm::vec2> *solids, vector<glm::vec2> *quadrics);
-    void cubicToQuadrics(glm::vec2 start, glm::vec2 control1, glm::vec2 control2, glm::vec2 end, vector<glm::vec2> *solids, vector<glm::vec2> *quadrics);
+    void prepVertices(const vector<PathVertex> &vertices, vector<glm::vec2> *solids, vector<glm::vec2> *quadrics,
+      vector<glm::vec2> *cubics, vector<glm::vec2> *cubic_extra);
     void makeBezierCoords(const vector<glm::vec2> &quadrics, vector<glm::vec2> *bezier_coords);
     void findCorners(const vector<PathVertex> &vertices);
     // Member data.
-    bool has_solids_, has_quadrics_;
-    size_t solids_size_, quadrics_size_;
+    bool has_solids_, has_quadrics_, has_cubics_;
+    size_t solids_size_, quadrics_size_, cubics_size_;
     glm::vec2 min_corner_, max_corner_;
-    GLuint solid_buffer_object_, quadric_buffer_object_, bezier_coords_buffer_object_;
+    GLuint solid_buffer_object_, quadric_buffer_object_, cubic_buffer_object_, cubic_extra_buffer_object_, bezier_coords_buffer_object_;
 };
 
 struct NamedFile {
@@ -87,7 +92,7 @@ class Shape : public Entity {
     Animator *animator_;
     float lerp_ts_[2];
     // OpenGL stuff
-    GLuint solid_array_object_, quadric_array_object_;
+    GLuint solid_array_object_, quadric_array_object_, cubic_array_object_;
 };
 
 #endif  // SRC_PATH_SHAPE_H_
