@@ -49,14 +49,16 @@ void ShapeData::init(string filename) {
 
 void ShapeData::init(const vector<PathVertex> &vertices) {
   findCorners(vertices);
-  vector<glm::vec2> solids, quadrics, bezier_coords;
-  prepVertices(vertices, &solids, &quadrics);
+  vector<glm::vec2> solids, quadrics, cubics, bezier_coords;
+  prepVertices(vertices, &solids, &quadrics, &cubics);
   makeBezierCoords(quadrics, &bezier_coords);
   // Set members.
   solids_size_ = solids.size();
   has_solids_ = solids_size_ > 0;
   quadrics_size_ = quadrics.size();
   has_quadrics_ = quadrics_size_ > 0;
+  cubics_size_ = cubics.size();
+  has_cubics_ = cubics_size_ > 0;
   // Send buffer data.
   if (has_solids_) {
     glGenBuffers(1, &solid_buffer_object_);
@@ -70,6 +72,11 @@ void ShapeData::init(const vector<PathVertex> &vertices) {
     glGenBuffers(1, &bezier_coords_buffer_object_);
     glBindBuffer(GL_ARRAY_BUFFER, bezier_coords_buffer_object_);
     glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * bezier_coords.size(), &bezier_coords[0], GL_STATIC_DRAW);
+  }
+  if (has_cubics_) {
+    glGenBuffers(1, &cubic_buffer_object_);
+    glBindBuffer(GL_ARRAY_BUFFER, cubic_buffer_object_);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * cubics.size(), &cubics[0], GL_STATIC_DRAW);
   }
 }
 
@@ -92,7 +99,8 @@ void ShapeData::readVertices(string filename, vector<PathVertex> *vertices) {
   json_value_free(&path_json);
 }
 
-void ShapeData::prepVertices(const vector<PathVertex> &vertices, vector<glm::vec2> *solids, vector<glm::vec2> *quadrics) {
+void ShapeData::prepVertices(const vector<PathVertex> &vertices, vector<glm::vec2> *solids, vector<glm::vec2> *quadrics,
+  vector<glm::vec2> *cubics) {
   for (unsigned int i = 0; i < vertices.size(); ++i) {
     PathVertexType type = vertices[i].type;
     if (type == ON_PATH) {
@@ -102,7 +110,10 @@ void ShapeData::prepVertices(const vector<PathVertex> &vertices, vector<glm::vec
       quadrics->push_back(vertices[i].position);
       quadrics->push_back(vertices[i+1].position);
     } else if (type == CUBIC) {
-      cubicToQuadrics(vertices[i-1].position, vertices[i].position, vertices[i+1].position, vertices[i+2].position, solids, quadrics);
+      cubics->push_back(vertices[i-1].position);
+      cubics->push_back(vertices[i].position);
+      cubics->push_back(vertices[i+1].position);
+      cubics->push_back(vertices[i+2].position);
       // Skip the next vertex its the other cubic control.
       ++i;
     }
@@ -117,43 +128,6 @@ void ShapeData::findCorners(const vector<PathVertex> &vertices) {
     min_corner_ = glm::min(position, min_corner_);
     max_corner_ = glm::max(position, max_corner_);
   }
-}
-
-void ShapeData::cubicToQuadrics(glm::vec2 start, glm::vec2 control1, glm::vec2 control2, glm::vec2 end,
-  vector<glm::vec2> *solids, vector<glm::vec2> *quadrics) {
-  // Approximate the cubic with two quadrics.
-  // Find on path point with succesive midpoints.
-  glm::vec2 midpoints[3];
-  midpoints[0] = midpoint(start, control1);
-  midpoints[1] = midpoint(control1, control2);
-  midpoints[2] = midpoint(control2, end);
-  glm::vec2 new_tangents[2];
-  new_tangents[0] = midpoint(midpoints[0], midpoints[1]);
-  new_tangents[1] = midpoint(midpoints[1], midpoints[2]);
-  glm::vec2 new_on_path = midpoint(new_tangents[0], new_tangents[1]);
-  // Calculate new control points preserving tangent lines.
-  glm::vec2 new_control_point;
-  bool degenerate, intersects;
-  // First quadric
-  intersectRays(start, control1, new_tangents[1], new_tangents[0], &degenerate, &intersects, &new_control_point);
-  quadrics->push_back(start);
-  if (!degenerate && intersects) {
-    quadrics->push_back(new_control_point);
-  } else {
-    quadrics->push_back(midpoint(start, new_on_path));
-  }
-  quadrics->push_back(new_on_path);
-  // Second quadric
-  intersectRays(end, control2, new_tangents[0], new_tangents[1], &degenerate, &intersects, &new_control_point);
-  quadrics->push_back(new_on_path);
-  if (!degenerate && intersects) {
-    quadrics->push_back(new_control_point);
-  } else {
-    quadrics->push_back(midpoint(new_on_path, end));
-  }
-  quadrics->push_back(end);
-  // Add a solid point at the new on path points
-  solids->push_back(new_on_path);
 }
 
 void ShapeData::makeBezierCoords(const vector<glm::vec2> &quadrics, vector<glm::vec2> *bezier_coords) {
@@ -230,7 +204,7 @@ void Shape::createVAOs() {
       glEnableVertexAttribArray(theEngine().attributeHandle("position"));
       glEnableVertexAttribArray(theEngine().attributeHandle("lerp_position1"));
       glEnableVertexAttribArray(theEngine().attributeHandle("lerp_position2"));
-      glEnableVertexAttribArray(theEngine().attributeHandle("bezier_coord"));      
+      glEnableVertexAttribArray(theEngine().attributeHandle("bezier_coord"));
     } else {
       // Set up the quadric vertices vertex buffer
       glBindBuffer(GL_ARRAY_BUFFER, data_->quadricBufferObject());
@@ -241,6 +215,23 @@ void Shape::createVAOs() {
       // Pass in the bezier texture coords.
       glBindBuffer(GL_ARRAY_BUFFER, data_->bezierCoordsBufferObject());
       handle = theEngine().attributeHandle("bezier_coord");
+      glEnableVertexAttribArray(handle);
+      glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+    }
+  }
+
+  // Set up the cubic triangles VAO
+  if (data_->hasCubicVertices()) {
+    glGenVertexArrays(1, &cubic_array_object_);
+    glBindVertexArray(cubic_array_object_);
+    if (animated_) {
+      glEnableVertexAttribArray(theEngine().attributeHandle("position"));
+      glEnableVertexAttribArray(theEngine().attributeHandle("lerp_position1"));
+      glEnableVertexAttribArray(theEngine().attributeHandle("lerp_position2"));
+    } else {
+      // Set up the quadric vertices vertex buffer
+      glBindBuffer(GL_ARRAY_BUFFER, data_->cubicBufferObject());
+      GLuint handle = theEngine().attributeHandle("position");
       glEnableVertexAttribArray(handle);
       glVertexAttribPointer(handle, 2, GL_FLOAT, GL_FALSE, 0, NULL);
     }
@@ -278,6 +269,17 @@ void Shape::bindKeyframeBuffers() {
 
     glBindBuffer(GL_ARRAY_BUFFER, keyframe1->bezierCoordsBufferObject());
     glVertexAttribPointer(theEngine().attributeHandle("bezier_coord"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
+  }
+  if (data_->hasCubicVertices()) {
+    glBindVertexArray(cubic_array_object_);
+    glBindBuffer(GL_ARRAY_BUFFER, keyframe1->cubicBufferObject());
+    glVertexAttribPointer(theEngine().attributeHandle("position"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    glBindBuffer(GL_ARRAY_BUFFER, keyframe2->cubicBufferObject());
+    glVertexAttribPointer(theEngine().attributeHandle("lerp_position1"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    glBindBuffer(GL_ARRAY_BUFFER, keyframe3->cubicBufferObject());
+    glVertexAttribPointer(theEngine().attributeHandle("lerp_position2"), 2, GL_FLOAT, GL_FALSE, 0, NULL);
   }
 }
 
@@ -317,6 +319,23 @@ void Shape::drawHelper(bool asOccluder) {
     glUniformMatrix3fv(theEngine().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
     glBindVertexArray(quadric_array_object_);
     glDrawArrays(GL_TRIANGLES, 0, data_->quadricVerticesSize());
+    glDisable(GL_DEPTH_TEST);
+  }
+
+  if (data_->hasCubicVertices()) {
+    if (animated_) {
+      theEngine().useProgram("cubic_animated");
+      glUniform1f(theEngine().uniformHandle("lerp_t1"), lerp_ts_[0]);
+      glUniform1f(theEngine().uniformHandle("lerp_t2"), lerp_ts_[1]);
+    } else {
+      theEngine().useProgram("cubic");
+    }
+    glEnable(GL_DEPTH_TEST);
+    glUniformMatrix3fv(theEngine().uniformHandle("modelview"), 1, GL_FALSE, glm::value_ptr(fullTransform()));
+    glBindVertexArray(cubic_array_object_);
+    // GL_LINES_AJACENCY lets us pass four verts to the geometry shader at a
+    // time, without needing to hide extra vertex data in varyings
+    glDrawArrays(GL_LINES_ADJACENCY, 0, data_->cubicVerticesSize());
     glDisable(GL_DEPTH_TEST);
   }
 
