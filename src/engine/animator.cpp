@@ -52,7 +52,6 @@ void Animation::update(float delta_time) {
       if (repeat_) {
         float remaining_time = time_ - last_keyframe_.time;
         start(last_keyframe_.name);
-        update(remaining_time);
       } else {
         finished_ = true;
       }

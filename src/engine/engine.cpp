@@ -125,14 +125,17 @@ void Engine::loadShaders() {
   attribute_handles_["visible"] = 9;
 
   Shader general_vert, animated_vert, textured_frag, textured_with_shadows_frag, minimal_frag,
-    quadric_frag, circles_frag, shadows_vert, shadows_frag, text_stencil_frag, text_to_texture_frag,
-    particle_feedback_vert, particle_draw_vert, particle_draw_geom, particle_draw_frag;
+    quadric_frag, cubic_geom, cubic_frag, circles_frag, shadows_vert, shadows_frag,
+    text_stencil_frag, text_to_texture_frag, particle_feedback_vert, particle_draw_vert,
+    particle_draw_geom, particle_draw_frag;
   general_vert.load("src/engine/shaders/general.vert", GL_VERTEX_SHADER);
   animated_vert.load("src/engine/shaders/animated.vert", GL_VERTEX_SHADER);
   textured_frag.load("src/engine/shaders/textured.frag", GL_FRAGMENT_SHADER);
   textured_with_shadows_frag.load("src/engine/shaders/textured_with_shadows.frag", GL_FRAGMENT_SHADER);
   minimal_frag.load("src/engine/shaders/minimal.frag", GL_FRAGMENT_SHADER);
   quadric_frag.load("src/engine/shaders/quadric_anti_aliased.frag", GL_FRAGMENT_SHADER);
+  cubic_geom.load("src/engine/shaders/cubic.geom", GL_GEOMETRY_SHADER);
+  cubic_frag.load("src/engine/shaders/cubic_anti_aliased.frag", GL_FRAGMENT_SHADER);
   circles_frag.load("src/engine/shaders/circles_anti_aliased.frag", GL_FRAGMENT_SHADER);
   shadows_frag.load("src/engine/shaders/shadows.frag", GL_FRAGMENT_SHADER);
   text_stencil_frag.load("src/engine/shaders/text_stencil.frag", GL_FRAGMENT_SHADER);
@@ -165,6 +168,16 @@ void Engine::loadShaders() {
   programs_["quadric_animated"].init();
   programs_["quadric_animated"].addShader(&animated_vert);
   programs_["quadric_animated"].addShader(&quadric_frag);
+
+  programs_["cubic"].init();
+  programs_["cubic"].addShader(&general_vert);
+  programs_["cubic"].addShader(&cubic_geom);
+  programs_["cubic"].addShader(&cubic_frag);
+
+  programs_["cubic_animated"].init();
+  programs_["cubic_animated"].addShader(&animated_vert);
+  programs_["cubic_animated"].addShader(&cubic_geom);
+  programs_["cubic_animated"].addShader(&cubic_frag);
 
   programs_["circles"].init();
   programs_["circles"].addShader(&general_vert);
