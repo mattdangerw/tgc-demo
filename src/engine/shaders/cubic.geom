@@ -43,85 +43,49 @@ void emit(vec4 p1, vec4 p2, vec4 p3, vec4 p4,
   EndPrimitive();
 }
 
-void last_subdivide(vec4 p1, vec4 p2, vec4 p3, vec4 p4,
-               vec3 b1, vec3 b2, vec3 b3, vec3 b4,
-               float subdivide_t) {
-  if (subdivide_t < 1) {
-    vec4 p12, p23, p34, p123, p234, p1234;
-    p12 = mix(p1, p2, subdivide_t);
-    p23 = mix(p2, p3, subdivide_t);
-    p34 = mix(p3, p4, subdivide_t);
-    p123 = mix(p12, p23, subdivide_t);
-    p234 = mix(p23, p34, subdivide_t);
-    p1234 = mix(p123, p234, subdivide_t);
-    vec3 b12, b23, b34, b123, b234, b1234;
-    b12 = mix(b1, b2, subdivide_t);
-    b23 = mix(b2, b3, subdivide_t);
-    b34 = mix(b3, b4, subdivide_t);
-    b123 = mix(b12, b23, subdivide_t);
-    b234 = mix(b23, b34, subdivide_t);
-    b1234 = mix(b123, b234, subdivide_t);
-    
-    // First subdivision
-    emit(p1, p12, p123, p1234, b1, b12, b123, b1234);
+// Subdivides the cubic curve. Emits the first subdivision and the fill
+// triangle directly. Sets the output p1-p4 and b1-b4 to the second
+// subdivision hull.
+void subdivide(inout vec4 p1, inout vec4 p2, inout vec4 p3, vec4 p4,
+               inout vec3 b1, inout vec3 b2, inout vec3 b3, vec3 b4,
+               float t) {
+  vec4 p12, p23, p34, p123, p234, p1234;
+  p12 = mix(p1, p2, t);
+  p23 = mix(p2, p3, t);
+  p34 = mix(p3, p4, t);
+  p123 = mix(p12, p23, t);
+  p234 = mix(p23, p34, t);
+  p1234 = mix(p123, p234, t);
+  vec3 b12, b23, b34, b123, b234, b1234;
+  b12 = mix(b1, b2, t);
+  b23 = mix(b2, b3, t);
+  b34 = mix(b3, b4, t);
+  b123 = mix(b12, b23, t);
+  b234 = mix(b23, b34, t);
+  b1234 = mix(b123, b234, t);
 
-    emit(p1234, p234, p34, p4, b1234, b234, b34, b4);
+  // Middle triangle. This bezier coord will make our fragment shader fill
+  // in for every fragment
+  frag_bezier_coord = vec3(0.0, 1.0, 1.0);
+  gl_Position = p1;
+  EmitVertex();
+  gl_Position = p1234;
+  EmitVertex();
+  gl_Position = p4;
+  EmitVertex();
+  EndPrimitive();
 
-    // Middle triangle. This bezier coord will make our fragment shader fill
-    // in for every fragment
-    frag_bezier_coord = vec3(0.0, 1.0, 1.0);
-    gl_Position = p1;
-    EmitVertex();
-    gl_Position = p1234;
-    EmitVertex();
-    gl_Position = p4;
-    EmitVertex();
-    EndPrimitive();
-  } else {
-    emit(p1, p2, p3, p4, b1, b2, b3, b4);
-  }
-}
+  // First subdivision
+  emit(p1, p12, p123, p1234, b1, b12, b123, b1234);
 
-// Subdivides our control hull into two smaller ones at subdivide_t. Then
-// emits these smaller curves along with a triangle for the space in the
-// middle
-void subdivide_and_emit(vec4 p1, vec4 p2, vec4 p3, vec4 p4,
-               vec3 b1, vec3 b2, vec3 b3, vec3 b4,
-               float subdivide_t1, float subdivide_t2) {
-  if (subdivide_t1 < 1) {
-    vec4 p12, p23, p34, p123, p234, p1234;
-    p12 = mix(p1, p2, subdivide_t1);
-    p23 = mix(p2, p3, subdivide_t1);
-    p34 = mix(p3, p4, subdivide_t1);
-    p123 = mix(p12, p23, subdivide_t1);
-    p234 = mix(p23, p34, subdivide_t1);
-    p1234 = mix(p123, p234, subdivide_t1);
-    vec3 b12, b23, b34, b123, b234, b1234;
-    b12 = mix(b1, b2, subdivide_t1);
-    b23 = mix(b2, b3, subdivide_t1);
-    b34 = mix(b3, b4, subdivide_t1);
-    b123 = mix(b12, b23, subdivide_t1);
-    b234 = mix(b23, b34, subdivide_t1);
-    b1234 = mix(b123, b234, subdivide_t1);
-    
-    // First subdivision
-    emit(p1, p12, p123, p1234, b1, b12, b123, b1234);
-
-    last_subdivide(p1234, p234, p34, p4, b1234, b234, b34, b4, subdivide_t2);
-
-    // Middle triangle. This bezier coord will make our fragment shader fill
-    // in for every fragment
-    frag_bezier_coord = vec3(0.0, 1.0, 1.0);
-    gl_Position = p1;
-    EmitVertex();
-    gl_Position = p1234;
-    EmitVertex();
-    gl_Position = p4;
-    EmitVertex();
-    EndPrimitive();
-  } else {
-    emit(p1, p2, p3, p4, b1, b2, b3, b4);
-  }
+  // Set our new hull to be the second subdivision. This way we can "recurse"
+  // into subdivide
+  p1 = p1234;
+  p2 = p234;
+  p3 = p34;
+  b1 = b1234;
+  b2 = b234;
+  b3 = b34;
 }
 
 void main() {
@@ -149,11 +113,11 @@ void main() {
   // Classify and determine implicit bezier coordinates
   vec3 b1, b2, b3, b4;
   float rad, ls, lt, ms, mt;
-  ls = -1;
-  lt = 1;
-  ms = -1;
-  mt = 1;
   if (d1 == 0 && d2 == 0) { // Quadratic
+    ls = 2;
+    lt = 1;
+    ms = 2;
+    mt = 1;
     b1 = vec3(0, 0, 0);
     b2 = vec3(1.0/3, 0, 1.0/3);
     b3 = vec3(2.0/3, 1.0/3, 2.0/3);
@@ -194,7 +158,15 @@ void main() {
 
   float subdivide_l = ls / lt;
   float subdivide_m = ms / mt;
-  if (subdivide_l <= 0 || subdivide_l >= 1) subdivide_l = 2;
-  if (subdivide_m <= 0 || subdivide_m >= 1) subdivide_m = 2;
-  subdivide_and_emit(p1, p2, p3, p4, b1, b2, b3, b4, min(subdivide_l, subdivide_m), max(subdivide_l, subdivide_m));
+  if (subdivide_l <= 0) subdivide_l = 2;
+  if (subdivide_m <= 0) subdivide_m = 2;
+  float t1 = min(subdivide_l, subdivide_m);
+  float t2 = (max(subdivide_l, subdivide_m) - t1) / (1 - t1);
+  if (t1 < 1) {
+    subdivide(p1, p2, p3, p4, b1, b2, b3, b4, t1);
+    if (t2 < 1) {
+      subdivide(p1, p2, p3, p4, b1, b2, b3, b4, t2);
+    }
+  }
+  emit(p1, p2, p3, p4, b1, b2, b3, b4);
 }
