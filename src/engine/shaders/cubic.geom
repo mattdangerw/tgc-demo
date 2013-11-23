@@ -16,8 +16,7 @@ bool inside_curve(vec3 b) {
 }
 
 // Emits the hull of a cubic curve with bezier coordinates. Handles flipping
-// the curve so that the p1-p4 line is always inside. Also makes sure no
-// portion of the curve is drawn twice.
+// the curve so that the p1-p4 line is always inside.
 void emit(vec4 p1, vec4 p2, vec4 p3, vec4 p4,
           vec3 b1, vec3 b2, vec3 b3, vec3 b4) {
   if (!inside_curve((b1 + b2 + b3 + b4) / 4.0)) {
@@ -42,12 +41,13 @@ void emit(vec4 p1, vec4 p2, vec4 p3, vec4 p4,
   EndPrimitive();
 }
 
-// Subdivides the cubic curve. Emits the first subdivision and the fill
-// triangle directly. Sets the output p1-p4 and b1-b4 to the second
-// subdivision hull.
+// Subdivides the cubic curve if t is in the range (0, 1). Emits the first
+// subdivision and the fill triangle directly. Sets the output p1-p4 and b1-b4
+// to the second subdivision hull.
 void subdivide(inout vec4 p1, inout vec4 p2, inout vec4 p3, vec4 p4,
                inout vec3 b1, inout vec3 b2, inout vec3 b3, vec3 b4,
                float t) {
+  if (t <= 0 || t >= 1) return;
   vec4 p12, p23, p34, p123, p234, p1234;
   p12 = mix(p1, p2, t);
   p23 = mix(p2, p3, t);
@@ -111,63 +111,53 @@ void main() {
 
   // Classify and determine implicit bezier coordinates
   vec3 b1, b2, b3, b4;
-  float rad, ls, lt, ms, mt;
+  float rad, lu, mu, v;
   if (d1 == 0 && d2 == 0) { // Quadratic
-    ls = 2;
-    lt = 1;
-    ms = 2;
-    mt = 1;
+    lu = 2;
+    mu = 2;
+    v = 1;
     b1 = vec3(0, 0, 0);
     b2 = vec3(1.0/3, 0, 1.0/3);
     b3 = vec3(2.0/3, 1.0/3, 2.0/3);
     b4 = vec3(1, 1, 1);
   } else if (disc > 0) { // Serpentine
     rad = sqrt(9 * d2 * d2 - 12 * d1 * d3);
-    ls = 3 * d2 - rad;
-    ms = 3 * d2 + rad;
-    lt = 6 * d1;
-    mt = lt;
-    b1 = vec3(ls * ms, pow(ls, 3), pow(ms, 3));
-    b2 = vec3((3 * ls * ms - ls * mt  - mt * ms) / 3,
-              ls * ls * (ls - lt),
-              ms * ms * (ms - mt));
-    b3 = vec3((lt * (mt - 2 * ms) + ls * (3 * ms - 2 * mt)) / 3,
-              pow(lt - ls, 2) * ls,
-              pow(mt - ms, 2) * ms);
-    b4 = vec3((lt - ls) * (mt - ms),
-              -1 * pow(lt - ls, 3),
-              -1 * pow(mt - ms, 3));
+    lu = 3 * d2 - rad;
+    mu = 3 * d2 + rad;
+    v = 6 * d1;
+    b1 = vec3(lu * mu, pow(lu, 3), pow(mu, 3));
+    b2 = vec3((3 * lu * mu - lu * v  - v * mu) / 3,
+              lu * lu * (lu - v),
+              mu * mu * (mu - v));
+    b3 = vec3((v * (v - 2 * mu) + lu * (3 * mu - 2 * v)) / 3,
+              pow(v - lu, 2) * lu,
+              pow(v - mu, 2) * mu);
+    b4 = vec3((v - lu) * (v - mu),
+              -pow(v - lu, 3),
+              -pow(v - mu, 3));
   } else { // Loop
     rad = sqrt(4 * d1 * d3 - 3 * d2 * d2);
-    ls = d2 - rad;
-    ms = d2 + rad;
-    lt = 2 * d1;
-    mt = lt;
-    b1 = vec3(ls * ms, ls * ls * ms, ms * ms * ls);
-    b2 = vec3((3 * ls * ms - ls * mt - lt * ms) / 3,
-              -ls * (ls * (mt - 3 * ms) + 2 * lt * ms) / 3,
-              -ms * (ls * (2 * mt - 3 * ms) + lt * ms) / 3);
-    b3 = vec3((lt * (mt - 2 * ms) + ls * (3 * ms - 2 * mt)) / 3,
-              (lt - ls) * (ls * (2 * mt - 3 * ms) + lt * ms) / 3,
-              (mt - ms) * (ls * (mt - 3 * ms) + 2 * lt * ms) / 3);
-    b4 = vec3((lt - ls) * (mt - ms),
-              -pow(lt - ls, 2) * (mt - ms),
-              -pow(mt - ms, 2) * (lt - ls));
+    lu = d2 - rad;
+    mu = d2 + rad;
+    v = 2 * d1;
+    b1 = vec3(lu * mu, lu * lu * mu, mu * mu * lu);
+    b2 = vec3((3 * lu * mu - lu * v - v * mu) / 3,
+              -lu * (lu * (v - 3 * mu) + 2 * v * mu) / 3,
+              -mu * (lu * (2 * v - 3 * mu) + v * mu) / 3);
+    b3 = vec3((v * (v - 2 * mu) + lu * (3 * mu - 2 * v)) / 3,
+              (v - lu) * (lu * (2 * v - 3 * mu) + v * mu) / 3,
+              (v - mu) * (lu * (v - 3 * mu) + 2 * v * mu) / 3);
+    b4 = vec3((v - lu) * (v - mu),
+              -pow(v - lu, 2) * (v - mu),
+              -pow(v - mu, 2) * (v - lu));
   }
 
-  // Subdivide at intersection or inflection points in the interval (0,1). Maybe
-  // make more readable?
-  float subdivide_l = ls / lt;
-  float subdivide_m = ms / mt;
-  if (subdivide_l <= 0) subdivide_l = 99999;
-  if (subdivide_m <= 0) subdivide_m = 99999;
-  float t1 = min(subdivide_l, subdivide_m);
-  float t2 = (max(subdivide_l, subdivide_m) - t1) / (1 - t1);
-  if (t1 < 1) {
-    subdivide(p1, p2, p3, p4, b1, b2, b3, b4, t1);
-    if (t2 < 1) {
-      subdivide(p1, p2, p3, p4, b1, b2, b3, b4, t2);
-    }
-  }
+  // Subdivide at intersection or inflection points in the interval (0,1).
+  float root_l = lu / v;
+  float root_m = mu / v;
+  float t1 = min(root_l, root_m);
+  float t2 = (max(root_l, root_m) - max(t1, 0)) / (1 - max(t1, 0));
+  subdivide(p1, p2, p3, p4, b1, b2, b3, b4, t1);
+  subdivide(p1, p2, p3, p4, b1, b2, b3, b4, t2);
   emit(p1, p2, p3, p4, b1, b2, b3, b4);
 }
