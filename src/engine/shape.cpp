@@ -10,25 +10,6 @@
 #include "util/random.h"
 #include "util/transform2D.h"
 
-static inline glm::vec2 midpoint(glm::vec2 a, glm::vec2 b) {
-  return glm::mix(a, b, 0.5f);
-}
-
-static void intersectRays(glm::vec2 a_src, glm::vec2 a_dest, glm::vec2 b_src, glm::vec2 b_dest, bool *degenerate, bool *intersects, glm::vec2 *intersection) {
-  glm::vec2 diff = b_src - a_src;
-  glm::vec2 a_dir = a_dest - a_src;
-  glm::vec2 b_dir = b_dest - b_src;
-  float determinant = b_dir.x * a_dir.y - b_dir.y * a_dir.x;
-  *degenerate = determinant == 0;
-  if (*degenerate) return;
-  float u = (diff.y * b_dir.x - diff.x * b_dir.y) / determinant;
-  float v = (diff.y * a_dir.x - diff.x * a_dir.y) / determinant;
-  *intersects = (u > 0 && v > 0);
-  if (*intersects) {
-    *intersection = u * a_dir + a_src;
-  }
-}
-
 static map<string, ShapeData> loaded_shape_data;
 static ShapeData *loadIfNeeded(string filename) {
   if (loaded_shape_data.count(filename) == 0) {
