@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <GL/glew.h>
-#include <GL/glfw.h>
+#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
 #include "engine/engine.h"
@@ -61,17 +61,16 @@ bool Game::stillRunning() {
 }
 
 void Game::handleKeyboardEvent(int key, int action) {
-  if (action != GLFW_PRESS && action != GLFW_RELEASE) return;
   switch (key) {
-    case GLFW_KEY_ESC:
-      leave_game_ = true;
+    case GLFW_KEY_ESCAPE:
+      if (action == GLFW_PRESS) leave_game_ = true;
       break;
     case GLFW_KEY_LEFT:
-      left_down_ = action == GLFW_PRESS;
+      left_down_ = action != GLFW_RELEASE;
       if (left_down_ && right_down_) right_down_ = false;
       break;
     case GLFW_KEY_RIGHT:
-      right_down_ = action == GLFW_PRESS;
+      right_down_ = action != GLFW_RELEASE;
       if (left_down_ && right_down_) left_down_ = false;
       break;
     case GLFW_KEY_SPACE:

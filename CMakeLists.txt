@@ -5,6 +5,7 @@ project(tgc-demo)
 find_package(OpenGL REQUIRED)
 
 add_definitions(-DGLEW_STATIC)
+set(GLFW_INSTALL OFF)
 
 add_subdirectory(libs)
 
@@ -67,4 +68,4 @@ add_executable(tgc-demo
   src/util/json.c
   )
 
-target_link_libraries(tgc-demo glew glfw freetype ${OPENGL_LIBRARIES})
+target_link_libraries(tgc-demo glew glfw freetype ${OPENGL_LIBRARIES} ${GLFW_LIBRARIES})
