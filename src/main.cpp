@@ -1,10 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <GL/glew.h>
-#include <GL/glfw.h>
+#include <GLFW/glfw3.h>
 
 #include "game.h"
 #include "util/settings.h"
+#include "util/error.h"
 
 static Game *game = NULL;
 
@@ -16,13 +17,13 @@ void cleanupAndExit(int exit_code) {
 }
 
 // Handle keyboard events.
-void GLFWCALL keyboardCallback(int key, int action) {
+static void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
   game->handleKeyboardEvent(key, action);
 }
 
-int GLFWCALL windowCloseCallback() {
+static void windowCloseCallback(GLFWwindow* window) {
   game->prepareToQuit();
-  return GL_TRUE;
 }
 
 int main(int argc, char *argv[]) {
@@ -36,53 +37,46 @@ int main(int argc, char *argv[]) {
   loadSettings("content/game_settings");
 
   // Demand a core profile.
-  glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, 3);
-  glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, 3);
-  glfwOpenWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_SAMPLES, 8);
+  glfwSwapInterval(1);
 
-  // This is really for multisampling not FSAA but whatevs, we still need it.
-  glfwOpenWindowHint(GLFW_FSAA_SAMPLES, 8);
-  bool fullscreen = getSetting("fullscreen").getBoolean();
-  int screen_mode = fullscreen ? GLFW_FULLSCREEN : GLFW_WINDOW;
   int width, height;
+  GLFWwindow* window = NULL;
+  bool fullscreen = getSetting("fullscreen").getBoolean();
   if (fullscreen) {
-    // Gets native resolution of monitor.
-    GLFWvidmode mode;
-    glfwGetDesktopMode(&mode);
-    width = mode.Width;
-    height = mode.Height;
+    // Gets current resolution of monitor.
+    const GLFWvidmode *video_mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    width = video_mode->width;
+    height = video_mode->height;
+    window = glfwCreateWindow(width, height, "Demo", glfwGetPrimaryMonitor(), NULL);
   } else {
     width = 800;
     height = 600;
+    window = glfwCreateWindow(width, height, "Demo", NULL, NULL);
   }
-  if (!glfwOpenWindow(width, height, 0, 0, 0, 0, 24, 8, screen_mode)) {
-    fprintf(stderr, "Failed to open GLFW window.\n");
-    cleanupAndExit(1);
-  }
-  int major, minor, rev;
-  glfwGetGLVersion(&major, &minor, &rev);
-  fprintf(stderr, "OpenGL version: %d.%d.%d\n", major, minor, rev);
+  if (window == NULL) error("Failed to open GLFW window.\n");
+
+  // Finish configuring GLEW.
+  glfwMakeContextCurrent(window);
+  glfwSetKeyCallback(window, keyboardCallback);
+  glfwSetWindowCloseCallback(window, windowCloseCallback);
   
   // Init glew. We need experimental for a core profile till glew fixes a bug...
   glewExperimental = GL_TRUE;
   GLenum err = glewInit();
+  if (GLEW_OK != err) error("GLEW error: %s\n", glewGetErrorString(err));
+  if (!GLEW_VERSION_3_3) error("OpenGL 3.3 is not supported.\n");
   // Glew init spawns an error sometimes. This clears the GL error state for our own use.
   glGetError();
-  if (GLEW_OK != err) {
-    fprintf(stderr, "GLEW error: %s\n", glewGetErrorString(err));
-    cleanupAndExit(1);
-  }
-  if (!GLEW_VERSION_3_3) {
-    fprintf(stderr, "OpenGL 3.3 is not supported.\n");
-    cleanupAndExit(1);
-  }
-
-  // GLFW options.
-  glfwEnable(GLFW_KEY_REPEAT);
-  glfwSwapInterval(1);
-  // Set callback functions.
-  glfwSetKeyCallback(keyboardCallback);
-  glfwSetWindowCloseCallback(windowCloseCallback);
+  
+  int major, minor, rev;
+  major = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MAJOR);
+  minor = glfwGetWindowAttrib(window, GLFW_CONTEXT_VERSION_MINOR);
+  rev = glfwGetWindowAttrib(window, GLFW_CONTEXT_REVISION);
+  printf("OpenGL version: %d.%d.%d\n", major, minor, rev);
 
   // Make the main game object.
   game = new Game();
@@ -99,7 +93,7 @@ int main(int argc, char *argv[]) {
     // Update and draw the game.
     game->draw();
     // glFinish will hurt framerate but gives better estimate of the draw time.
-    //glFinish();
+    // glFinish();
     float frame_draw_time = static_cast<float>(glfwGetTime());
     time_drawing += frame_draw_time - frame_start_time;
     game->update();
@@ -115,7 +109,8 @@ int main(int argc, char *argv[]) {
       printf("Update time per frame: %f.\n", time_updating / print_frequency);
       time_updating = 0.0f;
     }
-    glfwSwapBuffers();
+    glfwSwapBuffers(window);
+    glfwPollEvents();
   }
   cleanupAndExit(0);
   return 0;

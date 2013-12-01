@@ -4,9 +4,11 @@
 #include <GL/glew.h>
 #include <string>
 #include <vector>
+#include <map>
 
 using std::string;
 using std::vector;
+using std::map;
 
 class Shader {
   public:
@@ -37,6 +39,8 @@ class Program {
   private:
     bool linked_;
     GLuint handle_;
+    map<string, GLuint> attribute_handles_;
+    map<string, GLuint> uniform_handles_;
     vector<Shader *> shaders_;
 };
 

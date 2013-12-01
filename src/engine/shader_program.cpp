@@ -75,17 +75,25 @@ void Program::setAttributeHandle(string attribute, GLuint handle) {
 }
 
 GLuint Program::attributeHandle(string attribute) {
-  GLint handle = glGetAttribLocation(handle_, attribute.c_str());
-  if (handle == -1) {
-    error("Shader attribute %s not found.\n", attribute.c_str());
+  if (attribute_handles_.count(attribute) == 0) {
+    GLint handle_or_error = glGetAttribLocation(handle_, attribute.c_str());
+    if (handle_or_error == -1) {
+      error("Shader attribute %s not found.\n", attribute.c_str());
+    }
+    GLuint handle = static_cast<GLuint>(handle_or_error);
+    attribute_handles_[attribute] = handle;
   }
-  return static_cast<GLuint>(handle);
+  return attribute_handles_[attribute];
 }
 
 GLuint Program::uniformHandle(string uniform) {
-  GLint handle = glGetUniformLocation(handle_, uniform.c_str());
-  if (handle == -1) {
-    error("Shader uniform %s not found.\n", uniform.c_str());
+  if (attribute_handles_.count(uniform) == 0) {
+    GLint handle_or_error = glGetUniformLocation(handle_, uniform.c_str());
+    if (handle_or_error == -1) {
+      error("Shader uniform %s not found.\n", uniform.c_str());
+    }
+    GLuint handle = static_cast<GLuint>(handle_or_error);
+    attribute_handles_[uniform] = handle;
   }
-  return static_cast<GLuint>(handle);
+  return attribute_handles_[uniform];
 }
