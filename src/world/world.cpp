@@ -114,4 +114,12 @@ void World::init() {
   character.setDisplayPriority(2);
   test_text.setDisplayPriority(0);
   test_shapes.setDisplayPriority(2);
+  for(int i = 1; i < 10; ++i) {
+    ShapeGroup *s = new ShapeGroup();
+    s->init("test.group");
+    s->setParent(this);
+    s->setDisplayPriority(10);
+    glm::mat3 t = translate2D(glm::mat3(1.0f), glm::vec2(0.2f * i, 0.0f));
+    s->setRelativeTransform(t);
+  }
 }
