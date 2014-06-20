@@ -15,26 +15,7 @@ include_directories(libs/glew/include)
 include_directories(libs/glfw/include)
 include_directories(libs/freetype/include)
 
-add_executable(tgc-demo
-  src/main.cpp
-  src/game.h
-  src/game.cpp
-  src/world/world.h
-  src/world/world.cpp
-  src/world/clouds.cpp
-  src/world/clouds.h
-  src/world/ground.h
-  src/world/ground.cpp
-  src/world/background.h
-  src/world/background.cpp
-  src/world/character.h
-  src/world/character.cpp
-  src/world/scroller.h
-  src/world/scroller.cpp
-  src/world/event_manager.h
-  src/world/event_manager.cpp
-  src/world/birds.h
-  src/world/birds.cpp
+add_library(engine
   src/engine/engine.h
   src/engine/engine.cpp
   src/engine/animator.h
@@ -68,4 +49,26 @@ add_executable(tgc-demo
   src/util/json.c
   )
 
-target_link_libraries(tgc-demo glew glfw freetype ${OPENGL_LIBRARIES} ${GLFW_LIBRARIES})
+add_executable(render-test
+  src/main.cpp
+  src/game.h
+  src/game.cpp
+  src/render-test/world.h
+  src/render-test/world.cpp
+  src/render-test/clouds.cpp
+  src/render-test/clouds.h
+  src/render-test/ground.h
+  src/render-test/ground.cpp
+  src/render-test/background.h
+  src/render-test/background.cpp
+  src/render-test/character.h
+  src/render-test/character.cpp
+  src/render-test/scroller.h
+  src/render-test/scroller.cpp
+  src/render-test/event_manager.h
+  src/render-test/event_manager.cpp
+  src/render-test/birds.h
+  src/render-test/birds.cpp
+  )
+
+target_link_libraries(render-test engine glew glfw freetype ${OPENGL_LIBRARIES} ${GLFW_LIBRARIES})

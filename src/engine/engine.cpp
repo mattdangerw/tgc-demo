@@ -21,6 +21,7 @@ Engine::Engine()
 Engine::~Engine() {}
 
 void Engine::init(int width, int height) {
+  srand((unsigned)time(0));
   width_ = width;
   height_ = height;
   aspect_ = static_cast<float>(width)/height;
@@ -39,6 +40,12 @@ void Engine::init(int width, int height) {
   glUniform1f(uniformHandle("decay_rate"), 0.98f);
   glUniform1f(uniformHandle("constant_factor"), 0.85f);
   glUniform1f(uniformHandle("scale_factor"), 1.0f/160.0f);
+
+#ifdef _DEBUG
+  // Check for any bad GL calls. I think this needs GL to flush all it's
+  // commands, so only do it when debugging.
+  checkForGLError();
+#endif
 }
 
 void Engine::setupUnitQuad() {
@@ -240,6 +247,14 @@ void Engine::setTextureUnits() {
   glUniform1i(uniformHandle("color_texture"), 0);
 }
 
+void Engine::update(float delta_time) {
+  root_entity_.updateAll(delta_time);
+#ifdef _DEBUG
+  // Check for any bad GL calls.
+  checkForGLError();
+#endif
+}
+
 void Engine::draw() {
   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
   // 2D rendering modelview
@@ -314,6 +329,11 @@ void Engine::draw() {
   //if (do_stencil_) {
   //  glDisable(GL_STENCIL_TEST);
   //}
+
+#ifdef _DEBUG
+  // Check for any bad GL calls.
+  checkForGLError();
+#endif
 }
 
 void Engine::drawUnitQuad() {
